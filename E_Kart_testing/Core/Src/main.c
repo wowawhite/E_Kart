@@ -117,7 +117,7 @@ int main(void)
 
   LoadfromFlash();
 
-
+// test blah
 
   sFilterConfig.FilterBank = 0;
     sFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;
@@ -147,7 +147,7 @@ int main(void)
 
 
 
-    HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);	// Interrupt für CAN Rx aktiviren
+    HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);	// Interrupt fï¿½r CAN Rx aktiviren
 
     HAL_TIM_Base_Start(&htim3);
     HAL_TIM_IC_Start(&htim3,TIM_CHANNEL_1);
