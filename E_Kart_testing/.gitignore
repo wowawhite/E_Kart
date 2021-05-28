@@ -1,1 +1,9 @@
-/Debug/
+# STM32Cube copied library and project folders
+!*/*.hzp
+!*/*.hzs
+*.o
+.settings
+/Debug/*
+Drivers/*
+MDK-ARM/*
+EWARM/*
