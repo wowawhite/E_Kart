@@ -53,8 +53,8 @@ uint32_t DutyCycleGas;         // DutyCycle des Gassensors als absoluter Wert, 0
 uint32_t DutyCycleBremse;	   	 // DutyCycle des Bremssensors als absoluter Wert, 0-1000 = 0-100,0%
 uint32_t FrequencyGas;	       // PWM-Frequenz des Gassensors in Hz
 uint32_t FrequencyBremse;      // PWM-Frequenz des Bremssensors in Hz
-int16_t  Gas;				              // Wert des Gaspedals, der über PWM-Sensor ermittelt wurde, Wertebereich: 0 .. 100 = Volldurchgedrückt
-int16_t  Bremse;				            // Bremswert, der über PWM-Sensor ermittelt wurde, Wertebereich: 0 .. 100 = Volldurchgedrückt
+int16_t  Gas;				              // Wert des Gaspedals, der ï¿½ber PWM-Sensor ermittelt wurde, Wertebereich: 0 .. 100 = Volldurchgedrï¿½ckt
+int16_t  Bremse;				            // Bremswert, der ï¿½ber PWM-Sensor ermittelt wurde, Wertebereich: 0 .. 100 = Volldurchgedrï¿½ckt
 
 /* USER CODE END PV */
 
@@ -80,7 +80,7 @@ extern TIM_HandleTypeDef htim4;
 /* USER CODE END EV */
 
 /******************************************************************************/
-/*           Cortex-M4 Processor Interruption and Exception Handlers          */ 
+/*           Cortex-M4 Processor Interruption and Exception Handlers          */
 /******************************************************************************/
 /**
   * @brief This function handles Non maskable interrupt.

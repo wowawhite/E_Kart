@@ -7,3 +7,7 @@
 Drivers/*
 MDK-ARM/*
 EWARM/*
+/Debug/
+/Documentation/
+/Drivers/
+/E_Kart_testing Debug.launch
