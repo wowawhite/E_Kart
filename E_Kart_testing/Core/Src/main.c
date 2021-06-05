@@ -22,6 +22,7 @@
 #include "can.h"
 #include "spi.h"
 #include "tim.h"
+#include "usb_otg.h"
 #include "gpio.h"
 #include "fsmc.h"
 
@@ -107,32 +108,30 @@ int main(void)
   MX_SPI1_Init();
   MX_FSMC_Init();
   MX_TIM3_Init();
+  MX_USB_OTG_FS_PCD_Init();
   /* USER CODE BEGIN 2 */
 
 //  flash_init();
 //  TransferListElements(1);
-
   LoadfromFlash();
 
-// test blah
-
   sFilterConfig.FilterBank = 0;
-    sFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;
-    sFilterConfig.FilterScale = CAN_FILTERSCALE_32BIT;
-    sFilterConfig.FilterIdHigh = 0xFFFF;
-    sFilterConfig.FilterIdLow = 0x0000;
-    sFilterConfig.FilterMaskIdHigh = 0x0000;
-    sFilterConfig.FilterMaskIdLow = 0x0000;
-    sFilterConfig.FilterFIFOAssignment = CAN_RX_FIFO0;
-    sFilterConfig.FilterActivation = ENABLE;
-    sFilterConfig.SlaveStartFilterBank = 14;
+  sFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;
+  sFilterConfig.FilterScale = CAN_FILTERSCALE_32BIT;
+  sFilterConfig.FilterIdHigh = 0xFFFF;
+  sFilterConfig.FilterIdLow = 0x0000;
+  sFilterConfig.FilterMaskIdHigh = 0x0000;
+  sFilterConfig.FilterMaskIdLow = 0x0000;
+  sFilterConfig.FilterFIFOAssignment = CAN_RX_FIFO0;
+  sFilterConfig.FilterActivation = ENABLE;
+  sFilterConfig.SlaveStartFilterBank = 14;
 
-    // CAN Eingangsfilter konfigurieren
-    if(HAL_CAN_ConfigFilter(&hcan1, &sFilterConfig) != HAL_OK)
-    {
-  	  /* Filter configuration Error */
-        Error_Handler();
-    }
+  // CAN Eingangsfilter konfigurieren
+  if(HAL_CAN_ConfigFilter(&hcan1, &sFilterConfig) != HAL_OK)
+  {
+	  /* Filter configuration Error */
+	  Error_Handler();
+  }
 
 
     // Start der CAN Kommunikation

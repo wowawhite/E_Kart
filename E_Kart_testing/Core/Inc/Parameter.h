@@ -1,8 +1,8 @@
 /*******************************************************************************
 * File Name          : Parameter.h
-* Author             : Ostfalia Hochschule für angewandte Wissenschaften
+* Author             : Ostfalia Hochschule fï¿½r angewandte Wissenschaften
                        Michael Scheele
-* Modification			 : Tina Kähling											 
+* Modification			 : Tina Kï¿½hling											 
 * Date First Issued  : 2012-05-15
 * Description        : Parameter des E-Karts
 *******************************************************************************/
@@ -14,23 +14,28 @@
 /* Exported constants ------------------------------------------------*/                             
 /* Macros ------------------------------------------------------------*/
 
+#define SOFTWAREVERSION "V2021.01"
+
+// Errorcodes RCP-Mode
+#define NO_ERROR 0
+#define WAITING_RESPOND 1
+#define NO_CAN_RESPOND 2
+#define NO_RCP_HEARTBEAT 3
+#define NO_MOTOR_HEARTBEAT 4
+
 #define max_Menuebenen 19       // insgesamt 19 Menuebenen, 0.Menuebene wird nicht genutzt
-#define max_buttons 13           // in jeder Menuebene kann man maximal 14(13) Switch-Bottons(0.Buttons zählt dazu) auslegen.
+#define max_buttons 13           // in jeder Menuebene kann man maximal 14(13) Switch-Bottons(0.Buttons zï¿½hlt dazu) auslegen.
 // SwitchButton ist ein Button auf Display angezeigt und der verlinkt zu anderen Menuebenen
 // In "struct" [TouchFunktion.c] sind die Eigenschaft von SwitchButton definiert
 
 #define max_sliders 3           // in jeder Menuebene kann man maximal (2+1) Gleitblock auslegen [0. bis 2. Slider]
-// Gleitblock ist fuer Eingabe von Parameter ausgelegt, der Wert von Gleitblock kann man durch Touch-Funktion verändern. 
+// Gleitblock ist fuer Eingabe von Parameter ausgelegt, der Wert von Gleitblock kann man durch Touch-Funktion verï¿½ndern. 
 // In "struct" [TouchFunktion.c] sind die Eigenschaft von Slidern definiert
 
-//#define Change_X							// Provisorische Maßnahme zur Spiegelung der Touch-X-Koordinate
-
-
-#define SYSCLK_FREQ_72MHz			  // wenn definiert, dann allgemeine Taktfrequenz auf 72 MHz gesetzt
 #define TOUCH_AKTIV					  	// wenn definiert, Touch-Aktiv, durch auskommentieren, Touch-Inaktiv
 
 /* -------------------------------- FFR ----------------------------------------------  Motor-Controller-Daten --------------------------------*/
-#define SaveButton					0		// für bessere Lesbarkeit des Codes definiert
+#define SaveButton					0		// fï¿½r bessere Lesbarkeit des Codes definiert
 
 #define MenuSelectDrivingMode		5
 
@@ -43,7 +48,7 @@
 #define	TestModeButton				5
 
 /* -------------------------------- FLASH Definitionen -----------------------------------------------------------*/
-#define NumberOfSavedParameter 	((uint32_t)0x0000001E)//30 Elemente sind in den Listen für die Flash-Speicherung
+#define NumberOfSavedParameter 	((uint32_t)0x0000001E)//30 Elemente sind in den Listen fï¿½r die Flash-Speicherung
 
 #define ChosenDrivingMode			0
 #define VorgabeMomentDrehzahl		1
@@ -66,118 +71,125 @@
 #define Standard_Rueckwaert			23
 #define Profi_Rueckwaert			24
 #define Test_Rueckwaert				25
-// die restlichen Elemente 10-17 sind die letzten Cursor-Positionen und werden in Menuestruktur() [TouchFunktion.c] verwendet für die Initial.Position
+// die restlichen Elemente 10-17 sind die letzten Cursor-Positionen und werden in Menuestruktur() [TouchFunktion.c] verwendet fï¿½r die Initial.Position
 // Element 18 ist Initialisierung
-// Element 19 ist die Markierung für SDO-Parameters, 0 - SDO nicht senden; 1 - SDO werde dann gesendet; 2 - SDO von Rechtsmotor schon gesendet, aber Linksmotor noch nicht;
+// Element 19 ist die Markierung fï¿½r SDO-Parameters, 0 - SDO nicht senden; 1 - SDO werde dann gesendet; 2 - SDO von Rechtsmotor schon gesendet, aber Linksmotor noch nicht;
 // Manual Reference, Seite 50, Tabelle 4, "High density": Auf Sektor 4 ist 64 Kbyte mit 0x0801 0000 - 0x0801 FFFF
 #define FlashMemoryAddressSTART		((uint32_t)0x08010000)
-#define FlashPageNextPosition		((uint32_t)0x00000010)		// auf einem Sektor stehen 16*512 Bits = 2x512 Bytes = 16'383 Bits zur Verfügung
-#define FlashMemoryAddressEND		((uint32_t)0x0801FFFF)  	// Darf nicht überschirtten werden!
+#define FlashPageNextPosition		((uint32_t)0x00000010)		// auf einem Sektor stehen 16*512 Bits = 2x512 Bytes = 16'383 Bits zur Verfï¿½gung
+#define FlashMemoryAddressEND		((uint32_t)0x0801FFFF)  	// Darf nicht ï¿½berschirtten werden!
 
 /* -------------------------------- Fahrzeugdaten --------------------------------*/
 #define DREHZAHL_MAX 				5000 		// Maximale Motordrehzahl in rpm, Motor PERM PMS120, zur Sicherheit weniger angenommen, Hersteller: n_max = 6000 rpm
 #define DREHZAHL_GRENZ				500
-#define R_BEGRENZUNG				4 		// Begrenzungsdivisor der Motordrehzahl/-moment für Rückwärtsgang, n_Rückwärts_max = Drehzahl_Max/R_Begrenzung, 3000rpm/4 = 750 rpm
-#define REIFENRADIUS 			 	13 		// Reifenradius in cm, für Geschwindigkeitsberechnung
-#define MOTOR_RAD_RATIO	    	  	25 		// 25 = 2.5, Motor zu Rad Übersetzung = Motor_Drehzahl / Rad_Drehzahl
+#define R_BEGRENZUNG				4 		// Begrenzungsdivisor der Motordrehzahl/-moment fï¿½r Rï¿½ckwï¿½rtsgang, n_Rï¿½ckwï¿½rts_max = Drehzahl_Max/R_Begrenzung, 3000rpm/4 = 750 rpm
+#define REIFENRADIUS 			 	13 		// Reifenradius in cm, fï¿½r Geschwindigkeitsberechnung
+#define MOTOR_RAD_RATIO	    	  	25 		// 25 = 2.5, Motor zu Rad ï¿½bersetzung = Motor_Drehzahl / Rad_Drehzahl
 
 /* -------------------------------- Differenzial ---------------------------*/
-#define Lenkuebersetzung			15 		// Lenkradwinkel/Lenkwinkel = 90°/6° = 15
+#define Lenkuebersetzung			15 		// Lenkradwinkel/Lenkwinkel = 90ï¿½/6ï¿½ = 15
 
 /* -------------------------------- Batteriemanagement ---------------------------*/
 #define BM	 					    0		// Batteriemanagement, 0 - nicht vorhanden, 1 - vorhanden
 
 /* -------------------------------- Gas und Bremspedal-Daten ---------------------*/
-#define DUTY_CYCLE_GAS_MIN			84 		// Tastverhältnis in Grundstellung in 10*%, 0 .. 100,0 % = 0 .. 1000
-#define DUTY_CYCLE_GAS_MAX 			205 	// Tastverhältnis bei voller Betätigung in 10*%, 0 .. 100,0 % = 0 .. 1000
+#define DUTY_CYCLE_GAS_MIN			84 		// Tastverhï¿½ltnis in Grundstellung in 10*%, 0 .. 100,0 % = 0 .. 1000
+#define DUTY_CYCLE_GAS_MAX 			205 	// Tastverhï¿½ltnis bei voller Betï¿½tigung in 10*%, 0 .. 100,0 % = 0 .. 1000
 
-#define DUTY_CYCLE_BREMSE_MIN  		114 	// Tastverhältnis in Grundstellung in 10*%, 0 .. 100,0 % = 0 .. 1000
-#define DUTY_CYCLE_BREMSE_MAX   	236 	// Tastverhältnis bei voller Betätigung in 10*%, 0 .. 100,0 % = 0 .. 1000
+#define DUTY_CYCLE_BREMSE_MIN  		114 	// Tastverhï¿½ltnis in Grundstellung in 10*%, 0 .. 100,0 % = 0 .. 1000
+#define DUTY_CYCLE_BREMSE_MAX   	236 	// Tastverhï¿½ltnis bei voller Betï¿½tigung in 10*%, 0 .. 100,0 % = 0 .. 1000
 
-#define Norm_100                	100 	// Normwert für 100 %
-#define Norm_0                    	0 	// Normwert für 0 %
+#define Norm_100                	100 	// Normwert fï¿½r 100 %
+#define Norm_0                    	0 	// Normwert fï¿½r 0 %
 
-#define Bremse_SchwelleVerGas	   	30 	// Schwelle in Prozent das Bremspedals, ab der Gasbetätigung verriegelt wird
+#define Bremse_SchwelleVerGas	   	30 	// Schwelle in Prozent das Bremspedals, ab der Gasbetï¿½tigung verriegelt wird
 
 /* -------------------------------- Lenkwinkel-Daten ----------------------------*/
-#define LW_R					 	-920 // -900= -90,0° - Lenkradwinkel bei Vollausschlag nach rechts in °/10
-#define LW_L 					 	+920 // +900= +90,0° - Lenkradwinkel bei Vollausschlag nach links in °/10
+#define LW_R					 	-920 // -900= -90,0ï¿½ - Lenkradwinkel bei Vollausschlag nach rechts in ï¿½/10
+#define LW_L 					 	+920 // +900= +90,0ï¿½ - Lenkradwinkel bei Vollausschlag nach links in ï¿½/10
 
 /* -------------------------------- CAN-Daten -----------------------------------*/
-#define CANx                     	CAN1 // CAN1 oder CAN2, bei Verwendung von CAN2 Konfiguration entsprechend üperprüfen
+#define CANx                     	CAN1 	// CAN1 oder CAN2, bei Verwendung von CAN2 Konfiguration entsprechend ï¿½perprï¿½fen
 
 // Senden
-#define ID_MC_rechts 				0x205 	// Nachrichten-ID für Motorcontroller rechts
-#define ID_MC_links 				0x206 	// Nachrichten-ID für Motorcontroller links
-#define Motor_EIN_rechts          	1 	// 2. Datenbyte der Nachricht auf ID_MC_rechts
-#define Motor_EIN_links           	1 	// 2. Datenbyte der Nachricht auf ID_MC_links
-#define Motor_Moment_REV     		5 	// 5-dez = 101 - negatives Moment vorgeben, Rückwärts
-#define Motor_Moment_FWD      		6 	// 6-dez = 110 - positives Moment vorgeben, Vorwärts
+#define ID_MC_rechts 				0x205 	// Nachrichten-ID fï¿½r Motorcontroller rechts
+#define ID_MC_links 				0x206 	// Nachrichten-ID fï¿½r Motorcontroller links
+#define Motor_EIN_rechts          	1 		// 2. Datenbyte der Nachricht auf ID_MC_rechts
+#define Motor_EIN_links           	1 		// 2. Datenbyte der Nachricht auf ID_MC_links
+#define Motor_Moment_REV     		5 		// 5-dez = 101 - negatives Moment vorgeben, Rï¿½ckwï¿½rts
+#define Motor_Moment_FWD      		6 		// 6-dez = 110 - positives Moment vorgeben, Vorwï¿½rts
 
-#define ID_Heartbeat_FFR			0x701 	// Nachrichten-ID für Heartbeat des FFRs, FFR ist bereit
-#define Msg_Heartbeat_FFR		    5 	// Message-Inhalt des Heartbeats vom FFR
+#define ID_Heartbeat_FFR			0x701 	// Nachrichten-ID fï¿½r Heartbeat des FFRs, FFR ist bereit
+#define Msg_Heartbeat_FFR		    5 		// Message-Inhalt des Heartbeats vom FFR
 #define ID_Synchronisation     		0x80 	// Nachrichten-ID der Synchronisation
 
-#define ID_NMT     		0x00 	// Nachrichten-ID der NMT
+#define ID_TxPDO1 					0x181	// Nachrichten-ID TxPDO1
+
+#define ID_NMT     					0x00 	// Nachrichten-ID der NMT
 
 
 // Empfangen
 #define ID_Lenkradwinkelsensor		0x184 // 0x600 Nachrichten-ID vom Lenkradwinkelsensor im E-Kart, 0xC0 vom Testsensor
-#define DL_Lenkradwinkelsensor		5 	// Datenlänge in Bytes der Lenkradwinkelsensor-Nachricht, 0-8 Bytes
+#define DL_Lenkradwinkelsensor		5 	// Datenlï¿½nge in Bytes der Lenkradwinkelsensor-Nachricht, 0-8 Bytes
 
 #define ID_Heartbeat_MC_rechts  	0x705 // Nachrichten-ID des Heartbeats des Motorcontrollers rechts
 #define Msg_Heartbeat_MC_rechts	    5 // Message-Inhalt des Heartbeats, nicht Null
-#define DL_Heartbeat_MC_rechts	    1 // Datenlänge in Bytes der Nachricht, 0-8 Bytes
+#define DL_Heartbeat_MC_rechts	    1 // Datenlï¿½nge in Bytes der Nachricht, 0-8 Bytes
 
 #define ID_Heartbeat_MC_links   	0x706 // Nachrichten-ID des Heartbeats des Motorcontrollers links
 #define Msg_Heartbeat_MC_links	    5 // Message-Inhalt des Heartbeats
-#define DL_Heartbeat_MC_links	    1 // Datenlänge in Bytes der Nachricht, 0-8 Bytes
+#define DL_Heartbeat_MC_links	    1 // Datenlï¿½nge in Bytes der Nachricht, 0-8 Bytes
 
 #define ID_Motor_Drehzahl_r	    	0x185 // Nachrichten-ID vom Speed-Sensor rechts
-#define DL_Motor_Drehzahl_r		   	4 // Datenlänge in Bytes der Nachricht, 0-8 Bytes
+#define DL_Motor_Drehzahl_r		   	4 // Datenlï¿½nge in Bytes der Nachricht, 0-8 Bytes
 
 #define ID_Motor_Drehzahl_l	    	0x186 // Nachrichten-ID vom Speed-Sensor links
-#define DL_Motor_Drehzahl_l		    4 // Datenlänge in Bytes der Nachricht, 0-8 Bytes
+#define DL_Motor_Drehzahl_l		    4 // Datenlï¿½nge in Bytes der Nachricht, 0-8 Bytes
 
 #define ID_Status_Batteriesteuerung	0x1BA // Nachrichten-ID vom Speed-Sensor rechts
-#define DL_Status_Batteriesteuerung	8 // Datenlänge in Bytes der Nachricht, 0-8 Bytes
+#define DL_Status_Batteriesteuerung	8 // Datenlï¿½nge in Bytes der Nachricht, 0-8 Bytes
 
-#define ID_Temperatur_Zellen_r		0x1F5 // Nachrichten-ID vom BMS für die Zellen rechts
-#define DL_Temperatur_Zellen_r		8 // Datenlänge in Bytes der Nachricht, 0-8 Bytes
+#define ID_Temperatur_Zellen_r		0x1F5 // Nachrichten-ID vom BMS fï¿½r die Zellen rechts
+#define DL_Temperatur_Zellen_r		8 // Datenlï¿½nge in Bytes der Nachricht, 0-8 Bytes
 
-#define ID_Temperatur_Zellen_l		0x1F6 // Nachrichten-ID vom BMS für die Zellen links
-#define DL_Temperatur_Zellen_l		8 // Datenlänge in Bytes der Nachricht, 0-8 Bytes
+#define ID_Temperatur_Zellen_l		0x1F6 // Nachrichten-ID vom BMS fï¿½r die Zellen links
+#define DL_Temperatur_Zellen_l		8 // Datenlï¿½nge in Bytes der Nachricht, 0-8 Bytes
 
-#define ID_Spannung_Zellen_r		0x1D5 // Nachrichten-ID vom BMS für die Zellen rechts
-#define DL_Spannung_Zellen_r		8 // Datenlänge in Bytes der Nachricht, 0-8 Bytes
+#define ID_Spannung_Zellen_r		0x1D5 // Nachrichten-ID vom BMS fï¿½r die Zellen rechts
+#define DL_Spannung_Zellen_r		8 // Datenlï¿½nge in Bytes der Nachricht, 0-8 Bytes
 
-#define ID_Spannung_Zellen_l		0x1D6 // Nachrichten-ID vom BMS für die Zellen links
-#define DL_Spannung_Zellen_l		8 // Datenlänge in Bytes der Nachricht, 0-8 Bytes
+#define ID_Spannung_Zellen_l		0x1D6 // Nachrichten-ID vom BMS fï¿½r die Zellen links
+#define DL_Spannung_Zellen_l		8 // Datenlï¿½nge in Bytes der Nachricht, 0-8 Bytes
+
+#define ID_Heartbeat_RCP			0x70A
 
 // SDO-Parameters senden & Empfangen
-#define ID_SDO_MC_rechts			0x606 // Nachrichten-ID für SDO-Parameters von Motorcontroller rechts, Senden
-#define ID_SDO_MC_links 			0x605 // Nachrichten-ID für SDO-Parameters von Motorcontroller links, Senden
-#define ID_SDO_MC_rechts_E			0x586 // Nachrichten-ID für SDO-Parameters von Motorcontroller rechts, Empfangen
-#define ID_SDO_MC_links_E			0x585 // Nachrichten-ID für SDO-Parameters von Motorcontroller links, Empfangen
+#define ID_SDO_MC_rechts			0x606 // Nachrichten-ID fï¿½r SDO-Parameters von Motorcontroller rechts, Senden
+#define ID_SDO_MC_links 			0x605 // Nachrichten-ID fï¿½r SDO-Parameters von Motorcontroller links, Senden
+#define ID_SDO_MC_rechts_E			0x586 // Nachrichten-ID fï¿½r SDO-Parameters von Motorcontroller rechts, Empfangen
+#define ID_SDO_MC_links_E			0x585 // Nachrichten-ID fï¿½r SDO-Parameters von Motorcontroller links, Empfangen
+
+#define ID_SDO_RCP_Rx				0x60A
+#define ID_SDO_RCP_Tx				0x58A
 
 #define Motor_links					5
 #define Motor_rechts				6
 
-// Definition der SDO-Parameters für SDO_Parameter_transmit(uint16_t SDO_Merker)
-#define User_ID						0			// 0,1,2 für Pre-Operational; 0,1,3 für Operational
+// Definition der SDO-Parameters fï¿½r SDO_Parameter_transmit(uint16_t SDO_Merker)
+#define User_ID						0			// 0,1,2 fï¿½r Pre-Operational; 0,1,3 fï¿½r Operational
 #define Password					1
 #define Pre_Operational				2
 #define Operational					3
 #define setStrom					4
 #define Drehzahl					5
 #define Beschleunigung				6
-#define Speed_mode					7			// 7-8 für Speedmode, Vorgabedrehzahl
+#define Speed_mode					7			// 7-8 fï¿½r Speedmode, Vorgabedrehzahl
 #define Traction_control_mode1		8
-#define Torque_mode					9			// 9-11 für Torquemode, Vorgabemoment
+#define Torque_mode					9			// 9-11 fï¿½r Torquemode, Vorgabemoment
 #define Traction_control_mode0  	10
 #define Maximum_torque				11
 
-#define Throttle_Flags0				12		// 12,14,16,18 für Torque-mode; 13,15,17,19 für Speed-mode
+#define Throttle_Flags0				12		// 12,14,16,18 fï¿½r Torque-mode; 13,15,17,19 fï¿½r Speed-mode
 #define Throttle_Flags1				13
 #define Throttle_Start_Voltage0		14
 #define Throttle_Start_Voltage1		15
@@ -186,14 +198,14 @@
 #define Transmission_Type0			18
 #define Transmission_Type1			19
 
-#define MaxTorque_A0				20		// 20,22,24 für Torque-Mode; 21,23,25 für Speed-Mode
+#define MaxTorque_A0				20		// 20,22,24 fï¿½r Torque-Mode; 21,23,25 fï¿½r Speed-Mode
 #define MaxTorque_A1				21
 #define MaxTorque_B0				22
 #define MaxTorque_B1				23
 #define MaxTorque_C0				24
 #define MaxTorque_C1				25
 
-#define Transmissiontype_RS			26		// RS für Rechtsmotor_Speedmode, RT für Rechtsmotor_Torquemode
+#define Transmissiontype_RS			26		// RS fï¿½r Rechtsmotor_Speedmode, RT fï¿½r Rechtsmotor_Torquemode
 #define Transmissiontype_RT			27
 #define Eventtimer_RS				28
 #define Eventtimer_RT				29
@@ -208,7 +220,7 @@
 #define CosMax_Voltage_RS			38
 #define CosMax_Voltage_RT			39
 
-#define Num_Entries_A0				40		// 40,42,44,46,48,50,52,54 für Torque-Mode; 41,43,45,47,49,51,53,55 für Speed-Mode; 56 für Beide
+#define Num_Entries_A0				40		// 40,42,44,46,48,50,52,54 fï¿½r Torque-Mode; 41,43,45,47,49,51,53,55 fï¿½r Speed-Mode; 56 fï¿½r Beide
 #define Num_Entries_A1				41
 #define Num_Entries_B0				42
 #define Num_Entries_B1				43
@@ -239,11 +251,11 @@
 // lv=0.71;        %Abstand zum Schwerpunkt von VA in m
 // l=lv+lh;
 // sw=1;           %Spurweite
-// i_s=15;         %Lenkübersetzung
+// i_s=15;         %Lenkï¿½bersetzung
 // d= 0.26;        %Reifendurchmesser
 // r=d/2;
-// J=1.6;          %Massentraegheitsmoment der Räder einer Achse
-// c1=0.686;       %Werte für Schlupfkurve
+// J=1.6;          %Massentraegheitsmoment der Rï¿½der einer Achse
+// c1=0.686;       %Werte fï¿½r Schlupfkurve
 // c2=33.82;
 // c3=0.36;
 // hs=0.1;         %Hoehe des Schwerpunktes

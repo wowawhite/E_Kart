@@ -6,15 +6,12 @@
 #endif
 
 #include "main.h"
-//#include "stm32f4xx_hal.h"
-//#include "stm32f4xx_hal_gpio.h"
-//#include "stm32f4xx_hal_spi.h"
-//#include "stm32f4xx_hal_rcc.h"
+
 
 #define	XPT2046_ACCURACY 	1
 #define	XPT2046_REVERSED 	1
-#define	XPT2046_MIRROR_X 	0
-#define	XPT2046_MIRROR_Y 	1
+#define	XPT2046_MIRROR_X 	0 // mirroring touch on horizontal axis
+#define	XPT2046_MIRROR_Y 	0 // mirroring touch on vertical axis
 
 #define RAW_MIN_X	300
 #define RAW_MAX_X	3800

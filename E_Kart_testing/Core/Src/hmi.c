@@ -19,22 +19,22 @@
 
 
 
-extern int16_t  Lenkradwinkel;            // Lenkradwinkelwert in Grad*10 nach LW-Sensor über CAN-It, -7800 .. 0 .. +7800
+extern int16_t  Lenkradwinkel;            // Lenkradwinkelwert in Grad*10 nach LW-Sensor ï¿½ber CAN-It, -7800 .. 0 .. +7800
 extern uint32_t Geschwindigkeit_kmh;      // Geschwindigkeit des E-Karts in kmh, 0 .. umgerechneter Wert von DREHZAHL_MAX
-extern uint8_t  ReverseGear;              // Rückwärtsgang 0 - aus, 1 - ein = Rückwärtsfahren
+extern uint8_t  ReverseGear;              // Rï¿½ckwï¿½rtsgang 0 - aus, 1 - ein = Rï¿½ckwï¿½rtsfahren
 extern uint8_t  Hauptrelais;              // Schaltsignal-Hauptrelias,  1 - alles i.O. , 0 - Fehler
-//extern uint32_t Merker_aktuelle_Drehzahl; // Merker für Berechnung der Beschleunigung in stm32f10x_it.c   Funktion: AccelerationCalc()
-//extern int32_t  Motor_Drehzahl_r;		// Motordrehzahl rechts in rpm nach Speed-Sensor über CAN-It -DREHZAHL_MAX  .. 0 .. +DREHZAHL_MAX
-//extern int32_t  Motor_Drehzahl_l;		// Motordrehzahl links in rpm nach Speed-Sensor über CAN-It -DREHZAHL_MAX  .. 0 .. +DREHZAHL_MAX
-extern int16_t  Gas;				              // Wert des Gaspedals, der über PWM-Sensor ermittelt wurde, Wertebereich: 0 .. 100 = Volldurchgedrückt
-extern int16_t  Bremse;				            // Bremswert, der über PWM-Sensor ermittelt wurde, Wertebereich: 0 .. 100 = Volldurchgedrückt
+//extern uint32_t Merker_aktuelle_Drehzahl; // Merker fï¿½r Berechnung der Beschleunigung in stm32f10x_it.c   Funktion: AccelerationCalc()
+//extern int32_t  Motor_Drehzahl_r;		// Motordrehzahl rechts in rpm nach Speed-Sensor ï¿½ber CAN-It -DREHZAHL_MAX  .. 0 .. +DREHZAHL_MAX
+//extern int32_t  Motor_Drehzahl_l;		// Motordrehzahl links in rpm nach Speed-Sensor ï¿½ber CAN-It -DREHZAHL_MAX  .. 0 .. +DREHZAHL_MAX
+extern int16_t  Gas;				              // Wert des Gaspedals, der ï¿½ber PWM-Sensor ermittelt wurde, Wertebereich: 0 .. 100 = Volldurchgedrï¿½ckt
+extern int16_t  Bremse;				            // Bremswert, der ï¿½ber PWM-Sensor ermittelt wurde, Wertebereich: 0 .. 100 = Volldurchgedrï¿½ckt
 extern uint8_t StateofCharge;
-char buf[3];
+char buf[4];
 char buf1[4];
 uint8_t PasswordCode[4]={1,2,3,4};
 uint8_t PasswordCodeUser[4];
 uint8_t sCode;                 // 0-4, eingegebene Zeichen des Password
-char Asci_SliderWert[11];  		// Puffer-für uintToasci-Wandelung
+char Asci_SliderWert[11];  		// Puffer-fï¿½r uintToasci-Wandelung
 
 extern uint8_t Sp_Min;
 extern uint8_t Sp_Sek;
@@ -52,14 +52,20 @@ extern uint16_t Flash_Memory_List[NumberOfSavedParameter];
 extern uint16_t Flash_New_Parameters_List[NumberOfSavedParameter];
 
 extern uint16_t *Pointer_GasProzent;	// Parameter dient zur Touch-Eingabe, Wertbereich (0-100)=(0%-100%), dessen Initialwert ist 100%
-															// als der Beiwert für Einstellung des Wirkungsbereichs von Gaspedal(bei Drehzahlvorgabe_mode )
-                              // z.B wenn "Pointer_GasProzent=100", Gaspedal volldurchgedrückt, die max.Drehzahl=3000 wird durch CAN-BUS vorgegeben
-                              // wenn "Pointer_GasProzent=50", volldurchgedrückt, dann wird nur die Drehzahl=1500 vorgegeben.
+															// als der Beiwert fï¿½r Einstellung des Wirkungsbereichs von Gaspedal(bei Drehzahlvorgabe_mode )
+                              // z.B wenn "Pointer_GasProzent=100", Gaspedal volldurchgedrï¿½ckt, die max.Drehzahl=3000 wird durch CAN-BUS vorgegeben
+                              // wenn "Pointer_GasProzent=50", volldurchgedrï¿½ckt, dann wird nur die Drehzahl=1500 vorgegeben.
 															// der Wirkungsbereich halbiert sich
 
 extern uint16_t *Pointer_BeschlProzent;   // Parameter dient zur Touch-Eingabe, Wertbereich (0-100)=(0%-100%), dessen Initialwert ist 100%					--------------------------------------
 extern uint16_t *Pointer_Rueckwaert;
 
+// RCP-Mode global communication variables
+extern uint8_t RCP_Mode_status;
+extern uint8_t RCP_Mode_selected;
+extern uint8_t RCP_Mode_errorcode;
+extern uint8_t Heartbeat_RCP;
+extern uint8_t SDOack;
 
 struct SwitchButton
 {
@@ -67,10 +73,10 @@ struct SwitchButton
 	uint8_t    	y1;					  		// Startkoordinate Y P1
 	uint16_t   	x2;					  		// Startkoordinate x P2
 	uint8_t    	y2;					  		// Startkoordinate Y P2
-	uint8_t	  	Menueverlinkung;	// Auf welches Menü verlinkt wird beim klicken
-	uint8_t    	Wert;             // Werte für Code
+	uint8_t	  	Menueverlinkung;	// Auf welches Menï¿½ verlinkt wird beim klicken
+	uint8_t    	Wert;             // Werte fï¿½r Code
 	char		*Text;				    // Buttontext
-	uint8_t    	Textlaenge;			  // Buttontext Länge
+	uint8_t    	Textlaenge;			  // Buttontext Lï¿½nge
 	uint8_t    	bottonsanzahl;    // Anzahl aller Buttons in einer Ebene
 } S_Button[max_Menuebenen][max_buttons];
 
@@ -78,7 +84,7 @@ volatile struct GleitBlock
 {
 	uint16_t  x; 		 		// Grundkoordinate von Gleitblock
 	uint8_t   y;
-	uint8_t   Laenge; 		// geometrische Größe von Gleitblock
+	uint8_t   Laenge; 		// geometrische Grï¿½ï¿½e von Gleitblock
 	uint8_t   Breite;
 	uint16_t  Bahn_x1; 	// Anzeige der Gleitbahn
 	uint8_t   Bahn_y1;
@@ -95,13 +101,12 @@ volatile struct GleitBlock
 	uint16_t  Farbe;	 		 // Farbe
 } Slider[max_Menuebenen][max_sliders];
 
-
 void WriteButton(uint_fast8_t Menuenummer, uint8_t Buttonnummer)
 {
      uint16_t textposi_x, textposi_y;
      // Aufzeichnung des Buttons
      LCD_Rect_Fill(S_Button[Menuenummer][Buttonnummer].x1,S_Button[Menuenummer][Buttonnummer].y1,S_Button[Menuenummer][Buttonnummer].x2-S_Button[Menuenummer][Buttonnummer].x1,S_Button[Menuenummer][Buttonnummer].y2-S_Button[Menuenummer][Buttonnummer].y1, WHITE);
-     // Mit der Annahme das ein Buchstabe = 8 x 14 pixel groß ist
+     // Mit der Annahme das ein Buchstabe = 8 x 14 pixel groï¿½ ist
 	 // Berechnung fuer die Position der Beschriftung
      textposi_x=((S_Button[Menuenummer][Buttonnummer].x2+S_Button[Menuenummer][Buttonnummer].x1)/2)-S_Button[Menuenummer][Buttonnummer].Textlaenge*8/2;
      textposi_y=((S_Button[Menuenummer][Buttonnummer].y2+S_Button[Menuenummer][Buttonnummer].y1)/2+14/2);
@@ -125,8 +130,8 @@ void MarkChosenButton(uint_fast8_t Menuenummer, uint8_t Buttonnummer)
 void AnzeigeSlider_Init(uint_fast8_t Menuenummer, uint_fast8_t slidernummer)
 {
 	uint16_t delta;
-	char Asci_max_wert[11];         // Puffer-für uintToasci-Wandelung
-	char Asci_min_wert[11];         // Puffer-für uintToasci-Wandelung
+	char Asci_max_wert[11];         // Puffer-fï¿½r uintToasci-Wandelung
+	char Asci_min_wert[11];         // Puffer-fï¿½r uintToasci-Wandelung
 	// Grenzwert des Gleitblocksystems in Asci-Zeichen wandeln
 	utoa( Slider[Menuenummer][slidernummer].max_wert, Asci_max_wert ,10);
 	utoa( Slider[Menuenummer][slidernummer].min_wert, Asci_min_wert ,10);
@@ -244,9 +249,9 @@ void ZeitAnzeige(void)
     // Initialisierung mit Menu_Oben() bewirkte Ausgabe: "00:00:00"
     // GUI_Text(250,1,"00:00:00",White,Black);
     // Zeichen sind 8 Pixel breit und 16 hoch
-    // Trennzeichen ":" wird nur beim Rücksetzen neu geschrieben
-    // Sekunden,  Ausgabe, wenn Wert sich vergrößert hat -> eine Sekunde später, so muss Wert nicht jedesmal geschrieben werden
-	// oder wenn Minute eins weiter gezählt hat, neue "00"
+    // Trennzeichen ":" wird nur beim Rï¿½cksetzen neu geschrieben
+    // Sekunden,  Ausgabe, wenn Wert sich vergrï¿½ï¿½ert hat -> eine Sekunde spï¿½ter, so muss Wert nicht jedesmal geschrieben werden
+	// oder wenn Minute eins weiter gezï¿½hlt hat, neue "00"
 	if ( (Sp_Sek != Sp_Sek_Merker) || (Sp_Min != Sp_Min_Merker) || (Sp_Stu != Sp_Stu_Merker))
 	{
 		if (Sp_Sek < 10)
@@ -345,7 +350,7 @@ void ZeitAnzeige(void)
 void Menu_Oben(void)
 {
 	LCD_Rect(0,0,320,16,1,BLACK);
-	LCD_Font(3, 17, "07.11.2018", _8_Retro, 1, WHITE);
+	LCD_Font(3, 17, SOFTWAREVERSION, _8_Retro, 1, WHITE); // software version number
 	LCD_Font(99, 17, "Fahrzeugrechner", _8_Retro, 1, WHITE);
 	ZeitAnzeige_Init();
 	LCD_Line(0,17,320,17,1,WHITE);
@@ -388,8 +393,8 @@ void PasswordAnzeige_Init(uint8_t menuebene)
 	WriteButton(menuebene, 8);
 	WriteButton(menuebene, 9);
 	WriteButton(menuebene, 10);		//Abbruch
-	WriteButton(menuebene, 11);		//Bestätigen
-	WriteButton(menuebene, 12);		//Löschen
+	WriteButton(menuebene, 11);		//Bestï¿½tigen
+	WriteButton(menuebene, 12);		//Lï¿½schen
 
 }
 
@@ -510,12 +515,12 @@ void BatterieMenu_Init(void)
 {
 	LCD_Rect_Fill(0, 0, 320, 240, BLACK);
 
-	Menu_Oben();					            // Überschrift, Fahrzeugrechner
+	Menu_Oben();					            // ï¿½berschrift, Fahrzeugrechner
 	Menu_Unten();						        // Menu-Zeile unten, Optionen, Pfeile
 
 	LCD_Font(0,35,"Batterie - Spannung", _8_Retro,1,WHITE);
 
-	//Spannungsanzeige Für Zelle 1
+	//Spannungsanzeige Fï¿½r Zelle 1
 	LCD_Font(0,60,"U 1:", _8_Retro,1,WHITE);
 	utoa(Spannung_Zellen_l[0],buf,10);
 	buf1[0]=buf[0];
@@ -525,7 +530,7 @@ void BatterieMenu_Init(void)
 	LCD_Font(32,60,buf1, _8_Retro,1,WHITE);
 	LCD_Font(64,60,"V", _8_Retro,1,WHITE);
 
-	//Spannungsanzeige Für Zelle 2
+	//Spannungsanzeige Fï¿½r Zelle 2
 	LCD_Font(0,80,"U 2:", _8_Retro,1,WHITE);
 	utoa(Spannung_Zellen_l[1],buf,10);
 	buf1[0]=buf[0];
@@ -535,7 +540,7 @@ void BatterieMenu_Init(void)
 	LCD_Font(32,80,buf1, _8_Retro,1,WHITE);
 	LCD_Font(64,80,"V", _8_Retro,1,WHITE);
 
-	//Spannungsanzeige Für Zelle 3
+	//Spannungsanzeige Fï¿½r Zelle 3
 	LCD_Font(0,100,"U 3:", _8_Retro,1,WHITE);
 	utoa(Spannung_Zellen_l[2],buf,10);
 	buf1[0]=buf[0];
@@ -545,7 +550,7 @@ void BatterieMenu_Init(void)
 	LCD_Font(32,100,buf1, _8_Retro,1,WHITE);
 	LCD_Font(64,100,"V", _8_Retro,1,WHITE);
 
-	//Spannungsanzeige Für Zelle 4
+	//Spannungsanzeige Fï¿½r Zelle 4
 	LCD_Font(0,120,"U 4:", _8_Retro,1,WHITE);
 	utoa(Spannung_Zellen_l[3],buf,10);
 	buf1[0]=buf[0];
@@ -555,7 +560,7 @@ void BatterieMenu_Init(void)
 	LCD_Font(32,120,buf1, _8_Retro,1,WHITE);
 	LCD_Font(64,120,"V", _8_Retro,1,WHITE);
 
-	//Spannungsanzeige Für Zelle 5
+	//Spannungsanzeige Fï¿½r Zelle 5
 	LCD_Font(0,140,"U 5:", _8_Retro,1,WHITE);
 	utoa(Spannung_Zellen_l[4],buf,10);
 	buf1[0]=buf[0];
@@ -565,7 +570,7 @@ void BatterieMenu_Init(void)
 	LCD_Font(32,140,buf1, _8_Retro,1,WHITE);
 	LCD_Font(64,140,"V", _8_Retro,1,WHITE);
 
-	//Spannungsanzeige Für Zelle 6
+	//Spannungsanzeige Fï¿½r Zelle 6
 	LCD_Font(0,160,"U 6:", _8_Retro,1,WHITE);
 	utoa(Spannung_Zellen_l[5],buf,10);
 	buf1[0]=buf[0];
@@ -575,7 +580,7 @@ void BatterieMenu_Init(void)
 	LCD_Font(32,160,buf1, _8_Retro,1,WHITE);
 	LCD_Font(64,160,"V", _8_Retro,1,WHITE);
 
-	//Spannungsanzeige Für Zelle 7
+	//Spannungsanzeige Fï¿½r Zelle 7
 	LCD_Font(0,180,"U 7:", _8_Retro,1,WHITE);
 	utoa(Spannung_Zellen_l[6],buf,10);
 	buf1[0]=buf[0];
@@ -585,7 +590,7 @@ void BatterieMenu_Init(void)
 	LCD_Font(32,180,buf1, _8_Retro,1,WHITE);
 	LCD_Font(64,180,"V", _8_Retro,1,WHITE);
 
-	//Spannungsanzeige Für Zelle 8
+	//Spannungsanzeige Fï¿½r Zelle 8
 	LCD_Font(0,200,"U 8:", _8_Retro,1,WHITE);
 	utoa(Spannung_Zellen_l[7],buf,10);
 	buf1[0]=buf[0];
@@ -595,7 +600,7 @@ void BatterieMenu_Init(void)
 	LCD_Font(32,200,buf1, _8_Retro,1,WHITE);
 	LCD_Font(64,200,"V", _8_Retro,1,WHITE);
 
-	//Spannungsanzeige Für Zelle 9
+	//Spannungsanzeige Fï¿½r Zelle 9
 	LCD_Font(90,60,"U 9:", _8_Retro,1,WHITE);
 	utoa(Spannung_Zellen_r[0],buf,10);
 	buf1[0]=buf[0];
@@ -605,7 +610,7 @@ void BatterieMenu_Init(void)
 	LCD_Font(122,60,buf1, _8_Retro,1,WHITE);
 	LCD_Font(154,60,"V", _8_Retro,1,WHITE);
 
-	//Spannungsanzeige Für Zelle 10
+	//Spannungsanzeige Fï¿½r Zelle 10
 	LCD_Font(90,80,"U10:", _8_Retro,1,WHITE);
 	utoa(Spannung_Zellen_r[1],buf,10);
 	buf1[0]=buf[0];
@@ -615,7 +620,7 @@ void BatterieMenu_Init(void)
 	LCD_Font(122,80,buf1, _8_Retro,1,WHITE);
 	LCD_Font(154,80,"V", _8_Retro,1,WHITE);
 
-	//Spannungsanzeige Für Zelle 11
+	//Spannungsanzeige Fï¿½r Zelle 11
 	LCD_Font(90,100,"U11:", _8_Retro,1,WHITE);
 	utoa(Spannung_Zellen_r[2],buf,10);
 	buf1[0]=buf[0];
@@ -625,7 +630,7 @@ void BatterieMenu_Init(void)
 	LCD_Font(122,100,buf1, _8_Retro,1,WHITE);
 	LCD_Font(154,100,"V", _8_Retro,1,WHITE);
 
-	//Spannungsanzeige Für Zelle 12
+	//Spannungsanzeige Fï¿½r Zelle 12
 	LCD_Font(90,120,"U12:", _8_Retro,1,WHITE);
 	utoa(Spannung_Zellen_r[3],buf,10);
 	buf1[0]=buf[0];
@@ -635,7 +640,7 @@ void BatterieMenu_Init(void)
 	LCD_Font(122,120,buf1, _8_Retro,1,WHITE);
 	LCD_Font(154,120,"V", _8_Retro,1,WHITE);
 
-	//Spannungsanzeige Für Zelle 13
+	//Spannungsanzeige Fï¿½r Zelle 13
 	LCD_Font(90,140,"U13:", _8_Retro,1,WHITE);
 	utoa(Spannung_Zellen_r[4],buf,10);
 	buf1[0]=buf[0];
@@ -645,7 +650,7 @@ void BatterieMenu_Init(void)
 	LCD_Font(122,140,buf1, _8_Retro,1,WHITE);
 	LCD_Font(154,140,"V", _8_Retro,1,WHITE);
 
-	//Spannungsanzeige Für Zelle 14
+	//Spannungsanzeige Fï¿½r Zelle 14
 	LCD_Font(90,160,"U14:", _8_Retro,1,WHITE);
 	utoa(Spannung_Zellen_r[5],buf,10);
 	buf1[0]=buf[0];
@@ -655,7 +660,7 @@ void BatterieMenu_Init(void)
 	LCD_Font(122,160,buf1, _8_Retro,1,WHITE);
 	LCD_Font(154,160,"V", _8_Retro,1,WHITE);
 
-	//Spannungsanzeige Für Zelle 15
+	//Spannungsanzeige Fï¿½r Zelle 15
 	LCD_Font(90,180,"U15:", _8_Retro,1,WHITE);
 	utoa(Spannung_Zellen_r[6],buf,10);
 	buf1[0]=buf[0];
@@ -665,7 +670,7 @@ void BatterieMenu_Init(void)
 	LCD_Font(122,180,buf1, _8_Retro,1,WHITE);
 	LCD_Font(154,180,"V", _8_Retro,1,WHITE);
 
-	//Spannungsanzeige Für Zelle 16
+	//Spannungsanzeige Fï¿½r Zelle 16
 	LCD_Font(90,200,"U16:", _8_Retro,1,WHITE);
 	utoa(Spannung_Zellen_r[7],buf,10);
 	buf1[0]=buf[0];
@@ -679,49 +684,49 @@ void BatterieMenu_Init(void)
 
 	LCD_Font(178,35,"Batterie - Temp", _8_Retro,1,WHITE);
 
-	//Temperaturanzeige Für Zelle 1
+	//Temperaturanzeige Fï¿½r Zelle 1
 	LCD_Font(178,60,"T 1:", _8_Retro,1,WHITE);
 	utoa(Temperatur_Zellen_l[0],buf,10);
 	LCD_Font(210,60,buf, _8_Retro,1,WHITE);
 	LCD_Font(226,60,"C", _8_Retro,1,WHITE);
 
-	//Temperaturanzeige Für Zelle 2
+	//Temperaturanzeige Fï¿½r Zelle 2
 	LCD_Font(178,80,"T 2:", _8_Retro,1,WHITE);
 	utoa(Temperatur_Zellen_l[1],buf,10);
 	LCD_Font(210,80,buf, _8_Retro,1,WHITE);
 	LCD_Font(226,80,"C", _8_Retro,1,WHITE);
 
-	//Temperaturanzeige Für Zelle 3
+	//Temperaturanzeige Fï¿½r Zelle 3
 	LCD_Font(178,100,"T 3:", _8_Retro,1,WHITE);
 	utoa(Temperatur_Zellen_l[2],buf,10);
 	LCD_Font(210,100,buf, _8_Retro,1,WHITE);
 	LCD_Font(226,100,"C", _8_Retro,1,WHITE);
 
-	//Temperaturanzeige Für Zelle 4
+	//Temperaturanzeige Fï¿½r Zelle 4
 	LCD_Font(178,120,"T 4:", _8_Retro,1,WHITE);
 	utoa(Temperatur_Zellen_l[3],buf,10);
 	LCD_Font(210,120,buf, _8_Retro,1,WHITE);
 	LCD_Font(226,120,"C", _8_Retro,1,WHITE);
 
-	//Temperaturanzeige Für Zelle 5
+	//Temperaturanzeige Fï¿½r Zelle 5
 	LCD_Font(178,140,"T 5:", _8_Retro,1,WHITE);
 	utoa(Temperatur_Zellen_l[4],buf,10);
 	LCD_Font(210,140,buf, _8_Retro,1,WHITE);
 	LCD_Font(226,140,"C", _8_Retro,1,WHITE);
 
-	//Temperaturanzeige Für Zelle 6
+	//Temperaturanzeige Fï¿½r Zelle 6
 	LCD_Font(178,160,"T 6:", _8_Retro,1,WHITE);
 	utoa(Temperatur_Zellen_l[5],buf,10);
 	LCD_Font(210,160,buf, _8_Retro,1,WHITE);
 	LCD_Font(226,160,"C", _8_Retro,1,WHITE);
 
-	//Temperaturanzeige Für Zelle 7
+	//Temperaturanzeige Fï¿½r Zelle 7
 	LCD_Font(178,180,"T 7:", _8_Retro,1,WHITE);
 	utoa(Temperatur_Zellen_l[6],buf,10);
 	LCD_Font(210,180,buf, _8_Retro,1,WHITE);
 	LCD_Font(226,180,"C", _8_Retro,1,WHITE);
 
-	//Temperaturanzeige Für Zelle 8
+	//Temperaturanzeige Fï¿½r Zelle 8
 	LCD_Font(178,200,"T 8:", _8_Retro,1,WHITE);
 	utoa(Temperatur_Zellen_l[7],buf,10);
 	LCD_Font(210,200,buf, _8_Retro,1,WHITE);
@@ -729,49 +734,49 @@ void BatterieMenu_Init(void)
 
 
 
-	//Temperaturanzeige Für Zelle 9
+	//Temperaturanzeige Fï¿½r Zelle 9
 	LCD_Font(244,60,"T 9:", _8_Retro,1,WHITE);
 	utoa(Temperatur_Zellen_r[0],buf,10);
 	LCD_Font(276,60,buf, _8_Retro,1,WHITE);
 	LCD_Font(292,60,"C", _8_Retro,1,WHITE);
 
-	//Temperaturanzeige Für Zelle 10
+	//Temperaturanzeige Fï¿½r Zelle 10
 	LCD_Font(244,80,"T10:", _8_Retro,1,WHITE);
 	utoa(Temperatur_Zellen_r[1],buf,10);
 	LCD_Font(276,80,buf, _8_Retro,1,WHITE);
 	LCD_Font(292,80,"C", _8_Retro,1,WHITE);
 
-	//Temperaturanzeige Für Zelle 11
+	//Temperaturanzeige Fï¿½r Zelle 11
 	LCD_Font(244,100,"T11:", _8_Retro,1,WHITE);
 	utoa(Temperatur_Zellen_r[2],buf,10);
 	LCD_Font(276,100,buf, _8_Retro,1,WHITE);
 	LCD_Font(292,100,"C", _8_Retro,1,WHITE);
 
-	//Temperaturanzeige Für Zelle 12
+	//Temperaturanzeige Fï¿½r Zelle 12
 	LCD_Font(244,120,"T12:", _8_Retro,1,WHITE);
 	utoa(Temperatur_Zellen_r[3],buf,10);
 	LCD_Font(276,120,buf, _8_Retro,1,WHITE);
 	LCD_Font(292,120,"C", _8_Retro,1,WHITE);
 
-	//Temperaturanzeige Für Zelle 13
+	//Temperaturanzeige Fï¿½r Zelle 13
 	LCD_Font(244,140,"T13:", _8_Retro,1,WHITE);
 	utoa(Temperatur_Zellen_r[4],buf,10);
 	LCD_Font(276,140,buf, _8_Retro,1,WHITE);
 	LCD_Font(292,140,"C", _8_Retro,1,WHITE);
 
-	//Temperaturanzeige Für Zelle 14
+	//Temperaturanzeige Fï¿½r Zelle 14
 	LCD_Font(244,160,"T14:", _8_Retro,1,WHITE);
 	utoa(Temperatur_Zellen_r[5],buf,10);
 	LCD_Font(276,160,buf, _8_Retro,1,WHITE);
 	LCD_Font(292,160,"C", _8_Retro,1,WHITE);
 
-	//Temperaturanzeige Für Zelle 15
+	//Temperaturanzeige Fï¿½r Zelle 15
 	LCD_Font(244,180,"T15:", _8_Retro,1,WHITE);
 	utoa(Temperatur_Zellen_r[6],buf,10);
 	LCD_Font(276,180,buf, _8_Retro,1,WHITE);
 	LCD_Font(292,180,"C", _8_Retro,1,WHITE);
 
-	//Temperaturanzeige Für Zelle 16
+	//Temperaturanzeige Fï¿½r Zelle 16
 	LCD_Font(244,200,"T16:", _8_Retro,1,WHITE);
 	utoa(Temperatur_Zellen_r[7],buf,10);
 	LCD_Font(276,200,buf, _8_Retro,1,WHITE);
@@ -791,8 +796,17 @@ void BatterieAnzeige_Init(void)
 
 	//Balkenanzeige
 	StateofChargeAnzeige=StateofCharge>>1;
-	LCD_Rect_Fill(20, 171,StateofChargeAnzeige,14,GREEN);	// Farb-Rechteck von linker unteren Ecke nach entspr Pos. oben rechts, variable Balkenhöhe
+	LCD_Rect_Fill(20, 171,StateofChargeAnzeige,14,GREEN);	// Farb-Rechteck von linker unteren Ecke nach entspr Pos. oben rechts, variable Balkenhï¿½he
 
+}
+
+void RCPstatusAnzeige_Init(void)
+{
+	const uint8_t xposition = 200;
+	const uint8_t yposition = 185;
+	LCD_Font(xposition,yposition,"RCP Mode:",_8_Retro,1,WHITE);
+	LCD_Rect_Fill(80,170,16,16,BLACK);
+	LCD_Font(xposition+80,yposition,itoa(RCP_Mode_status,buf,10),_8_Retro,1,WHITE);
 
 }
 
@@ -812,56 +826,56 @@ void StateofChargeAnzeige(void)
 		StateofChargeAnzeige=StateofCharge>>1;
 		if (StateofChargeAnzeige >= MerkerStateofChargeAnzeige )
 		{
-			LCD_Rect_Fill(20, 171,StateofChargeAnzeige,14,GREEN);	// Farb-Rechteck von linker unteren Ecke nach entspr Pos. oben rechts, variable Balkenhöhe
+			LCD_Rect_Fill(20, 171,StateofChargeAnzeige,14,GREEN);	// Farb-Rechteck von linker unteren Ecke nach entspr Pos. oben rechts, variable Balkenhï¿½he
 		}
 		else if (StateofChargeAnzeige < MerkerStateofChargeAnzeige)
 		{
-			// alte Zeile(n) löschen
+			// alte Zeile(n) lï¿½schen
 			LCD_Rect_Fill(20+StateofChargeAnzeige,171,50-StateofChargeAnzeige,14, BLACK);
 			// schwarzes Rechteck von linker oberer Ecke nach entspr. Pos. unten rechts, variable Balkentiefe
 			// sonst keine neue Anzeige, da alter und neuer Wert gleich sind
 		}
-		MerkerStateofChargeAnzeige=StateofChargeAnzeige; // neuen Wert der Anzeige für nächsten Durchlauf übernehmen
+		MerkerStateofChargeAnzeige=StateofChargeAnzeige; // neuen Wert der Anzeige fï¿½r nï¿½chsten Durchlauf ï¿½bernehmen
 	}
 }
 
 
 void GasAnzeige(void)
 {
-	uint8_t  GasAnzeige=0;	  		          // Wert des Gaspedals für Anzeige, Wertebereich 0 .. 50 (Pixelhöhe)
+	uint8_t  GasAnzeige=0;	  		          // Wert des Gaspedals fï¿½r Anzeige, Wertebereich 0 .. 50 (Pixelhï¿½he)
 	static uint8_t MerkerGasAnzeige=0;      // Merker der letzten Gasanzeige
-	GasAnzeige=Gas>>1;				              // Anpassung der Anzeige an Pixelhöhe = 50, Schiebeoperation um eins nach rechts = Division durch 2
+	GasAnzeige=Gas>>1;				              // Anpassung der Anzeige an Pixelhï¿½he = 50, Schiebeoperation um eins nach rechts = Division durch 2
 	if (GasAnzeige >= MerkerGasAnzeige )
 	{
-		LCD_Rect_Fill(280,80-GasAnzeige,20,GasAnzeige,GREEN);	// Farb-Rechteck von linker unteren Ecke nach entspr Pos. oben rechts, variable Balkenhöhe
+		LCD_Rect_Fill(280,80-GasAnzeige,20,GasAnzeige,GREEN);	// Farb-Rechteck von linker unteren Ecke nach entspr Pos. oben rechts, variable Balkenhï¿½he
 	}
 	else if (GasAnzeige < MerkerGasAnzeige)
 	{
-		// alte Zeile(n) löschen
+		// alte Zeile(n) lï¿½schen
 		LCD_Rect_Fill(280,30,20,50-GasAnzeige,BLACK);
 		// schwarzes Rechteck von linker oberer Ecke nach entspr. Pos. unten rechts, variable Balkentiefe
 		// sonst keine neue Anzeige, da alter und neuer Wert gleich sind
 	}
-	MerkerGasAnzeige=GasAnzeige; // neuen Wert der Anzeige für nächsten Durchlauf übernehmen
+	MerkerGasAnzeige=GasAnzeige; // neuen Wert der Anzeige fï¿½r nï¿½chsten Durchlauf ï¿½bernehmen
 }
 
 void BremsAnzeige(void)
 {
-	uint8_t  BremsAnzeige=0;	  		          // Wert des Gaspedals für Anzeige, Wertebereich 0 .. 50 (Pixelhöhe)
+	uint8_t  BremsAnzeige=0;	  		          // Wert des Gaspedals fï¿½r Anzeige, Wertebereich 0 .. 50 (Pixelhï¿½he)
 	static uint8_t MerkerBremsAnzeige=0;      // Merker der letzten Gasanzeige
-	BremsAnzeige=Bremse>>1;				              // Anpassung der Anzeige an Pixelhöhe = 50, Schiebeoperation um eins nach rechts = Division durch 2
+	BremsAnzeige=Bremse>>1;				              // Anpassung der Anzeige an Pixelhï¿½he = 50, Schiebeoperation um eins nach rechts = Division durch 2
 	if (BremsAnzeige >= MerkerBremsAnzeige )
 	{
-		LCD_Rect_Fill(21,80-BremsAnzeige,20,BremsAnzeige,RED);	// Farb-Rechteck von linker unteren Ecke nach entspr Pos. oben rechts, variable Balkenhöhe
+		LCD_Rect_Fill(21,80-BremsAnzeige,20,BremsAnzeige,RED);	// Farb-Rechteck von linker unteren Ecke nach entspr Pos. oben rechts, variable Balkenhï¿½he
 	}
 	else if (BremsAnzeige < MerkerBremsAnzeige)
 	{
-		// alte Zeile(n) löschen
+		// alte Zeile(n) lï¿½schen
 		LCD_Rect_Fill(21,30,20,50-BremsAnzeige,BLACK);
 		// schwarzes Rechteck von linker oberer Ecke nach entspr. Pos. unten rechts, variable Balkentiefe
 		// sonst keine neue Anzeige, da alter und neuer Wert gleich sind
 	}
-	MerkerBremsAnzeige=BremsAnzeige; // neuen Wert der Anzeige für nächsten Durchlauf übernehmen
+	MerkerBremsAnzeige=BremsAnzeige; // neuen Wert der Anzeige fï¿½r nï¿½chsten Durchlauf ï¿½bernehmen
 
 }
 
@@ -877,16 +891,16 @@ void Geschwindigkeitsanzeige(void)
 		if (GeschwindigkeitAnzeige >= MerkerGeschwindigkeitAnzeige )
 		{
 			LCD_Rect_Fill(GeschwindigkeitAnzeige+7,127,2,16,GREEN); // neuer Wert	rechts
-		    LCD_Rect_Fill(0,127,GeschwindigkeitAnzeige+6,16,BLACK); // Feld links löschen
+		    LCD_Rect_Fill(0,127,GeschwindigkeitAnzeige+6,16,BLACK); // Feld links lï¿½schen
 		}
 	    else if (GeschwindigkeitAnzeige < MerkerGeschwindigkeitAnzeige)
 		{
 	    	LCD_Rect_Fill(GeschwindigkeitAnzeige+7,127,2,16,GREEN); // neuer Wert links
-	    	LCD_Rect_Fill(GeschwindigkeitAnzeige+7+2,127,300-GeschwindigkeitAnzeige,16,BLACK); // Feld rechts löschen
+	    	LCD_Rect_Fill(GeschwindigkeitAnzeige+7+2,127,300-GeschwindigkeitAnzeige,16,BLACK); // Feld rechts lï¿½schen
 		}
 
 
-		MerkerGeschwindigkeitAnzeige=GeschwindigkeitAnzeige; // neuen Wert der Anzeige für nächsten Durchlauf übernehmen
+		MerkerGeschwindigkeitAnzeige=GeschwindigkeitAnzeige; // neuen Wert der Anzeige fï¿½r nï¿½chsten Durchlauf ï¿½bernehmen
 	}
 	LCD_Rect_Fill(188,152,24,16,BLACK);
 	LCD_Font(188,168,itoa(Geschwindigkeit_kmh,buf,10),_8_Retro,1,WHITE);
@@ -903,29 +917,29 @@ void LenkwinkelAnzeige(void)
 
 	if (LenkwinkelAnzeige>= 50)
 	{
-		LCD_Rect_Fill(110,51,49,21,BLACK);	     // Zeilen links von Balken löschen, bis Mitte ran
+		LCD_Rect_Fill(110,51,49,21,BLACK);	     // Zeilen links von Balken lï¿½schen, bis Mitte ran
 		if (LenkwinkelAnzeige >= MerkerLenkwinkelAnzeige && MerkerLenkwinkelAnzeige!=0)
 		{
 			LCD_Rect_Fill(160,51,LenkwinkelAnzeige-50,21,YELLOW);
 		}
 		else if (LenkwinkelAnzeige < MerkerLenkwinkelAnzeige )
 		{
-			LCD_Rect_Fill(160+LenkwinkelAnzeige-50,51,100-LenkwinkelAnzeige,21,BLACK);	// Zeilen rechts von Balken löschen, variabel
+			LCD_Rect_Fill(160+LenkwinkelAnzeige-50,51,100-LenkwinkelAnzeige,21,BLACK);	// Zeilen rechts von Balken lï¿½schen, variabel
 		}
 	}
 	if(LenkwinkelAnzeige < 50)
 	{
-		LCD_Rect_Fill(161,51,49,21,BLACK);	     // Zeilen Rechts von Balken löschen, bis Mitte ran
+		LCD_Rect_Fill(161,51,49,21,BLACK);	     // Zeilen Rechts von Balken lï¿½schen, bis Mitte ran
 		if (LenkwinkelAnzeige >= MerkerLenkwinkelAnzeige && MerkerLenkwinkelAnzeige!=0)
 		{
-			LCD_Rect_Fill(110,51,LenkwinkelAnzeige,21,BLACK);	// Zeilen rechts von Balken löschen, variabel
+			LCD_Rect_Fill(110,51,LenkwinkelAnzeige,21,BLACK);	// Zeilen rechts von Balken lï¿½schen, variabel
 		}
 		else if (LenkwinkelAnzeige < MerkerLenkwinkelAnzeige )
 		{
 			LCD_Rect_Fill(110+LenkwinkelAnzeige,51,50-LenkwinkelAnzeige,21,YELLOW);
 		}
 	}
-	MerkerLenkwinkelAnzeige=LenkwinkelAnzeige; // neuen Wert der Anzeige für nächsten Durchlauf übernehmen
+	MerkerLenkwinkelAnzeige=LenkwinkelAnzeige; // neuen Wert der Anzeige fï¿½r nï¿½chsten Durchlauf ï¿½bernehmen
 }
 
 
@@ -954,6 +968,7 @@ void GPIOAnzeige (void)
 	MerkerReverseGear = ReverseGear;
 }
 
+
 void EKartZustand(void)
 {
 	ZeitAnzeige();
@@ -978,27 +993,29 @@ void Anzeige_Init(uint8_t menuebene)
 	case 1:		//E-Kart Zustand
 	{
 		LCD_Rect_Fill(0, 0, 320, 240, BLACK);
-		Menu_Oben();					            // Überschrift, Fahrzeugrechner
+		Menu_Oben();					            // ï¿½berschrift, Fahrzeugrechner
 		Menu_Unten();						        // Menu-Zeile unten, Optionen, Pfeile
 		GeschwindigkeitsAnzeige_Init();
 		BremsAnzeige_Init();
 		GasAnzeige_Init();
 		LenkwinkelAnzeige_Init(50);
 		BatterieAnzeige_Init();
+		RCPstatusAnzeige_Init();
 	}
 	break;
 
-	case 2:		//Menu
+	case 2:		//Hauptmenu
 	{
 		LCD_Rect_Fill(0, 0, 320, 240, BLACK);
-		Menu_Oben();					            // Überschrift, Fahrzeugrechner
+		Menu_Oben();					            // ï¿½berschrift, Fahrzeugrechner
 		//Menu_Unten();						        // Menu-Zeile unten, Optionen, Pfeile
-		LCD_Font(0,35,"Menue", _8_Retro,1,WHITE);
+		LCD_Font(0,35,"Hauptmenu", _8_Retro,1,WHITE);
 		WriteButton(menuebene, 0);
 		WriteButton(menuebene, 1);
 		WriteButton(menuebene, 2);
 		WriteButton(menuebene, 3);
 		WriteButton(menuebene, 4);
+//		WriteButton(menuebene, 5);
 	}
 	break;
 
@@ -1007,19 +1024,19 @@ void Anzeige_Init(uint8_t menuebene)
 		LCD_Rect_Fill(0, 0, 320, 240, BLACK);
 		LCD_Font(0,35,"Batterie", _8_Retro,1,WHITE);
 		BatterieMenu_Init();
-		Menu_Oben();					            // Überschrift, Fahrzeugrechner
+		Menu_Oben();					            // ï¿½berschrift, Fahrzeugrechner
 		Menu_Unten();						        // Menu-Zeile unten, Optionen, Pfeile
 	}
 	break;
 
-	case 4:		//Fahrmodi Übersicht
+	case 4:		//Fahrmodi ï¿½bersicht
 	{
 		LCD_Rect_Fill(0, 0, 320, 240, BLACK);
 		LCD_Font(10,66,"Differenzial", _8_Retro,1,WHITE);
 		LCD_Font(90,101,"FahrModi", _8_Retro,1,WHITE);
 //		GUI_Text(10,50,"Differenzial:",Black,DarkGrey);
 //		GUI_Text(90,85,"FahrModi:",Black,DarkGrey);
-		Menu_Oben();					            // Überschrift, Fahrzeugrechner
+		Menu_Oben();					            // ï¿½berschrift, Fahrzeugrechner
 
 		WriteButton(4,VorgabeDrehzahl);	           // Switch-Button ParameterAuswahl "Moment"
 		WriteButton(4,VorgabeMoment);               // Switch-Button ParameterAuswahl "Drehzahl"
@@ -1027,7 +1044,7 @@ void Anzeige_Init(uint8_t menuebene)
 	    WriteButton(4,StandardModeButton);          // Switch-Button "FahrModi Standard" verlinkt 	7.Menuebene
 	    WriteButton(4,ProfiModeButton);             // Switch-Button "FahrModi Profi" 		verlinkt 	8.Menuebene
 		WriteButton(4,TestModeButton);              // Switch-Button "FahrModi Test" 		verlinkt 	9.Menuebene
-		WriteButton(4,6);   // Return to Menü (Ebene 4)
+		WriteButton(4,6);   // Return to Menï¿½ (Ebene 4)
 		switch (Flash_New_Parameters_List[VorgabeMomentDrehzahl]) {
 			case VorgabeDrehzahl:
 				MarkChosenButton(4,VorgabeDrehzahl);
@@ -1057,7 +1074,7 @@ void Anzeige_Init(uint8_t menuebene)
 	}
 	break;
 
-    case 5:		//Fahrmodus Anfänger
+    case 5:		//Fahrmodus Anfï¿½nger
     {
     	LCD_Rect_Fill(0, 0, 320, 240, BLACK);
     	LCD_Font(0,35,"Modus:Anfaenger", _8_Retro,1,GREEN);
@@ -1065,7 +1082,7 @@ void Anzeige_Init(uint8_t menuebene)
     	WriteButton(5,0);	           // Switch-Button ParameterAuswahl "Moment"
     	WriteButton(5,1);
 //    	LCD_Font(235,61,"FahrModi", _8_Retro,1,WHITE);
-        Menu_Oben();					           	// Überschrift, Fahrzeugrechner
+        Menu_Oben();					           	// ï¿½berschrift, Fahrzeugrechner
 //		Menu_Fahrmodi();									// Menu-Zeile unten: Fahrmodi| E-Kart
 		AnzeigeSlider_Init(5,0);          // initiale Anzeige 1.Gleiblocksystem
         AnzeigeSlider_Init(5,1);          // initiale Anzeige 2.Gleiblocksystem
@@ -1084,7 +1101,7 @@ void Anzeige_Init(uint8_t menuebene)
     	WriteButton(6,0);	           // Switch-Button ParameterAuswahl "Moment"
     	WriteButton(6,1);
 
-        Menu_Oben();					           	// Überschrift, Fahrzeugrechner
+        Menu_Oben();					           	// ï¿½berschrift, Fahrzeugrechner
 //		Menu_Fahrmodi();									// Menu-Zeile unten: Fahrmodi| E-Kart
 		AnzeigeSlider_Init(6,0);          // initiale Anzeige 1.Gleiblocksystem
         AnzeigeSlider_Init(6,1);          // initiale Anzeige 2.Gleiblocksystem
@@ -1103,7 +1120,7 @@ void Anzeige_Init(uint8_t menuebene)
     	WriteButton(7,0);	           // Switch-Button ParameterAuswahl "Moment"
     	WriteButton(7,1);
 
-        Menu_Oben();					           	// Überschrift, Fahrzeugrechner
+        Menu_Oben();					           	// ï¿½berschrift, Fahrzeugrechner
 //		Menu_Fahrmodi();									// Menu-Zeile unten: Fahrmodi| E-Kart
 		AnzeigeSlider_Init(7,0);          // initiale Anzeige 1.Gleiblocksystem
         AnzeigeSlider_Init(7,1);          // initiale Anzeige 2.Gleiblocksystem
@@ -1122,7 +1139,7 @@ void Anzeige_Init(uint8_t menuebene)
     	WriteButton(8,0);	           // Switch-Button ParameterAuswahl "Moment"
     	WriteButton(8,1);
 
-    	Menu_Oben();					           	// Überschrift, Fahrzeugrechner
+    	Menu_Oben();					           	// ï¿½berschrift, Fahrzeugrechner
 //		Menu_Fahrmodi();									// Menu-Zeile unten: Fahrmodi| E-Kart
 		AnzeigeSlider_Init(8,0);          // initiale Anzeige 1.Gleiblocksystem
         AnzeigeSlider_Init(8,1);          // initiale Anzeige 2.Gleiblocksystem
@@ -1134,7 +1151,7 @@ void Anzeige_Init(uint8_t menuebene)
 	{
     	LCD_Rect_Fill(0, 0, 320, 240, BLACK);
     	LCD_Font(0,35,"Strom-Ansteuerung", _8_Retro,1,GREEN);
-		Menu_Oben();                     // Überschrift, Fahrzeugrechner
+		Menu_Oben();                     // ï¿½berschrift, Fahrzeugrechner
 //		LCD_Rect(100, 210, 120, 27, 1, WHITE);
 //		LCD_Font(140,231,"Menue", _8_Retro,1,WHITE);
     	WriteButton(9,0);	           // Switch-Button ParameterAuswahl "Moment"
@@ -1153,14 +1170,22 @@ void Anzeige_Init(uint8_t menuebene)
 	}
 	break;
 
-	case 11:	//SDO Parameter senden
+	case 11:	// RCP-Menu handling
 	{
-//    	LCD_Rect_Fill(0, 0, 320, 240, BLACK);
-//    	LCD_Font(0,35,"Code:", _8_Retro,1,GREEN);
-//		Menu_Oben();                     // Überschrift, Fahrzeugrechner
-//		LCD_Rect(100, 210, 120, 27, 1, WHITE);
-//		LCD_Font(140,231,"Menue", _8_Retro,1,WHITE);
-//		//AnzeigeSliderInit(13,0);          // initiale Anzeige 1.Gleiblocksystem
+
+    	LCD_Rect_Fill(0, 0, 320, 240, BLACK);  // clean previous screen
+
+    	LCD_Font(0,170,"RCP-Mode Status:", _8_Retro,1,WHITE);
+    	LCD_Rect_Fill(130,170,16,16,BLACK);
+    	LCD_Font(130,170,itoa(RCP_Mode_status,buf,10),_8_Retro,1,WHITE);
+
+    	LCD_Font(0,200,"RCP-Mode Errorcode:", _8_Retro,1,WHITE);
+    	LCD_Rect_Fill(130,200,16,16,BLACK);
+    	LCD_Font(180,200,itoa(RCP_Mode_errorcode,buf,10),_8_Retro,1,WHITE);
+		Menu_Oben();                     // ï¿½berschrift, Fahrzeugrechner
+    	WriteButton(11,0);	           // Switch-Button zurueck zum "Hauptmenu"
+    	WriteButton(11,1);			// Switch-Button RCP Connect
+
 	}
 	break;
 
@@ -1226,6 +1251,12 @@ uint8_t TouchAction(uint8_t menuenummer)
 				Anzeige_Init(S_Button[menuenummer][3].Menueverlinkung);
 				ret = S_Button[menuenummer][3].Menueverlinkung;
 			}
+
+			if (S_Button[menuenummer][0].x1<touchX&&S_Button[menuenummer][0].x2>touchX&&S_Button[menuenummer][0].y1<touchY&&S_Button[menuenummer][0].y2>touchY)
+			{
+				Anzeige_Init(S_Button[menuenummer][0].Menueverlinkung);
+				ret = S_Button[menuenummer][0].Menueverlinkung;
+			}
 		}
 		break;
 
@@ -1249,7 +1280,7 @@ uint8_t TouchAction(uint8_t menuenummer)
 		}
 		break;
 
-		case 4:			//Buttons im Fahrmodus Übersicht Menu
+		case 4:			//Buttons im Fahrmodus ï¿½bersicht Menu
 		{
 			if (S_Button[menuenummer][0].x1<touchX&&S_Button[menuenummer][0].x2>touchX&&S_Button[menuenummer][0].y1<touchY&&S_Button[menuenummer][0].y2>touchY)
 			{
@@ -1270,7 +1301,7 @@ uint8_t TouchAction(uint8_t menuenummer)
 				Flash_New_Parameters_List[ChosenDrivingMode]=AnfaengerModeButton;
 
 				Pointer_GasProzent=&Flash_New_Parameters_List[Anfaenger_GasProzent];				// POINTER nehme von diesem Listenelement-Speicherort den Wert an
-				Pointer_BeschlProzent=&Flash_New_Parameters_List[Anfaenger_BeschlProzent];	// für Änderungen in stm32f10x_it.c
+				Pointer_BeschlProzent=&Flash_New_Parameters_List[Anfaenger_BeschlProzent];	// fï¿½r ï¿½nderungen in stm32f10x_it.c
 				Pointer_Rueckwaert=&Flash_New_Parameters_List[Anfaenger_Rueckwaert];
 
 				Anzeige_Init(S_Button[menuenummer][2].Menueverlinkung);
@@ -1591,7 +1622,26 @@ uint8_t TouchAction(uint8_t menuenummer)
 
 		}
 		break;
+		case 11:			//Buttons in "RCP-Mode" menu
+		{
+			if (S_Button[menuenummer][0].x1<touchX&&S_Button[menuenummer][0].x2>touchX&&S_Button[menuenummer][0].y1<touchY&&S_Button[menuenummer][0].y2>touchY)
+			{
+				// Just go back to "Main Menu"
+				Anzeige_Init(S_Button[menuenummer][0].Menueverlinkung);
+				ret = S_Button[menuenummer][0].Menueverlinkung;
+			}
+			if (S_Button[menuenummer][1].x1<touchX&&S_Button[menuenummer][1].x2>touchX&&S_Button[menuenummer][1].y1<touchY&&S_Button[menuenummer][1].y2>touchY)
+			{
+				//TODO: check heartbeat from RCP after connection
 
+				RCP_Mode_selected = !RCP_Mode_selected;
+				RCP_Mode_errorcode = WAITING_RESPOND;
+//				Anzeige_Init(S_Button[menuenummer][1].Menueverlinkung);
+				ret = S_Button[menuenummer][1].Menueverlinkung;
+
+			}
+		}
+		break;
 		default:break;
 
 		}
@@ -1728,7 +1778,7 @@ void Menuestruktur(void)
   uint8_t slidernummer;
 //__________________________________________________________________________________________________________________________
 // Menuebene 1
-// Zustand-Anzeige für EKART
+// Zustand-Anzeige fï¿½r EKART
   menuenummer=1;
 
   buttonnummer=0;
@@ -1766,9 +1816,9 @@ void Menuestruktur(void)
   S_Button[menuenummer][buttonnummer].y1=50;
   S_Button[menuenummer][buttonnummer].x2=155;
   S_Button[menuenummer][buttonnummer].y2=100;
-  S_Button[menuenummer][buttonnummer].Menueverlinkung=2;
-  S_Button[menuenummer][buttonnummer].Text="Motor";
-  S_Button[menuenummer][buttonnummer].Textlaenge=5;
+  S_Button[menuenummer][buttonnummer].Menueverlinkung=11;
+  S_Button[menuenummer][buttonnummer].Text="RCP-Mode";
+  S_Button[menuenummer][buttonnummer].Textlaenge=8;
   S_Button[menuenummer][buttonnummer].bottonsanzahl=5;
 
   buttonnummer=1;
@@ -1813,7 +1863,7 @@ void Menuestruktur(void)
   S_Button[menuenummer][buttonnummer].bottonsanzahl=5;
 
   // Menuebene 3
-  // Ebene für mehr Daten von der Batterie
+  // Ebene fï¿½r mehr Daten von der Batterie
   menuenummer=3;
 
   buttonnummer=0;
@@ -1843,7 +1893,7 @@ void Menuestruktur(void)
   S_Button[menuenummer][buttonnummer].bottonsanzahl=3;
 
   // Menuebene 4
-  // "Fahrmodi - Übersicht"
+  // "Fahrmodi - ï¿½bersicht"
   menuenummer=4;
 
   buttonnummer=VorgabeDrehzahl;
@@ -1911,7 +1961,7 @@ void Menuestruktur(void)
   S_Button[menuenummer][buttonnummer].Textlaenge=4;
   S_Button[menuenummer][buttonnummer].bottonsanzahl=7;
 
-  buttonnummer=6;																						// Return zu Menü - Ebene
+  buttonnummer=6;																						// Return zu Menï¿½ - Ebene
   S_Button[menuenummer][buttonnummer].x1=10;
   S_Button[menuenummer][buttonnummer].y1=105;
   S_Button[menuenummer][buttonnummer].x2=70;
@@ -1926,18 +1976,18 @@ void Menuestruktur(void)
   menuenummer=5;
 
 
-  //---------> die Buttons für "Menu_Fahrmodi()"
+  //---------> die Buttons fï¿½r "Menu_Fahrmodi()"
   buttonnummer=0;
   S_Button[menuenummer][buttonnummer].x1=240;
   S_Button[menuenummer][buttonnummer].y1=30;
   S_Button[menuenummer][buttonnummer].x2=310;
   S_Button[menuenummer][buttonnummer].y2=80;
-  S_Button[menuenummer][buttonnummer].Menueverlinkung=4;					// "Zurück" verlinkt zur "Fahrmodi"
+  S_Button[menuenummer][buttonnummer].Menueverlinkung=4;					// "Zurï¿½ck" verlinkt zur "Fahrmodi"
   S_Button[menuenummer][buttonnummer].Text="Zurueck";
   S_Button[menuenummer][buttonnummer].Textlaenge=7;
   S_Button[menuenummer][buttonnummer].bottonsanzahl=2;
 
-  buttonnummer=1;                                  //Button für Bestätigen
+  buttonnummer=1;                                  //Button fï¿½r Bestï¿½tigen
   S_Button[menuenummer][buttonnummer].x1=120;
   S_Button[menuenummer][buttonnummer].y1=30;
   S_Button[menuenummer][buttonnummer].x2=230;
@@ -2015,18 +2065,18 @@ void Menuestruktur(void)
   menuenummer=6;
 
 
-  //---------> die Buttons für "Menu_Fahrmodi()"
+  //---------> die Buttons fï¿½r "Menu_Fahrmodi()"
   buttonnummer=0;
   S_Button[menuenummer][buttonnummer].x1=240;
   S_Button[menuenummer][buttonnummer].y1=30;
   S_Button[menuenummer][buttonnummer].x2=310;
   S_Button[menuenummer][buttonnummer].y2=80;
-  S_Button[menuenummer][buttonnummer].Menueverlinkung=4;					// "Zurück" verlinkt zur "Fahrmodi"
+  S_Button[menuenummer][buttonnummer].Menueverlinkung=4;					// "Zurï¿½ck" verlinkt zur "Fahrmodi"
   S_Button[menuenummer][buttonnummer].Text="Zurueck";
   S_Button[menuenummer][buttonnummer].Textlaenge=7;
   S_Button[menuenummer][buttonnummer].bottonsanzahl=2;
 
-  buttonnummer=1;                                  //Button für Bestätigen
+  buttonnummer=1;                                  //Button fï¿½r Bestï¿½tigen
   S_Button[menuenummer][buttonnummer].x1=120;
   S_Button[menuenummer][buttonnummer].y1=30;
   S_Button[menuenummer][buttonnummer].x2=230;
@@ -2104,18 +2154,18 @@ void Menuestruktur(void)
   menuenummer=7;
 
 
-  //---------> die Buttons für "Menu_Fahrmodi()"
+  //---------> die Buttons fï¿½r "Menu_Fahrmodi()"
   buttonnummer=0;
   S_Button[menuenummer][buttonnummer].x1=240;
   S_Button[menuenummer][buttonnummer].y1=30;
   S_Button[menuenummer][buttonnummer].x2=310;
   S_Button[menuenummer][buttonnummer].y2=80;
-  S_Button[menuenummer][buttonnummer].Menueverlinkung=4;					// "Zurück" verlinkt zur "Fahrmodi"
+  S_Button[menuenummer][buttonnummer].Menueverlinkung=4;					// "Zurï¿½ck" verlinkt zur "Fahrmodi"
   S_Button[menuenummer][buttonnummer].Text="Zurueck";
   S_Button[menuenummer][buttonnummer].Textlaenge=7;
   S_Button[menuenummer][buttonnummer].bottonsanzahl=2;
 
-  buttonnummer=1;                                  //Button für Bestätigen
+  buttonnummer=1;                                  //Button fï¿½r Bestï¿½tigen
   S_Button[menuenummer][buttonnummer].x1=120;
   S_Button[menuenummer][buttonnummer].y1=30;
   S_Button[menuenummer][buttonnummer].x2=230;
@@ -2193,18 +2243,18 @@ void Menuestruktur(void)
   menuenummer=8;
 
 
-  //---------> die Buttons für "Menu_Fahrmodi()"
+  //---------> die Buttons fï¿½r "Menu_Fahrmodi()"
   buttonnummer=0;
   S_Button[menuenummer][buttonnummer].x1=240;
   S_Button[menuenummer][buttonnummer].y1=30;
   S_Button[menuenummer][buttonnummer].x2=310;
   S_Button[menuenummer][buttonnummer].y2=80;
-  S_Button[menuenummer][buttonnummer].Menueverlinkung=4;					// "Zurück" verlinkt zur "Fahrmodi"
+  S_Button[menuenummer][buttonnummer].Menueverlinkung=4;					// "Zurï¿½ck" verlinkt zur "Fahrmodi"
   S_Button[menuenummer][buttonnummer].Text="Zurueck";
   S_Button[menuenummer][buttonnummer].Textlaenge=7;
   S_Button[menuenummer][buttonnummer].bottonsanzahl=2;
 
-  buttonnummer=1;                                  //Button für Bestätigen
+  buttonnummer=1;                                  //Button fï¿½r Bestï¿½tigen
   S_Button[menuenummer][buttonnummer].x1=120;
   S_Button[menuenummer][buttonnummer].y1=30;
   S_Button[menuenummer][buttonnummer].x2=230;
@@ -2284,41 +2334,34 @@ void Menuestruktur(void)
 
   buttonnummer=0;
   S_Button[menuenummer][buttonnummer].x1=240;
-  S_Button[menuenummer][buttonnummer].y1=30;
+  S_Button[menuenummer][buttonnummer].y1=50;
   S_Button[menuenummer][buttonnummer].x2=310;
-  S_Button[menuenummer][buttonnummer].y2=80;
-  S_Button[menuenummer][buttonnummer].Menueverlinkung=2;					// "Zurück" verlinkt zur "Fahrmodi"
+  S_Button[menuenummer][buttonnummer].y2=100;
+  S_Button[menuenummer][buttonnummer].Menueverlinkung=2;					// "Zurï¿½ck" verlinkt zur "Fahrmodi"
   S_Button[menuenummer][buttonnummer].Text="Zurueck";
   S_Button[menuenummer][buttonnummer].Textlaenge=7;
   S_Button[menuenummer][buttonnummer].bottonsanzahl=2;
 
-  buttonnummer=1;                                  //Button für Bestätigen
+  buttonnummer=1;                                  //Button fï¿½r Bestï¿½tigen
   S_Button[menuenummer][buttonnummer].x1=120;
-  S_Button[menuenummer][buttonnummer].y1=30;
+  S_Button[menuenummer][buttonnummer].y1=50;
   S_Button[menuenummer][buttonnummer].x2=230;
-  S_Button[menuenummer][buttonnummer].y2=80;
+  S_Button[menuenummer][buttonnummer].y2=100;
   S_Button[menuenummer][buttonnummer].Menueverlinkung=2;
   S_Button[menuenummer][buttonnummer].bottonsanzahl=2;
   S_Button[menuenummer][buttonnummer].Text="Flashen";
   S_Button[menuenummer][buttonnummer].Textlaenge=7;
 
-//  buttonnummer=0;
-//  S_Button[menuenummer][buttonnummer].x1=100;
-//  S_Button[menuenummer][buttonnummer].y1=210;
-//  S_Button[menuenummer][buttonnummer].x2=220;
-//  S_Button[menuenummer][buttonnummer].y2=237;
-//  S_Button[menuenummer][buttonnummer].Menueverlinkung=2;
-//  S_Button[menuenummer][buttonnummer].bottonsanzahl=1;
 
   slidernummer=0;
   Slider[menuenummer][slidernummer].x=Flash_New_Parameters_List[Strom_Cursorpositionen];
-  Slider[menuenummer][slidernummer].y=100;
+  Slider[menuenummer][slidernummer].y=120;
   Slider[menuenummer][slidernummer].Laenge=20;
   Slider[menuenummer][slidernummer].Breite=10;
   Slider[menuenummer][slidernummer].Bahn_x1=90;
-  Slider[menuenummer][slidernummer].Bahn_y1=105;
+  Slider[menuenummer][slidernummer].Bahn_y1=125;
   Slider[menuenummer][slidernummer].Bahn_x2=290;
-  Slider[menuenummer][slidernummer].Bahn_y2=115;
+  Slider[menuenummer][slidernummer].Bahn_y2=135;
   Slider[menuenummer][slidernummer].Touch_x1=Slider[menuenummer][slidernummer].Bahn_x1-20; //70
   Slider[menuenummer][slidernummer].Touch_y1=Slider[menuenummer][slidernummer].Bahn_y1-5;  //100
   Slider[menuenummer][slidernummer].Touch_x2=Slider[menuenummer][slidernummer].Bahn_x2+20; //310
@@ -2443,7 +2486,7 @@ void Menuestruktur(void)
   S_Button[menuenummer][buttonnummer].Text="9";
   S_Button[menuenummer][buttonnummer].Textlaenge=1;
 
-  buttonnummer=10;                                  //Button für Abbruch
+  buttonnummer=10;                                  //Button fï¿½r Abbruch
   S_Button[menuenummer][buttonnummer].x1=200;
   S_Button[menuenummer][buttonnummer].y1=23;
   S_Button[menuenummer][buttonnummer].x2=280;
@@ -2454,7 +2497,7 @@ void Menuestruktur(void)
   S_Button[menuenummer][buttonnummer].Text="Abbruch";
   S_Button[menuenummer][buttonnummer].Textlaenge=7;
 
-  buttonnummer=11;                                  //Button für Bestätigen
+  buttonnummer=11;                                  //Button fï¿½r Bestï¿½tigen
   S_Button[menuenummer][buttonnummer].x1=220;
   S_Button[menuenummer][buttonnummer].y1=60;
   S_Button[menuenummer][buttonnummer].x2=315;
@@ -2465,7 +2508,7 @@ void Menuestruktur(void)
   S_Button[menuenummer][buttonnummer].Text="Bestaetigen";
   S_Button[menuenummer][buttonnummer].Textlaenge=11;
 
-  buttonnummer=12;                                  //Button für Löschen
+  buttonnummer=12;                                  //Button fï¿½r Lï¿½schen
   S_Button[menuenummer][buttonnummer].x1=220;
   S_Button[menuenummer][buttonnummer].y1=186;
   S_Button[menuenummer][buttonnummer].x2=315;
@@ -2475,6 +2518,32 @@ void Menuestruktur(void)
   S_Button[menuenummer][buttonnummer].bottonsanzahl=13;
   S_Button[menuenummer][buttonnummer].Text="Loeschen";
   S_Button[menuenummer][buttonnummer].Textlaenge=8;
+
+  // Menuebene 11
+  // Menue "RCP-Mode"
+  menuenummer=11;
+
+  buttonnummer=0;
+  S_Button[menuenummer][buttonnummer].x1=240;
+  S_Button[menuenummer][buttonnummer].y1=50;
+  S_Button[menuenummer][buttonnummer].x2=310;
+  S_Button[menuenummer][buttonnummer].y2=100;
+  S_Button[menuenummer][buttonnummer].Menueverlinkung=2; // "Zurï¿½ck" verlinkt zur "Hauptmenu"
+  S_Button[menuenummer][buttonnummer].Text="Zurueck";
+  S_Button[menuenummer][buttonnummer].Textlaenge=7;
+  S_Button[menuenummer][buttonnummer].bottonsanzahl=2;
+
+  buttonnummer=1;                                  //Button sent RCP connection request
+  S_Button[menuenummer][buttonnummer].x1=120;
+  S_Button[menuenummer][buttonnummer].y1=50;
+  S_Button[menuenummer][buttonnummer].x2=230;
+  S_Button[menuenummer][buttonnummer].y2=100;
+  S_Button[menuenummer][buttonnummer].Menueverlinkung=2;
+  S_Button[menuenummer][buttonnummer].bottonsanzahl=2;
+  S_Button[menuenummer][buttonnummer].Text="RCP-Connect";
+  S_Button[menuenummer][buttonnummer].Textlaenge=11;
+
+  //TODO: Add visual sign for error or timeout or connection error
 
 }
 
@@ -2540,6 +2609,11 @@ void Anzeige(uint_fast8_t menuebene)
 	{
 		ZeitAnzeige();
 		PasswordAnzeige();
+	}
+	break;
+	case 11:
+	{
+		ZeitAnzeige();
 	}
 	break;
 

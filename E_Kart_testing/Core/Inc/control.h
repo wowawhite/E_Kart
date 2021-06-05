@@ -13,8 +13,8 @@
 
 
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan);
-
 void Motor_Init(void);
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin);
+void Emergency_Stop();
 
 #endif /* CONTROL_H_ */
