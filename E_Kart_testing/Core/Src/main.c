@@ -22,7 +22,6 @@
 #include "can.h"
 #include "spi.h"
 #include "tim.h"
-#include "usb_otg.h"
 #include "gpio.h"
 #include "fsmc.h"
 
@@ -108,7 +107,6 @@ int main(void)
   MX_SPI1_Init();
   MX_FSMC_Init();
   MX_TIM3_Init();
-  MX_USB_OTG_FS_PCD_Init();
   /* USER CODE BEGIN 2 */
 
 //  flash_init();

@@ -168,6 +168,19 @@ void HAL_SYSTICK_Callback(void)
 
 		HAL_CAN_AddTxMessage(&hcan1,&TxMessage,txData,(uint32_t *)Mailbox);
 	}
+	if(Sp_mSek == 3)
+	{
+	    /*NMT*/
+		TxMessage.StdId = ID_NMT ;     // Standart Identifier
+	    TxMessage.ExtId = ID_NMT ;     // extended Identifier
+	    TxMessage.RTR = CAN_RTR_DATA;       // Data frame
+	    TxMessage.IDE = CAN_ID_STD;         // use Standart Identifier
+	    TxMessage.DLC = 2;                  // length of the frame in Bytes
+	    txData[0] = 0x01;  		// 0. Byte  , Little Endian
+	    txData[1] = 0x00;  		// 0. Byte  , Little Endian
+
+	    HAL_CAN_AddTxMessage(&hcan1, &TxMessage,txData,(uint32_t *)Mailbox);     // Message �bertragen
+	}
 
 	/*Turn RCP-Mode on or off*/
 	if(RCP_Mode_selected != RCP_Mode_status)
@@ -190,13 +203,18 @@ void HAL_SYSTICK_Callback(void)
 		}
 	}
 
-	if ( (Heartbeat_MC_rechts==Msg_Heartbeat_MC_rechts) &&	(Heartbeat_MC_links==Msg_Heartbeat_MC_links) )
+	if (( Sp_mSek==3 ) || ( Sp_mSek==8 ))
 	{
-		if (( Sp_mSek==3 ) || ( Sp_mSek==8 ))
+		if ( (Heartbeat_MC_rechts==Msg_Heartbeat_MC_rechts) &&	(Heartbeat_MC_links==Msg_Heartbeat_MC_links) )
 		{
 			/*************************************************************************************************************************/
 			/*****************************************************RCP-Mode************************************************************/
 			/*************************************************************************************************************************/
+			if (RCP_Mode_errorcode == NO_MOTOR_HEARTBEAT)
+			{
+				RCP_Mode_errorcode = NO_ERROR;
+			}
+
 			if(RCP_Mode_status== 1)
 			{
 				if(Heartbeat_RCP == 0)
@@ -269,13 +287,14 @@ void HAL_SYSTICK_Callback(void)
 			}
 
 		}
+		/*Heartbeat Motorcontroller*/
+		else
+		{
+			Emergency_Stop();
+			RCP_Mode_errorcode = NO_MOTOR_HEARTBEAT;
+		}
 	}
-	/*Heartbeat Motorcontroller*/
-	else
-	{
-		Emergency_Stop();
-		RCP_Mode_errorcode = NO_MOTOR_HEARTBEAT;
-	}
+
 }
 
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
@@ -302,8 +321,6 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 	if ((sCanRxHeader.StdId == ID_Heartbeat_RCP)&&(sCanRxHeader.IDE == CAN_ID_STD) && (sCanRxHeader.DLC == 1))
 	{
 		Heartbeat_RCP = RxMessage[0];
-	}else{
-		RCP_Mode_errorcode = NO_RCP_HEARTBEAT;
 	}
 
 	/*SDO Tx RCP*/
