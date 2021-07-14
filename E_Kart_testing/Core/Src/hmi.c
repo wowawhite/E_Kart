@@ -1632,12 +1632,10 @@ uint8_t TouchAction(uint8_t menuenummer)
 			}
 			if (S_Button[menuenummer][1].x1<touchX&&S_Button[menuenummer][1].x2>touchX&&S_Button[menuenummer][1].y1<touchY&&S_Button[menuenummer][1].y2>touchY)
 			{
-				//TODO: check heartbeat from RCP after connection
-
 				RCP_Mode_selected = !RCP_Mode_selected;
 				RCP_Mode_errorcode = WAITING_RESPOND;
 //				Anzeige_Init(S_Button[menuenummer][1].Menueverlinkung);
-				ret = S_Button[menuenummer][1].Menueverlinkung;
+				ret = S_Button[menuenummer][1].Menueverlinkung;  //  TODO: bug wrong menu after doubleclick
 
 			}
 		}
@@ -1769,14 +1767,29 @@ uint8_t TouchAction(uint8_t menuenummer)
 * Return         :  None
 *******************************************************************************/
 
+/* Menueebenen
+ * 1. Zustand-Anzeige
+ * 2."Menue"
+ * 3. Ebene f�r mehr Daten von der Batterie
+ * 4. "Fahrmodi - �bersicht"
+ * 5. "FahrModi-Anfaenger"
+ * 6. "FahrModi-Anfaenger"
+ * 7. "FahrModi-Profi"
+ * 8. "FahrModi-Test"
+ * 9. Strom
+ * 10. Password
+ * 11. Menue "RCP-Mode"
+ */
+
+
+
 
 void Menuestruktur(void)
-
 {
   uint8_t menuenummer;
   uint8_t buttonnummer;
   uint8_t slidernummer;
-//__________________________________________________________________________________________________________________________
+//________________________________________________________
 // Menuebene 1
 // Zustand-Anzeige f�r EKART
   menuenummer=1;

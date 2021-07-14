@@ -14,7 +14,7 @@
 /* Exported constants ------------------------------------------------*/                             
 /* Macros ------------------------------------------------------------*/
 
-#define SOFTWAREVERSION "V2021.01"
+#define SOFTWAREVERSION "V2021.02"
 
 // Errorcodes RCP-Mode
 #define NO_ERROR 0

@@ -199,8 +199,10 @@ void HAL_SYSTICK_Callback(void)
 			txData[4] = RCP_Mode_selected;
 
 			HAL_CAN_AddTxMessage(&hcan1,&TxMessage,txData,(uint32_t *)Mailbox);
+			//TODO: Add wait time for response here
 			RCP_Mode_errorcode = WAITING_RESPOND;
 		}
+
 	}
 
 	if (( Sp_mSek==3 ) || ( Sp_mSek==8 ))
