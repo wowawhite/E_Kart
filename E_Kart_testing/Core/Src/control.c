@@ -180,7 +180,9 @@ void HAL_SYSTICK_Callback(void)
 	    txData[1] = 0x00;  		// 0. Byte  , Little Endian
 
 	    HAL_CAN_AddTxMessage(&hcan1, &TxMessage,txData,(uint32_t *)Mailbox);     // Message �bertragen
-	}
+
+
+
 
 	/*Turn RCP-Mode on or off*/
 	if(RCP_Mode_selected != RCP_Mode_status)
@@ -199,10 +201,9 @@ void HAL_SYSTICK_Callback(void)
 			txData[4] = RCP_Mode_selected;
 
 			HAL_CAN_AddTxMessage(&hcan1,&TxMessage,txData,(uint32_t *)Mailbox);
-			//TODO: Add wait time for response here
-			RCP_Mode_errorcode = WAITING_RESPOND;
-		}
 
+		}
+	}
 	}
 
 	if (( Sp_mSek==3 ) || ( Sp_mSek==8 ))
@@ -333,6 +334,8 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 		if(SDOack == 0x60)
 		{
 			RCP_Mode_status = RCP_Mode_selected;
+			if (RCP_Mode_errorcode == NO_CAN_RESPOND){
+				RCP_Mode_errorcode = NO_ERROR;
 		}else{
 			RCP_Mode_errorcode = NO_CAN_RESPOND;
 		}
@@ -628,4 +631,9 @@ void Emergency_Stop()
 	txData[2] = Drehrichtung_Moment_links;
 
 	HAL_CAN_AddTxMessage(&hcan1, &TxMessage,txData,(uint32_t *)Mailbox);     // Message �bertragen
+}
+
+void RCP_change_status(void){
+
+}
 }

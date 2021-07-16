@@ -9,9 +9,6 @@
 #include "flash.h"
 
 #include "Parameter.h"
-
-
-
 #include "fonts/Font_8_Retro.h"
 
 #define _8_Retro               &Font_8_Retro
@@ -1029,7 +1026,7 @@ void Anzeige_Init(uint8_t menuebene)
 	}
 	break;
 
-	case 4:		//Fahrmodi �bersicht
+	case 4:		//Fahrmodi �bersicht TODO: Hier muster auswahl-schattierung
 	{
 		LCD_Rect_Fill(0, 0, 320, 240, BLACK);
 		LCD_Font(10,66,"Differenzial", _8_Retro,1,WHITE);
@@ -1633,9 +1630,13 @@ uint8_t TouchAction(uint8_t menuenummer)
 			if (S_Button[menuenummer][1].x1<touchX&&S_Button[menuenummer][1].x2>touchX&&S_Button[menuenummer][1].y1<touchY&&S_Button[menuenummer][1].y2>touchY)
 			{
 				RCP_Mode_selected = !RCP_Mode_selected;
-				RCP_Mode_errorcode = WAITING_RESPOND;
+//				RCP_Mode_errorcode = WAITING_RESPOND;
 //				Anzeige_Init(S_Button[menuenummer][1].Menueverlinkung);
 				ret = S_Button[menuenummer][1].Menueverlinkung;  //  TODO: bug wrong menu after doubleclick
+				// TODO: Doubletap to disable rcp mode
+				// Indicate rcp enabled by shadow
+				// error merker no response zurücksetzen
+				//
 
 			}
 		}

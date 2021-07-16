@@ -11,7 +11,7 @@
 #define	XPT2046_ACCURACY 	1
 #define	XPT2046_REVERSED 	1
 #define	XPT2046_MIRROR_X 	0 // mirroring touch on horizontal axis
-#define	XPT2046_MIRROR_Y 	0 // mirroring touch on vertical axis TODO: invert on alternative testboard
+#define	XPT2046_MIRROR_Y 	1 // mirroring touch on vertical axis TODO: invert on alternative testboard
 
 #define RAW_MIN_X	300
 #define RAW_MAX_X	3800
