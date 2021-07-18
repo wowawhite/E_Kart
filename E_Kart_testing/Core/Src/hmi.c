@@ -33,6 +33,7 @@ uint8_t PasswordCodeUser[4];
 uint8_t sCode;                 // 0-4, eingegebene Zeichen des Password
 char Asci_SliderWert[11];  		// Puffer-f�r uintToasci-Wandelung
 
+//extern uint8_t Sp_mSek_mul100;
 extern uint8_t Sp_Min;
 extern uint8_t Sp_Sek;
 extern uint8_t Sp_Stu;
@@ -60,6 +61,7 @@ extern uint16_t *Pointer_Rueckwaert;
 // RCP-Mode global communication variables
 extern uint8_t RCP_Mode_status;
 extern uint8_t RCP_Mode_selected;
+extern uint8_t RCP_Mode_pending;
 extern uint8_t RCP_Mode_errorcode;
 extern uint8_t Heartbeat_RCP;
 extern uint8_t SDOack;
@@ -115,6 +117,20 @@ void MarkChosenButton(uint_fast8_t Menuenummer, uint8_t Buttonnummer)
 {
 	LCD_Rect(S_Button[Menuenummer][Buttonnummer].x1,S_Button[Menuenummer][Buttonnummer].y1,S_Button[Menuenummer][Buttonnummer].x2-S_Button[Menuenummer][Buttonnummer].x1,S_Button[Menuenummer][Buttonnummer].y2-S_Button[Menuenummer][Buttonnummer].y1,1,RED);
 }
+
+void UnmarkChosenButton(uint_fast8_t Menuenummer, uint8_t Buttonnummer)
+{
+	LCD_Rect(S_Button[Menuenummer][Buttonnummer].x1,S_Button[Menuenummer][Buttonnummer].y1,S_Button[Menuenummer][Buttonnummer].x2-S_Button[Menuenummer][Buttonnummer].x1,S_Button[Menuenummer][Buttonnummer].y2-S_Button[Menuenummer][Buttonnummer].y1,1,BLACK);
+}
+
+//void BlinkChosenButton(uint_fast8_t Menuenummer, uint8_t Buttonnummer)
+//{
+//	if (Sp_mSek_mul100<5){
+//		MarkChosenButton(Menuenummer, Buttonnummer);
+//	} else {
+//		UnmarkChosenButton(Menuenummer, Buttonnummer);
+//	}
+//}
 
 /*******************************************************************************
 * Function Name  :  AnzeigeSliderInit
@@ -302,45 +318,6 @@ void ZeitAnzeige(void)
 		}
 
 	}
-	// Minuten
-//	if ( (Sp_Sek != Sp_Sek_Merker) || (Sp_Min != Sp_Min_Merker) || (Sp_Stu != Sp_Stu_Merker) )
-//	{
-//		if (Sp_Min < 10)
-//		{
-//			LCD_Rect_Fill(274,1,16,16,BLACK);
-//			LCD_Font(274,17,"0",_8_Retro,1,WHITE);
-//			LCD_Font(282,17,itoa(Sp_Min,Asci_Time,10),_8_Retro,1,WHITE);
-//		}
-//		else
-//		{
-//			LCD_Rect_Fill(274,1,16,16,BLACK);
-//			LCD_Font(274,17,itoa(Sp_Min,Asci_Time,10),_8_Retro,1,WHITE);
-//		}
-//	    Sp_Min_Merker = Sp_Min;
-//	}
-	// Stunden
-//	if ((Sp_Sek != Sp_Sek_Merker) || (Sp_Stu != Sp_Stu_Merker))
-//	{
-//		if (Sp_Stu<10)
-//		{
-//			LCD_Rect_Fill(250,1,16,16,BLACK);
-//			LCD_Font(250,17,"0",_8_Retro,1,WHITE);
-//			LCD_Font(258, 17, itoa(Sp_Stu,Asci_Time,10), _8_Retro, 1, WHITE);
-//		}
-//		else
-//		{
-//			LCD_Rect_Fill(250,1,16,16,BLACK);
-//			LCD_Font(250, 17, itoa(Sp_Stu,Asci_Time,10), _8_Retro, 1, WHITE);
-//		}
-//	    Sp_Stu_Merker = Sp_Stu;
-//	}
-//	if ( (Sp_Stu >= 99) && (Sp_Min >= 59) && (Sp_Sek >= 59))
-//	{
-//		Sp_Stu_Merker = 0;
-//		Sp_Min_Merker = 0;
-//		Sp_Sek_Merker = 0;
-//		LCD_Font(250,17,"00:00:00",_8_Retro,1,WHITE);
-//	}
 }
 
 
@@ -1632,7 +1609,8 @@ uint8_t TouchAction(uint8_t menuenummer)
 				RCP_Mode_selected = !RCP_Mode_selected;
 //				RCP_Mode_errorcode = WAITING_RESPOND;
 //				Anzeige_Init(S_Button[menuenummer][1].Menueverlinkung);
-				ret = S_Button[menuenummer][1].Menueverlinkung;  //  TODO: bug wrong menu after doubleclick
+				ret = S_Button[menuenummer][1].Menueverlinkung;
+				//  TODO: bug wrong menu after doubleclick
 				// TODO: Doubletap to disable rcp mode
 				// Indicate rcp enabled by shadow
 				// error merker no response zurücksetzen
@@ -2634,3 +2612,6 @@ void Anzeige(uint_fast8_t menuebene)
 	default: break;
 	}
 }
+
+
+

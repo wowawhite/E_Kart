@@ -15,6 +15,8 @@
 #include <stdlib.h>
 
 //
+
+
 void Menu_Oben(void);
 void Menu_Unten(void);
 void Password_Init(uint8_t menuebene);
@@ -42,6 +44,7 @@ void Anzeige(uint_fast8_t menuebene);
 void AnzeigeSlider_Init(uint_fast8_t Menuenummer, uint_fast8_t slidernummer);
 void TouchSlider(uint8_t menuenummer, uint8_t slidernummer);
 void WriteButton(uint_fast8_t Menuenummer, uint8_t Buttonnummer);
-
-
+void MarkChosenButton(uint_fast8_t Menuenummer, uint8_t Buttonnummer);
+void UnmarkChosenButton(uint_fast8_t Menuenummer, uint8_t Buttonnummer);
+void BlinkChosenButton(uint_fast8_t Menuenummer, uint8_t Buttonnummer);
 #endif /* HMI_H_ */

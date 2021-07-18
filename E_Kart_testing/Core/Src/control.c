@@ -68,11 +68,14 @@ uint16_t Spannung_Zellen_r[8];
 
 uint8_t touchIRQ = 0;
 // RCP-Mode global communication variables
-uint8_t RCP_Mode_status= 0;
-uint8_t RCP_Mode_selected = 0;
+uint8_t RCP_Mode_status= 0;		// actual RCP state status
+uint8_t RCP_Mode_selected = 0;  // connection/disconnection request. 1 == selected
+uint8_t RCP_Mode_pending= 0;	// state while connecting/disconnecting to rcp module
+
 uint8_t RCP_Mode_errorcode = 0;
 uint8_t Heartbeat_RCP = 0;
 uint8_t SDOack = 0;
+
 
 void HAL_SYSTICK_Callback(void)
 {
