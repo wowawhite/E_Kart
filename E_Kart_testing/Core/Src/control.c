@@ -184,7 +184,7 @@ void HAL_SYSTICK_Callback(void)
 
 	    HAL_CAN_AddTxMessage(&hcan1, &TxMessage,txData,(uint32_t *)Mailbox);     // Message �bertragen
 
-
+	}
 
 
 	/*Turn RCP-Mode on or off*/
@@ -207,7 +207,7 @@ void HAL_SYSTICK_Callback(void)
 
 		}
 	}
-	}
+
 
 	if (( Sp_mSek==3 ) || ( Sp_mSek==8 ))
 	{
@@ -337,10 +337,13 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 		if(SDOack == 0x60)
 		{
 			RCP_Mode_status = RCP_Mode_selected;
-			if (RCP_Mode_errorcode == NO_CAN_RESPOND){
+			if (RCP_Mode_errorcode == NO_CAN_RESPOND)
+			{
 				RCP_Mode_errorcode = NO_ERROR;
-		}else{
-			RCP_Mode_errorcode = NO_CAN_RESPOND;
+			}else
+			{
+				RCP_Mode_errorcode = NO_CAN_RESPOND;
+			}
 		}
 	}
 
@@ -636,7 +639,4 @@ void Emergency_Stop()
 	HAL_CAN_AddTxMessage(&hcan1, &TxMessage,txData,(uint32_t *)Mailbox);     // Message �bertragen
 }
 
-void RCP_change_status(void){
 
-}
-}
