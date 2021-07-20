@@ -639,4 +639,23 @@ void Emergency_Stop()
 	HAL_CAN_AddTxMessage(&hcan1, &TxMessage,txData,(uint32_t *)Mailbox);     // Message �bertragen
 }
 
+//uint8_t RCP_connection_request(uint8_t buttonpress_detected,uint32_t timeout_time,uint16_t GPIO_Pin)
+//{
+//	uint32_t timer_start = timeout_time;
+//	static uint8_t request_flag = 0;
+//
+//	if(buttonpress_detected==1)
+//	{
+//		request_flag
+//		// check if gas is pressed and engine is idle
+//		// request connection
+//		// wait
+//	} else {
+//
+//
+//	}
+//
+//	return
+//}
+
 

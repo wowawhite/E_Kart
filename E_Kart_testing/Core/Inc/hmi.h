@@ -2,7 +2,7 @@
  * hmi.h
  *
  *  Created on: 05.11.2018
- *      Author: melf_
+ *  Updated on: 2021.07 - Added RCP-Mode
  */
 
 #ifndef HMI_H_
@@ -14,8 +14,11 @@
 #include <string.h>
 #include <stdlib.h>
 
-//
-
+// function prototypes here
+void WriteButton(uint_fast8_t Menuenummer, uint8_t Buttonnummer);
+void MarkChosenButton(uint_fast8_t Menuenummer, uint8_t Buttonnummer);
+void UnmarkChosenButton(uint_fast8_t Menuenummer, uint8_t Buttonnummer);
+void BlinkChosenButton(uint_fast8_t Menuenummer, uint8_t Buttonnummer);
 
 void Menu_Oben(void);
 void Menu_Unten(void);
@@ -43,8 +46,5 @@ void getTouch(void);
 void Anzeige(uint_fast8_t menuebene);
 void AnzeigeSlider_Init(uint_fast8_t Menuenummer, uint_fast8_t slidernummer);
 void TouchSlider(uint8_t menuenummer, uint8_t slidernummer);
-void WriteButton(uint_fast8_t Menuenummer, uint8_t Buttonnummer);
-void MarkChosenButton(uint_fast8_t Menuenummer, uint8_t Buttonnummer);
-void UnmarkChosenButton(uint_fast8_t Menuenummer, uint8_t Buttonnummer);
-void BlinkChosenButton(uint_fast8_t Menuenummer, uint8_t Buttonnummer);
+
 #endif /* HMI_H_ */

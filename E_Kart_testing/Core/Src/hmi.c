@@ -1,20 +1,15 @@
 /*
- * hmi.c
- *
+ *  hmi.c
  *  Created on: 05.11.2018
- *      Author: melf_
+ *  Updated on: 2021.07 - Added RCP-Mode
  */
 
 #include "hmi.h"
 #include "flash.h"
-
 #include "Parameter.h"
 #include "fonts/Font_8_Retro.h"
 
 #define _8_Retro               &Font_8_Retro
-
-
-
 
 extern int16_t  Lenkradwinkel;            // Lenkradwinkelwert in Grad*10 nach LW-Sensor �ber CAN-It, -7800 .. 0 .. +7800
 extern uint32_t Geschwindigkeit_kmh;      // Geschwindigkeit des E-Karts in kmh, 0 .. umgerechneter Wert von DREHZAHL_MAX
@@ -33,7 +28,7 @@ uint8_t PasswordCodeUser[4];
 uint8_t sCode;                 // 0-4, eingegebene Zeichen des Password
 char Asci_SliderWert[11];  		// Puffer-f�r uintToasci-Wandelung
 
-//extern uint8_t Sp_mSek_mul100;
+extern uint8_t Sp_mSek_mul100;
 extern uint8_t Sp_Min;
 extern uint8_t Sp_Sek;
 extern uint8_t Sp_Stu;
@@ -59,9 +54,9 @@ extern uint16_t *Pointer_BeschlProzent;   // Parameter dient zur Touch-Eingabe, 
 extern uint16_t *Pointer_Rueckwaert;
 
 // RCP-Mode global communication variables
-extern uint8_t RCP_Mode_status;
-extern uint8_t RCP_Mode_selected;
-extern uint8_t RCP_Mode_pending;
+extern uint8_t RCP_Mode_status;  // actual rcp status: 0 == disconnected, 1 == connencted
+extern uint8_t RCP_Mode_selected;  // indicates if user wants connect/disconnect
+extern uint8_t RCP_Mode_pending;  // indicates connection/disconnection event ongoing
 extern uint8_t RCP_Mode_errorcode;
 extern uint8_t Heartbeat_RCP;
 extern uint8_t SDOack;
@@ -123,14 +118,14 @@ void UnmarkChosenButton(uint_fast8_t Menuenummer, uint8_t Buttonnummer)
 	LCD_Rect(S_Button[Menuenummer][Buttonnummer].x1,S_Button[Menuenummer][Buttonnummer].y1,S_Button[Menuenummer][Buttonnummer].x2-S_Button[Menuenummer][Buttonnummer].x1,S_Button[Menuenummer][Buttonnummer].y2-S_Button[Menuenummer][Buttonnummer].y1,1,BLACK);
 }
 
-//void BlinkChosenButton(uint_fast8_t Menuenummer, uint8_t Buttonnummer)
-//{
-//	if (Sp_mSek_mul100<5){
-//		MarkChosenButton(Menuenummer, Buttonnummer);
-//	} else {
-//		UnmarkChosenButton(Menuenummer, Buttonnummer);
-//	}
-//}
+void BlinkChosenButton(uint_fast8_t Menuenummer, uint8_t Buttonnummer)
+{
+	if (Sp_mSek_mul100<5){
+		MarkChosenButton(Menuenummer, Buttonnummer);
+	} else {
+		UnmarkChosenButton(Menuenummer, Buttonnummer);
+	}
+}
 
 /*******************************************************************************
 * Function Name  :  AnzeigeSliderInit
@@ -2543,73 +2538,73 @@ void Anzeige(uint_fast8_t menuebene)
 {
 	switch(menuebene)
 	{
-	case 1:
-	{
-		EKartZustand();
-	}
-	break;
+		case 1:
+		{
+			EKartZustand();
+		}
+		break;
 
-	case 2:
-	{
-		ZeitAnzeige();
-	}
-	break;
+		case 2:
+		{
+			ZeitAnzeige();
+		}
+		break;
 
-	case 3:
-	{
-		ZeitAnzeige();
-	}
-	break;
+		case 3:
+		{
+			ZeitAnzeige();
+		}
+		break;
 
-	case 4:
-	{
-		ZeitAnzeige();
-	}
-	break;
+		case 4:
+		{
+			ZeitAnzeige();
+		}
+		break;
 
-	case 5:
-	{
-		ZeitAnzeige();
-	}
-	break;
+		case 5:
+		{
+			ZeitAnzeige();
+		}
+		break;
 
-	case 6:
-	{
-		ZeitAnzeige();
-	}
-	break;
+		case 6:
+		{
+			ZeitAnzeige();
+		}
+		break;
 
-	case 7:
-	{
-		ZeitAnzeige();
-	}
-	break;
+		case 7:
+		{
+			ZeitAnzeige();
+		}
+		break;
 
-	case 8:
-	{
-		ZeitAnzeige();
-	}
-	break;
+		case 8:
+		{
+			ZeitAnzeige();
+		}
+		break;
 
-	case 9:
-	{
-		ZeitAnzeige();
-	}
-	break;
+		case 9:
+		{
+			ZeitAnzeige();
+		}
+		break;
 
-	case 10:
-	{
-		ZeitAnzeige();
-		PasswordAnzeige();
-	}
-	break;
-	case 11:
-	{
-		ZeitAnzeige();
-	}
-	break;
+		case 10:
+		{
+			ZeitAnzeige();
+			PasswordAnzeige();
+		}
+		break;
+		case 11:
+		{
+			ZeitAnzeige();
+		}
+		break;
 
-	default: break;
+		default: break;
 	}
 }
 
