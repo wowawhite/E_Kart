@@ -1,6 +1,5 @@
 /*
- * hmi.h
- *
+ * hmi.h - one line comments only!
  *  Created on: 05.11.2018
  *  Updated on: 2021.07 - Added RCP-Mode
  */
@@ -15,36 +14,42 @@
 #include <stdlib.h>
 
 // function prototypes here
+char * getErrorString(uint8_t errorcode);
+char * getStatusString(uint8_t statuscode);
 void WriteButton(uint_fast8_t Menuenummer, uint8_t Buttonnummer);
 void MarkChosenButton(uint_fast8_t Menuenummer, uint8_t Buttonnummer);
 void UnmarkChosenButton(uint_fast8_t Menuenummer, uint8_t Buttonnummer);
 void BlinkChosenButton(uint_fast8_t Menuenummer, uint8_t Buttonnummer);
-
+void AnzeigeSlider_Init(uint_fast8_t Menuenummer, uint_fast8_t slidernummer);
+void TouchSlider(uint8_t menuenummer, uint8_t slidernummer);
+void ZeitAnzeige_Init(void);
+void ZeitAnzeige(void);
 void Menu_Oben(void);
 void Menu_Unten(void);
-void Password_Init(uint8_t menuebene);
+void PasswordAnzeige_Init(uint8_t menuebene);
+//void Password_Init(uint8_t menuebene);  // delete canditdate
 void PasswordAnzeige(void);
 void GeschwindigkeitsAnzeige_Init(void);
 void GasAnzeige_Init(void);
 void BremsAnzeige_Init(void);
 void LenkwinkelAnzeige_Init(uint16_t Startwert);
 void BatterieAnzeige_Init(void);
-void Batterie_Init(void);
+void RCPstatusAnzeige_Init(void);
+void StateofChargeAnzeige(void);
 void GasAnzeige(void);
 void BremsAnzeige(void);
 void Geschwindigkeitsanzeige(void);
-void StateofChargeAnzeige(void);
 void LenkwinkelAnzeige(void);
-void ZeitAnzeige_Init(void);
-void ZeitAnzeige(void);
+//void Batterie_Init(void);  // delete canditdate
 void GPIOAnzeige (void);
+void RCP_show_connect(uint8_t msg_switch);
 void EKartZustand(void);
 void Anzeige_Init(uint8_t menuebene);
+void getTouch(void);
 uint8_t TouchAction(uint8_t menuebene);
 void Menuestruktur(void);
-void getTouch(void);
 void Anzeige(uint_fast8_t menuebene);
-void AnzeigeSlider_Init(uint_fast8_t Menuenummer, uint_fast8_t slidernummer);
-void TouchSlider(uint8_t menuenummer, uint8_t slidernummer);
+
+
 
 #endif /* HMI_H_ */

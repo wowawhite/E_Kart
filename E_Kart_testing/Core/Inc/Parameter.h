@@ -2,8 +2,9 @@
 * File Name          : Parameter.h
 * Author             : Ostfalia Hochschule f�r angewandte Wissenschaften
                        Michael Scheele
-* Modification			 : Tina K�hling											 
+* Modification		 : Tina K�hling
 * Date First Issued  : 2012-05-15
+* Updated 	         : 2021-07  - added RCP mode
 * Description        : Parameter des E-Karts
 *******************************************************************************/
 
@@ -14,14 +15,17 @@
 /* Exported constants ------------------------------------------------*/                             
 /* Macros ------------------------------------------------------------*/
 
-#define SOFTWAREVERSION "V2021.02"
+#define SOFTWAREVERSION "V2021.03" // dont forget to update if changed
+
+#define TRUE 1
+#define FALSE 0
 
 // Errorcodes RCP-Mode
 #define NO_ERROR 0
-#define WAITING_RESPOND 1
-#define NO_CAN_RESPOND 2
-#define NO_RCP_HEARTBEAT 3
-#define NO_MOTOR_HEARTBEAT 4
+#define RCP_TIMEOUT 1
+#define NO_RCP_HEARTBEAT 2
+#define NO_MOTOR_HEARTBEAT 3
+#define RCP_MOVING_ERROR 4
 
 #define max_Menuebenen 19       // insgesamt 19 Menuebenen, 0.Menuebene wird nicht genutzt
 #define max_buttons 13           // in jeder Menuebene kann man maximal 14(13) Switch-Bottons(0.Buttons z�hlt dazu) auslegen.
@@ -33,13 +37,13 @@
 // In "struct" [TouchFunktion.c] sind die Eigenschaft von Slidern definiert
 
 #define TOUCH_AKTIV					  	// wenn definiert, Touch-Aktiv, durch auskommentieren, Touch-Inaktiv
-
+#define TEMPORARY_INVERTTOUCH			// define this to invert touch on LCD
 /* -------------------------------- FFR ----------------------------------------------  Motor-Controller-Daten --------------------------------*/
 #define SaveButton					0		// f�r bessere Lesbarkeit des Codes definiert
 
 #define MenuSelectDrivingMode		5
 
-#define VorgabeDrehzahl				0
+#define VorgabeDrehzahl				0 // Speed mode is not implemented. Torque control mode is default
 #define VorgabeMoment				1
 
 #define	AnfaengerModeButton			2
@@ -171,6 +175,7 @@
 
 #define ID_SDO_RCP_Rx				0x60A
 #define ID_SDO_RCP_Tx				0x58A
+#define Msg_SDO_RCP_ack_OK			0x60
 
 #define Motor_links					5
 #define Motor_rechts				6
@@ -183,6 +188,7 @@
 #define setStrom					4
 #define Drehzahl					5
 #define Beschleunigung				6
+// Speed mode is not implemented. Torque control mode is default
 #define Speed_mode					7			// 7-8 f�r Speedmode, Vorgabedrehzahl
 #define Traction_control_mode1		8
 #define Torque_mode					9			// 9-11 f�r Torquemode, Vorgabemoment

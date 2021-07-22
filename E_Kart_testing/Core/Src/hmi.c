@@ -1,12 +1,13 @@
 /*
- *  hmi.c
+ * hmi.c - one line comments only!
  *  Created on: 05.11.2018
- *  Updated on: 2021.07 - Added RCP-Mode
+ *  Updated on: 2021.07 - Added RCP-Mode. LCD is 320x240 pixels
  */
 
 #include "hmi.h"
 #include "flash.h"
 #include "Parameter.h"
+#include "messages.h"
 #include "fonts/Font_8_Retro.h"
 
 #define _8_Retro               &Font_8_Retro
@@ -23,12 +24,12 @@ extern int16_t  Bremse;				            // Bremswert, der �ber PWM-Sensor ermit
 extern uint8_t StateofCharge;
 char buf[4];
 char buf1[4];
+char longbuf[20];
 uint8_t PasswordCode[4]={1,2,3,4};
 uint8_t PasswordCodeUser[4];
 uint8_t sCode;                 // 0-4, eingegebene Zeichen des Password
 char Asci_SliderWert[11];  		// Puffer-f�r uintToasci-Wandelung
 
-extern uint8_t Sp_mSek_mul100;
 extern uint8_t Sp_Min;
 extern uint8_t Sp_Sek;
 extern uint8_t Sp_Stu;
@@ -58,8 +59,7 @@ extern uint8_t RCP_Mode_status;  // actual rcp status: 0 == disconnected, 1 == c
 extern uint8_t RCP_Mode_selected;  // indicates if user wants connect/disconnect
 extern uint8_t RCP_Mode_pending;  // indicates connection/disconnection event ongoing
 extern uint8_t RCP_Mode_errorcode;
-extern uint8_t Heartbeat_RCP;
-extern uint8_t SDOack;
+
 
 struct SwitchButton
 {
@@ -108,6 +108,33 @@ void WriteButton(uint_fast8_t Menuenummer, uint8_t Buttonnummer)
 	 LCD_Font(textposi_x, textposi_y, S_Button[Menuenummer][Buttonnummer].Text, _8_Retro, 1, BLACK);
 }
 
+char * getErrorString(uint8_t errorcode)
+{
+	char * tmpptr;
+	switch(errorcode)
+	 {
+		case 0: tmpptr = NO_ERROR_MSG; break;
+		case 1: tmpptr = RCP_TIMEOUT_MSG; break;
+		case 2: tmpptr = NO_RCP_HEARTBEAT_MSG; break;
+		case 3: tmpptr = NO_MOTOR_HEARTBEAT_MSG; break;
+		case 4: tmpptr = RCP_MOVING_ERROR_MSG; break;
+		default: tmpptr=NO_ERROR_MSG; break;
+	}
+	return tmpptr;
+}
+char * getStatusString(uint8_t statuscode)
+{
+	char *tmpptr;
+	switch(statuscode)
+	 {
+		case 0: tmpptr = RCP_OFF_MSG; break;
+		case 1: tmpptr = RCP_ON_MSG; break;
+		default: tmpptr=RCP_OFF_MSG; break;
+	}
+	return tmpptr;
+}
+
+
 void MarkChosenButton(uint_fast8_t Menuenummer, uint8_t Buttonnummer)
 {
 	LCD_Rect(S_Button[Menuenummer][Buttonnummer].x1,S_Button[Menuenummer][Buttonnummer].y1,S_Button[Menuenummer][Buttonnummer].x2-S_Button[Menuenummer][Buttonnummer].x1,S_Button[Menuenummer][Buttonnummer].y2-S_Button[Menuenummer][Buttonnummer].y1,1,RED);
@@ -120,7 +147,7 @@ void UnmarkChosenButton(uint_fast8_t Menuenummer, uint8_t Buttonnummer)
 
 void BlinkChosenButton(uint_fast8_t Menuenummer, uint8_t Buttonnummer)
 {
-	if (Sp_mSek_mul100<5){
+	if (Sp_Sek%2){
 		MarkChosenButton(Menuenummer, Buttonnummer);
 	} else {
 		UnmarkChosenButton(Menuenummer, Buttonnummer);
@@ -775,7 +802,7 @@ void RCPstatusAnzeige_Init(void)
 	const uint8_t yposition = 185;
 	LCD_Font(xposition,yposition,"RCP Mode:",_8_Retro,1,WHITE);
 	LCD_Rect_Fill(80,170,16,16,BLACK);
-	LCD_Font(xposition+80,yposition,itoa(RCP_Mode_status,buf,10),_8_Retro,1,WHITE);
+	LCD_Font(xposition+80,yposition,getStatusString(RCP_Mode_status),_8_Retro,1,WHITE);
 
 }
 
@@ -937,6 +964,18 @@ void GPIOAnzeige (void)
 	MerkerReverseGear = ReverseGear;
 }
 
+void RCP_show_connect(uint8_t msg_switch)
+{
+	if(msg_switch)
+	{
+		LCD_Rect_Fill(56,29,208,18,RED);
+		LCD_Font(56,45,RCP_CONNECTING,_8_Retro,1,WHITE);
+	} else {
+		LCD_Rect_Fill(56,29,208,18,BLACK);
+	}
+
+
+}
 
 void EKartZustand(void)
 {
@@ -998,7 +1037,7 @@ void Anzeige_Init(uint8_t menuebene)
 	}
 	break;
 
-	case 4:		//Fahrmodi �bersicht TODO: Hier muster auswahl-schattierung
+	case 4:		//Fahrmodi �bersicht
 	{
 		LCD_Rect_Fill(0, 0, 320, 240, BLACK);
 		LCD_Font(10,66,"Differenzial", _8_Retro,1,WHITE);
@@ -1016,7 +1055,7 @@ void Anzeige_Init(uint8_t menuebene)
 		WriteButton(4,6);   // Return to Men� (Ebene 4)
 		switch (Flash_New_Parameters_List[VorgabeMomentDrehzahl]) {
 			case VorgabeDrehzahl:
-				MarkChosenButton(4,VorgabeDrehzahl);
+				MarkChosenButton(4,VorgabeDrehzahl);  // Vorgabedrehzahl nicht implementiert
 				break;
 			case VorgabeMoment:
 				MarkChosenButton(4,VorgabeMoment);
@@ -1144,17 +1183,16 @@ void Anzeige_Init(uint8_t menuebene)
 
     	LCD_Rect_Fill(0, 0, 320, 240, BLACK);  // clean previous screen
 
-    	LCD_Font(0,170,"RCP-Mode Status:", _8_Retro,1,WHITE);
-    	LCD_Rect_Fill(130,170,16,16,BLACK);
-    	LCD_Font(130,170,itoa(RCP_Mode_status,buf,10),_8_Retro,1,WHITE);
+    	LCD_Font(0,80,"RCP-Mode Status:", _8_Retro,1,WHITE);
+    	LCD_Rect_Fill(130,80,16,16,BLACK);
+    	LCD_Font(130,80,getStatusString(RCP_Mode_status),_8_Retro,1,WHITE);
 
-    	LCD_Font(0,200,"RCP-Mode Errorcode:", _8_Retro,1,WHITE);
-    	LCD_Rect_Fill(130,200,16,16,BLACK);
-    	LCD_Font(180,200,itoa(RCP_Mode_errorcode,buf,10),_8_Retro,1,WHITE);
+    	LCD_Font(0,105,"RCP-Mode Errorcode:", _8_Retro,1,WHITE);
+    	LCD_Rect_Fill(130,105,16,16,BLACK);
+    	LCD_Font(150,105,getErrorString(RCP_Mode_errorcode),_8_Retro,1,WHITE);
 		Menu_Oben();                     // �berschrift, Fahrzeugrechner
     	WriteButton(11,0);	           // Switch-Button zurueck zum "Hauptmenu"
     	WriteButton(11,1);			// Switch-Button RCP Connect
-
 	}
 	break;
 
@@ -1602,15 +1640,9 @@ uint8_t TouchAction(uint8_t menuenummer)
 			if (S_Button[menuenummer][1].x1<touchX&&S_Button[menuenummer][1].x2>touchX&&S_Button[menuenummer][1].y1<touchY&&S_Button[menuenummer][1].y2>touchY)
 			{
 				RCP_Mode_selected = !RCP_Mode_selected;
-//				RCP_Mode_errorcode = WAITING_RESPOND;
-//				Anzeige_Init(S_Button[menuenummer][1].Menueverlinkung);
-				ret = S_Button[menuenummer][1].Menueverlinkung;
-				//  TODO: bug wrong menu after doubleclick
-				// TODO: Doubletap to disable rcp mode
-				// Indicate rcp enabled by shadow
-				// error merker no response zurücksetzen
-				//
+				RCP_Mode_pending = 1;
 
+				ret = S_Button[menuenummer][1].Menueverlinkung;
 			}
 		}
 		break;
@@ -2511,29 +2543,38 @@ void Menuestruktur(void)
   menuenummer=11;
 
   buttonnummer=0;
-  S_Button[menuenummer][buttonnummer].x1=240;
-  S_Button[menuenummer][buttonnummer].y1=50;
-  S_Button[menuenummer][buttonnummer].x2=310;
-  S_Button[menuenummer][buttonnummer].y2=100;
+  S_Button[menuenummer][buttonnummer].x1=220;
+  S_Button[menuenummer][buttonnummer].y1=190;
+  S_Button[menuenummer][buttonnummer].x2=320;
+  S_Button[menuenummer][buttonnummer].y2=240;
   S_Button[menuenummer][buttonnummer].Menueverlinkung=2; // "Zur�ck" verlinkt zur "Hauptmenu"
   S_Button[menuenummer][buttonnummer].Text="Zurueck";
   S_Button[menuenummer][buttonnummer].Textlaenge=7;
   S_Button[menuenummer][buttonnummer].bottonsanzahl=2;
 
   buttonnummer=1;                                  //Button sent RCP connection request
-  S_Button[menuenummer][buttonnummer].x1=120;
-  S_Button[menuenummer][buttonnummer].y1=50;
-  S_Button[menuenummer][buttonnummer].x2=230;
-  S_Button[menuenummer][buttonnummer].y2=100;
-  S_Button[menuenummer][buttonnummer].Menueverlinkung=2;
+  S_Button[menuenummer][buttonnummer].x1=110;
+  S_Button[menuenummer][buttonnummer].y1=190;
+  S_Button[menuenummer][buttonnummer].x2=215;
+  S_Button[menuenummer][buttonnummer].y2=240;
+  S_Button[menuenummer][buttonnummer].Menueverlinkung=11;
   S_Button[menuenummer][buttonnummer].bottonsanzahl=2;
   S_Button[menuenummer][buttonnummer].Text="RCP-Connect";
   S_Button[menuenummer][buttonnummer].Textlaenge=11;
 
-  //TODO: Add visual sign for error or timeout or connection error
+//  buttonnummer=2;                                  // Experimental timeseries plot menu
+//  S_Button[menuenummer][buttonnummer].x1=0;
+//  S_Button[menuenummer][buttonnummer].y1=190;
+//  S_Button[menuenummer][buttonnummer].x2=105;
+//  S_Button[menuenummer][buttonnummer].y2=240;
+//  S_Button[menuenummer][buttonnummer].Menueverlinkung=11;
+//  S_Button[menuenummer][buttonnummer].bottonsanzahl=2;
+//  S_Button[menuenummer][buttonnummer].Text="Plot";
+//  S_Button[menuenummer][buttonnummer].Textlaenge=11;
 
 }
 
+// Diese Funktion sorgt für ein Update der tatsächlich angezeigten GUI-Struktur
 void Anzeige(uint_fast8_t menuebene)
 {
 	switch(menuebene)
@@ -2601,6 +2642,7 @@ void Anzeige(uint_fast8_t menuebene)
 		case 11:
 		{
 			ZeitAnzeige();
+			RCP_show_connect(RCP_Mode_pending);
 		}
 		break;
 
