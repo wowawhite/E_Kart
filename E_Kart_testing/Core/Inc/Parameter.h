@@ -15,10 +15,15 @@
 /* Exported constants ------------------------------------------------*/                             
 /* Macros ------------------------------------------------------------*/
 
-#define SOFTWAREVERSION "V2021.03" // dont forget to update if changed
+#define SOFTWAREVERSION "V2021.04" // dont forget to update if changed
 
 #define TRUE 1
 #define FALSE 0
+
+//#define EX_PLOT  // this one turns on/off experimental plot feature
+//#ifdef EX_PLOT
+//
+//#endif
 
 // Errorcodes RCP-Mode
 #define NO_ERROR 0
@@ -37,7 +42,7 @@
 // In "struct" [TouchFunktion.c] sind die Eigenschaft von Slidern definiert
 
 #define TOUCH_AKTIV					  	// wenn definiert, Touch-Aktiv, durch auskommentieren, Touch-Inaktiv
-#define TEMPORARY_INVERTTOUCH			// define this to invert touch on LCD
+#define TEMPORARY_INVERTTOUCH			// TODO: define this to invert touch on LCD
 /* -------------------------------- FFR ----------------------------------------------  Motor-Controller-Daten --------------------------------*/
 #define SaveButton					0		// f�r bessere Lesbarkeit des Codes definiert
 

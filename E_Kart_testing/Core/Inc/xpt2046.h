@@ -12,9 +12,9 @@
 #define	XPT2046_REVERSED 	1
 #define	XPT2046_MIRROR_X 	0 // mirroring touch on horizontal axis
 #ifdef TEMPORARY_INVERTTOUCH
-#define	XPT2046_MIRROR_Y 	1 // mirroring touch on vertical axis TODO: invert on alternative testboard
+#define	XPT2046_MIRROR_Y 	1
 #else
-#define	XPT2046_MIRROR_Y 	0 // mirroring touch on vertical axis TODO: invert on alternative testboard
+#define	XPT2046_MIRROR_Y 	0
 #endif
 
 #define RAW_MIN_X	300

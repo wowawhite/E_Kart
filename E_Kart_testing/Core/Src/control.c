@@ -2,11 +2,15 @@
  * control.c
  *
  *  Created on: 28.11.2018
- *      Author: melf_
+ *  Updated on: 2021.07 - Added RCP-Mode.
  */
 
 #include "control.h"
 #include "can.h"
+
+#ifdef EX_PLOT
+#include "plotter.h"
+#endif
 
 CAN_RxHeaderTypeDef RxMessage;			    // CAN-Receive
 CAN_TxHeaderTypeDef TxMessage;	            // CAN-Transmit
@@ -76,6 +80,19 @@ uint8_t RCP_Mode_errorcode = 0;
 uint8_t Heartbeat_RCP = 0;
 uint8_t SDOack = 0;
 
+// TODO experimental ringbuffer here
+#ifdef EX_PLOT
+#define PLOTBUF_SIZE 300
+size_t buffptr = 0;
+typedef struct {
+	int32_t left;
+	int32_t right;
+}hmi_buffer;
+
+hmi_buffer torque_plot[PLOTBUF_SIZE+2];
+CIRC_GBUF_DEF(struct hmi_buffer, torque_plot, PLOTBUF_SIZE );
+// https://githubmemory.com/repo/goToMain/c-utils/issues
+#endif
 
 void HAL_SYSTICK_Callback(void)
 {
@@ -185,6 +202,15 @@ void HAL_SYSTICK_Callback(void)
 	    HAL_CAN_AddTxMessage(&hcan1, &TxMessage,txData,(uint32_t *)Mailbox);     // Message �bertragen
 
 	}
+	#ifdef EX_PLOT
+	if(Sp_mSek_mul10 == 2)
+	{
+		buffptr = (buffptr+1)%PLOTBUF_SIZE;
+//		CIRC_GBUF_PUSH(my_circ_buf, &torque_plot[buffptr]);
+//		circ_gbuf_push(&my_circ_buf, &test);
+
+	}
+	#endif
 
 
 	/*Turn RCP-Mode on or off*/
@@ -192,6 +218,7 @@ void HAL_SYSTICK_Callback(void)
 	{
 		RCP_connection_request();
 	}
+	// TODO delete comment if RCP_connection_request() is tested
 //	if(RCP_Mode_selected != RCP_Mode_status)
 //	{
 //		if(Motor_Drehzahl <= 1 && Vorgabe_Moment == 0)
@@ -338,7 +365,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 	{
 		SDOack= RxMessage[0];
 
-
+		// TODO delete comment if RCP_connection_request() is tested
 //		if(SDOack == 0x60)
 //		{
 //			RCP_Mode_status = RCP_Mode_selected;
@@ -699,5 +726,13 @@ uint8_t RCP_connection_request(void)
 	RCP_Mode_pending = 0;
 	return FALSE;
 }
+
+#ifdef EX_PLOT
+int32_t plot_yValueToPixel(uint32 inputvalue)
+{
+	const int32_t maxvalue = 200;
+	return (170-(inputvalue/maxvalue) * 170);
+}
+#endif
 
 
