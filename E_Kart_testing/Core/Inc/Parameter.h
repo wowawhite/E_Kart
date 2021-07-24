@@ -15,7 +15,7 @@
 /* Exported constants ------------------------------------------------*/                             
 /* Macros ------------------------------------------------------------*/
 
-#define SOFTWAREVERSION "V2021.04" // dont forget to update if changed
+#define SOFTWAREVERSION "V2021.05" // dont forget to update if changed
 
 #define TRUE 1
 #define FALSE 0

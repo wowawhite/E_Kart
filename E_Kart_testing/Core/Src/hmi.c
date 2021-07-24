@@ -1666,12 +1666,14 @@ uint8_t TouchAction(uint8_t menuenummer)
 
 				ret = S_Button[menuenummer][1].Menueverlinkung;
 			}
+			#ifdef EX_PLOT
 			if (S_Button[menuenummer][2].x1<touchX&&S_Button[menuenummer][1].x2>touchX&&S_Button[menuenummer][1].y1<touchY&&S_Button[menuenummer][1].y2>touchY)
 			{
 				// button go to plotter
 
 				ret = S_Button[menuenummer][2].Menueverlinkung;
 			}
+			#endif
 		}
 		break;
 		#ifdef EX_PLOT
@@ -2604,7 +2606,7 @@ void Menuestruktur(void)
 	S_Button[menuenummer][buttonnummer].Menueverlinkung=2; // "Zur�ck" verlinkt zur "Hauptmenu"
 	S_Button[menuenummer][buttonnummer].Text="Zurueck";
 	S_Button[menuenummer][buttonnummer].Textlaenge=7;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=3;
+	S_Button[menuenummer][buttonnummer].bottonsanzahl=2;
 
 	buttonnummer=1;                                  //Button sent RCP connection request
 	S_Button[menuenummer][buttonnummer].x1=110;
@@ -2612,19 +2614,10 @@ void Menuestruktur(void)
 	S_Button[menuenummer][buttonnummer].x2=215;
 	S_Button[menuenummer][buttonnummer].y2=240;
 	S_Button[menuenummer][buttonnummer].Menueverlinkung=11;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=3;
+	S_Button[menuenummer][buttonnummer].bottonsanzahl=2;
 	S_Button[menuenummer][buttonnummer].Text="RCP-Connect";
 	S_Button[menuenummer][buttonnummer].Textlaenge=11;
 
-	buttonnummer=2;                                  // Experimental timeseries plot menu
-	S_Button[menuenummer][buttonnummer].x1=0;
-	S_Button[menuenummer][buttonnummer].y1=190;
-	S_Button[menuenummer][buttonnummer].x2=105;
-	S_Button[menuenummer][buttonnummer].y2=240;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=12;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=3;
-	S_Button[menuenummer][buttonnummer].Text="Plot";
-	S_Button[menuenummer][buttonnummer].Textlaenge=11;
 
 #ifdef EX_PLOT
 	// Menuebene 12

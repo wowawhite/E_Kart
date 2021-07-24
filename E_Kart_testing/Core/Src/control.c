@@ -215,28 +215,26 @@ void HAL_SYSTICK_Callback(void)
 	/*Turn RCP-Mode on or off*/
 	if(RCP_Mode_pending)
 	{
-		RCP_connection_request();
+//		RCP_connection_request();
+		if(Motor_Drehzahl <= 1 && Vorgabe_Moment == 0)
+		{
+			TxMessage.StdId = ID_SDO_RCP_Rx;	// Standart Identifier
+			TxMessage.ExtId = ID_SDO_RCP_Rx;	// extended Identifier
+			TxMessage.RTR = CAN_RTR_DATA;   // Data frame
+			TxMessage.IDE = CAN_ID_STD;     // use Standart Identifier
+			TxMessage.DLC = 8;              // length of the frame in Bytes
+			txData[0] = 0x2F;
+			txData[1] = 0x00;
+			txData[2] = 0x20;
+			txData[3] = 0x01;
+			txData[4] = RCP_Mode_selected;
+			HAL_CAN_AddTxMessage(&hcan1,&TxMessage,txData,(uint32_t *)Mailbox);
+			//maybe no wait time is needed and ack can be read here
+			RCP_Mode_pending = 0;
+		}
 	}
-	// TODO delete comment if RCP_connection_request() is tested
-//	if(RCP_Mode_selected != RCP_Mode_status)
-//	{
-//		if(Motor_Drehzahl <= 1 && Vorgabe_Moment == 0)
-//		{
-//			TxMessage.StdId = ID_SDO_RCP_Rx;	// Standart Identifier
-//			TxMessage.ExtId = ID_SDO_RCP_Rx;	// extended Identifier
-//			TxMessage.RTR = CAN_RTR_DATA;   // Data frame
-//			TxMessage.IDE = CAN_ID_STD;     // use Standart Identifier
-//			TxMessage.DLC = 8;              // length of the frame in Bytes
-//			txData[0] = 0x2F;
-//			txData[1] = 0x00;
-//			txData[2] = 0x20;
-//			txData[3] = 0x01;
-//			txData[4] = RCP_Mode_selected;
-//
-//			HAL_CAN_AddTxMessage(&hcan1,&TxMessage,txData,(uint32_t *)Mailbox);
-//
-//		}
-//	}
+
+
 
 
 	if (( Sp_mSek==3 ) || ( Sp_mSek==8 ))
@@ -364,18 +362,22 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 	{
 		SDOack= RxMessage[0];
 
-		// TODO delete comment if RCP_connection_request() is tested
-//		if(SDOack == 0x60)
-//		{
-//			RCP_Mode_status = RCP_Mode_selected;
-//			if (RCP_Mode_errorcode == NO_CAN_RESPOND)
-//			{
-//				RCP_Mode_errorcode = NO_ERROR;
-//			}else
-//			{
-//				RCP_Mode_errorcode = NO_CAN_RESPOND;
-//			}
-//		}
+		if(SDOack == Msg_SDO_RCP_ack_OK)
+		{
+			// connection established. Set flags and return.
+			if (RCP_Mode_errorcode == RCP_TIMEOUT)
+			{
+				RCP_Mode_errorcode = NO_ERROR;
+			}
+			RCP_Mode_status = RCP_Mode_selected;
+			RCP_Mode_pending = 0;
+
+		} else {
+			RCP_Mode_errorcode = RCP_TIMEOUT;
+			RCP_Mode_pending = 0;
+		}
+		// end SDOack check
+
 	}
 
 
@@ -680,7 +682,7 @@ uint8_t RCP_connection_request(void)
 		if(Motor_Drehzahl <= 1 && Vorgabe_Moment == 0)
 		{
 			// at t=700ms send request
-			if (Sp_mSek_mul100 == 7)
+			if (Sp_mSek_mul100 == 2)
 			{
 				TxMessage.StdId = ID_SDO_RCP_Rx;	// Standart Identifier
 				TxMessage.ExtId = ID_SDO_RCP_Rx;	// extended Identifier
@@ -698,6 +700,7 @@ uint8_t RCP_connection_request(void)
 
 			if (Sp_mSek_mul100 == 8)// 100ms later check for acknowledge
 			{
+
 
 				if(SDOack == Msg_SDO_RCP_ack_OK)
 				{
