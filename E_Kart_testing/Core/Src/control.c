@@ -57,8 +57,8 @@ uint32_t Merker_aktuelle_Drehzahl; // Merker f�r Berechnung der Beschleunigung
 
 uint8_t  ReverseGear;           // R�ckw�rtsgang 0 - aus, 1 - ein = R�ckw�rtsfahren
 uint8_t  Hauptrelais;           // Schaltsignal-Hauptrelias,  1 - alles i.O. , 0 - Fehler
-int32_t  Motor_Drehzahl_r;
-int32_t  Motor_Drehzahl_l;
+int32_t  Motor_Drehzahl_r;		// ist-drehzahl rechts
+int32_t  Motor_Drehzahl_l;		// ist-drehzahl links
 extern int16_t  Gas;				              // Wert des Gaspedals, der �ber PWM-Sensor ermittelt wurde, Wertebereich: 0 .. 100 = Volldurchgedr�ckt
 extern int16_t  Bremse;				            // Bremswert, der �ber PWM-Sensor ermittelt wurde, Wertebereich: 0 .. 100 = Volldurchgedr�ckt
 uint8_t  Heartbeat_MC_rechts;   // Heartbeat Motorcontroller rechts
@@ -82,16 +82,15 @@ uint8_t SDOack = 0;
 
 // TODO experimental ringbuffer here
 #ifdef EX_PLOT
-#define PLOTBUF_SIZE 300
-size_t buffptr = 0;
-typedef struct {
+#define POINTBUF_SIZE 300
+
+typedef struct{
 	int32_t left;
 	int32_t right;
-}hmi_buffer;
+}hmi_plotPoint;
+size_t pointArrayPointer = 0;
+hmi_plotPoint pointBuffer[POINTBUF_SIZE+1];
 
-hmi_buffer torque_plot[PLOTBUF_SIZE+2];
-CIRC_GBUF_DEF(struct hmi_buffer, torque_plot, PLOTBUF_SIZE );
-// https://githubmemory.com/repo/goToMain/c-utils/issues
 #endif
 
 void HAL_SYSTICK_Callback(void)
@@ -203,12 +202,12 @@ void HAL_SYSTICK_Callback(void)
 
 	}
 	#ifdef EX_PLOT
-	if(Sp_mSek_mul10 == 2)
+	if(Sp_mSek_mul10 == 2)  // read ist-drehzahl sometimes
 	{
-		buffptr = (buffptr+1)%PLOTBUF_SIZE;
-//		CIRC_GBUF_PUSH(my_circ_buf, &torque_plot[buffptr]);
-//		circ_gbuf_push(&my_circ_buf, &test);
 
+		pointBuffer[pointArrayPointer].left = Motor_Drehzahl_l;  // ist-drehzahl links
+		pointBuffer[pointArrayPointer].right = Motor_Drehzahl_r;  // ist-drehzahl rechts
+		pointArrayPointer = pointArrayPointer%POINTBUF_SIZE;
 	}
 	#endif
 
@@ -728,11 +727,10 @@ uint8_t RCP_connection_request(void)
 }
 
 #ifdef EX_PLOT
-int32_t plot_yValueToPixel(uint32 inputvalue)
+// TODO maybe this function in hmi.c
+int32_t scale_Yvalue(uint32_t inputvalue)
 {
-	const int32_t maxvalue = 200;
-	return (170-(inputvalue/maxvalue) * 170);
+	const int32_t maxvalue = 5000; // max drehzahl value(geschaetzt)
+	return (170-(inputvalue/maxvalue) * 170);  // relativ zur maximalen pixelhoehe
 }
 #endif
-
-

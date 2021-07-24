@@ -100,8 +100,19 @@ volatile struct GleitBlock
 	uint16_t  Farbe;	 		 // Farbe
 } Slider[max_Menuebenen][max_sliders];
 
+// TODO experimental ringbuffer here
+#ifdef EX_PLOT
 
+typedef struct{
+	int32_t left;
+	int32_t right;
+}hmi_plotPoint;
+extern size_t plotArrayPointer;
+extern hmi_plotPoint pointContainer;
+extern hmi_plotPoint *pointBuffer;
+extern size_t plotArrayPointer = 0;
 
+#endif
 
 
 // functions here
@@ -2716,13 +2727,38 @@ void Anzeige(uint_fast8_t menuebene)
 		case 12:
 		{
 			ZeitAnzeige();
-//			RCP_plot_graph();
+			#ifdef EX_PLOT
+			RCP_plot_graph();
+			#endif
 		}
 		break;
 		#endif
 		default: break;
 	}
 }
+
+// TODO experimental ringbuffer here
+#ifdef EX_PLOT
+
+void RCP_plot_graph(void)
+{
+	const int x_pixelOffset = 20;
+	size_t readArrayPointer = pointArrayPointer-1; // wrong
+	// get x and y coordinates
+	for(int i  = 0; i<POINTBUF_SIZE;i++)
+	{
+
+		pointBuffer[]
+		LCD_Pixel
+	}
+
+
+}
+
+#endif
+
+
+
 
 
 
