@@ -46,12 +46,8 @@
 // In "struct" [TouchFunktion.c] sind die Eigenschaft von Slidern definiert
 
 #define TOUCH_AKTIV					  	// wenn definiert, Touch-Aktiv, durch auskommentieren, Touch-Inaktiv
-#define TEMPORARY_INVERTTOUCH			// TODO: define this to invert touch on LCD on the testing uC because the LCD there is flipped
+//#define TEMPORARY_INVERTTOUCH	// TODO: define this to invert touch on the testing uC LCD because the LCD there is flipped
 /* -------------------------------- FFR ----------------------------------------------  Motor-Controller-Daten --------------------------------*/
-//#define SaveButton					0		// f�r bessere Lesbarkeit des Codes definiert
-//
-//#define MenuSelectDrivingMode		5
-
 #define VorgabeDrehzahl				0 // Speed mode is not implemented. Torque control mode is default
 #define VorgabeMoment				1
 

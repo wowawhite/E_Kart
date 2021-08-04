@@ -10,12 +10,13 @@
 
 #define	XPT2046_ACCURACY 	1
 #define	XPT2046_REVERSED 	1
-#define	XPT2046_MIRROR_Y 	1
-
-#ifdef TEMPORARY_INVERTTOUCH
-#define	XPT2046_MIRROR_X 	1 // mirroring touch on horizontal axis
-#else
 #define	XPT2046_MIRROR_X 	0
+
+// mirroring touch on horizontal axis
+#ifndef TEMPORARY_INVERTTOUCH
+#define	XPT2046_MIRROR_Y 	1
+#else
+#define	XPT2046_MIRROR_Y 	0
 #endif
 
 #define RAW_MIN_X	300
