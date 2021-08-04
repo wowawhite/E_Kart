@@ -8,19 +8,20 @@
 #include "flash.h"
 #include "Parameter.h"
 
+// variables here
 uint16_t Flash_Memory_List[NumberOfSavedParameter];
 uint16_t Flash_New_Parameters_List[NumberOfSavedParameter];
 
 uint16_t *Pointer_GasProzent=&Flash_Memory_List[Anfaenger_GasProzent];	// Parameter dient zur Touch-Eingabe, Wertbereich (0-100)=(0%-100%), dessen Initialwert ist 100%
-															// als der Beiwert für Einstellung des Wirkungsbereichs von Gaspedal(bei Drehzahlvorgabe_mode )
-                              // z.B wenn "Pointer_GasProzent=100", Gaspedal volldurchgedrückt, die max.Drehzahl=3000 wird durch CAN-BUS vorgegeben
-                              // wenn "Pointer_GasProzent=50", volldurchgedrückt, dann wird nur die Drehzahl=1500 vorgegeben.
+															// als der Beiwert fï¿½r Einstellung des Wirkungsbereichs von Gaspedal(bei Drehzahlvorgabe_mode )
+                              // z.B wenn "Pointer_GasProzent=100", Gaspedal volldurchgedrï¿½ckt, die max.Drehzahl=3000 wird durch CAN-BUS vorgegeben
+                              // wenn "Pointer_GasProzent=50", volldurchgedrï¿½ckt, dann wird nur die Drehzahl=1500 vorgegeben.
 															// der Wirkungsbereich halbiert sich
 
 uint16_t *Pointer_BeschlProzent=&Flash_Memory_List[Anfaenger_BeschlProzent];   // Parameter dient zur Touch-Eingabe, Wertbereich (0-100)=(0%-100%), dessen Initialwert ist 100%					--------------------------------------
 uint16_t *Pointer_Rueckwaert=&Flash_Memory_List[Anfaenger_Rueckwaert];
 
-uint16_t test1;
+//uint16_t test1;
 
 uint32_t FirstSector = 0, NbOfSectors = 0, Address = 0;
 uint32_t SectorError = 0;
@@ -30,6 +31,11 @@ static FLASH_EraseInitTypeDef EraseInitStruct;
 
 uint32_t *FlashMemoryPointer=0;
 
+// function prototypes here
+static uint32_t GetSector(uint32_t Address);
+static uint32_t GetSectorSize(uint32_t Sector);
+
+// function definitions here
 void flash_init(void)
 {
 	Flash_New_Parameters_List[ChosenDrivingMode]=AnfaengerModeButton;
@@ -330,7 +336,7 @@ void LoadfromFlash(void) {
 	}
 
 	TransferListElements(1);
-	// prüfe Flash_New_Parameters_List[INIT] == 2345
+	// prï¿½fe Flash_New_Parameters_List[INIT] == 2345
 	// ja, dann alles ok
 	// nein
 	// dann init Flash_New_Parameters_List[ChosenDrivingMode]=2

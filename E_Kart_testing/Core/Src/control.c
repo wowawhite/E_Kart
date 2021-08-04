@@ -15,10 +15,6 @@
 CAN_RxHeaderTypeDef RxMessage;			    // CAN-Receive
 CAN_TxHeaderTypeDef TxMessage;	            // CAN-Transmit
 #define ABS(x) ((x) > 0 ? (x) : -(x))
-//#define m_Gas      (( Norm_100 - Norm_0) * 100) / (DUTY_CYCLE_GAS_MAX - DUTY_CYCLE_GAS_MIN)         // 2 Nachkommastellen im Zwischenergebnis
-//int32_t n_Gas    =  ( (Norm_0 * 100) - ( m_Gas * DUTY_CYCLE_GAS_MIN ) ) ;							                // 2 Nachkommastellen im Zwischenergebnis
-//#define m_Bremse   (( Norm_100 - Norm_0) * 100) / (DUTY_CYCLE_BREMSE_MAX - DUTY_CYCLE_BREMSE_MIN)   // 2 Nachkommastellen im Zwischenergebnis
-//int32_t n_Bremse =  ( (Norm_0 * 100) - m_Bremse * DUTY_CYCLE_BREMSE_MIN ) ;  						              // 2 Nachkommastellen im Zwischenergebnis
 
 extern uint16_t *Pointer_GasProzent;	// Parameter dient zur Touch-Eingabe, Wertbereich (0-100)=(0%-100%), dessen Initialwert ist 100%
 															// als der Beiwert f�r Einstellung des Wirkungsbereichs von Gaspedal(bei Drehzahlvorgabe_mode )
@@ -129,25 +125,19 @@ void HAL_SYSTICK_Callback(void)
 		Sp_Stu=0;
 	}
 
-	// Motor_Drehzahl_r wird �ber CAN-Interrupt bereitgestellt
-	// Motor_Drehzahl_l wird �ber CAN-Interrupt bereitgestellt
-	Motor_Drehzahl_r = ABS(Motor_Drehzahl_r);
-	Motor_Drehzahl_l = ABS(Motor_Drehzahl_l);
+	Motor_Drehzahl_r = ABS(Motor_Drehzahl_r);	// Motor_Drehzahl_r wird �ber CAN-Interrupt bereitgestellt
+	Motor_Drehzahl_l = ABS(Motor_Drehzahl_l);	// Motor_Drehzahl_l wird �ber CAN-Interrupt bereitgestellt
 	// Mittlewert berechnen, Schiebeoperation um eins nach rechts = Division durch 2
 	Motor_Drehzahl = ( Motor_Drehzahl_r + Motor_Drehzahl_l )>>1 ;
 
-	Merker_aktuelle_Drehzahl= Motor_Drehzahl;
-	// Zwischenspeicherung des aktuellen Wertes an den R�dern
+	Merker_aktuelle_Drehzahl= Motor_Drehzahl;	// Zwischenspeicherung des aktuellen Wertes an den R�dern
 
-	// Geschwindigkeit berechnen
-	// v = 2*PI*n_reifen*r_reifen , n_reifen = n_motor / �bersetzung
+
+	// Geschwindigkeit berechnen: v = 2*PI*n_reifen*r_reifen , n_reifen = n_motor / �bersetzung
 	Geschwindigkeit_kmh = (2*PI*Motor_Drehzahl*REIFENRADIUS*36)/(100*60*100*MOTOR_RAD_RATIO);
 	//if (Geschwindigkeit_kmh>60) (Geschwindigkeit_kmh=60);	// Begrenzung der Geschwindigkeit, notwendig f�r Anzeige
-
-	// R�ckwertsgang einlesen, PE6
-	//Schaltsignal-Hauptrelais einlesen, PE4
-	ReverseGear = HAL_GPIO_ReadPin(Reverse_Switch_Input_GPIO_Port,Reverse_Switch_Input_Pin);
-	Hauptrelais = HAL_GPIO_ReadPin(Main_Relay_Input_GPIO_Port, Main_Relay_Input_Pin);
+	ReverseGear = HAL_GPIO_ReadPin(Reverse_Switch_Input_GPIO_Port,Reverse_Switch_Input_Pin);	// Rueckwertsgang einlesen, PE6
+	Hauptrelais = HAL_GPIO_ReadPin(Main_Relay_Input_GPIO_Port, Main_Relay_Input_Pin);  //Schaltsignal-Hauptrelais einlesen, PE4
 
 	/*Sync Message*/
 	if(Sp_mSek==1)
@@ -215,7 +205,6 @@ void HAL_SYSTICK_Callback(void)
 	/*Turn RCP-Mode on or off*/
 	if(RCP_Mode_pending)
 	{
-//		RCP_connection_request();
 		if(Motor_Drehzahl <= 1 && Vorgabe_Moment == 0)
 		{
 			TxMessage.StdId = ID_SDO_RCP_Rx;	// Standart Identifier
@@ -235,9 +224,7 @@ void HAL_SYSTICK_Callback(void)
 	}
 
 
-
-
-	if (( Sp_mSek==3 ) || ( Sp_mSek==8 ))
+	if (( Sp_mSek==3 ) || ( Sp_mSek==8 ))  // on every 300ms and 800ms
 	{
 		if ( (Heartbeat_MC_rechts==Msg_Heartbeat_MC_rechts) &&	(Heartbeat_MC_links==Msg_Heartbeat_MC_links) )
 		{
@@ -251,9 +238,8 @@ void HAL_SYSTICK_Callback(void)
 
 			if(RCP_Mode_status== 1)
 			{
-				if(Heartbeat_RCP == 0)
+				if(Heartbeat_RCP == 0) //kein Heartbeat -> NO_RCP_HEARTBEAT
 				{
-					//kein Heartbeat
 					Emergency_Stop();
 					RCP_Mode_errorcode = NO_RCP_HEARTBEAT;
 				}

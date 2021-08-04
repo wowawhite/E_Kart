@@ -54,7 +54,7 @@ typedef struct { // Data stored for FONT AS A WHOLE:
 	uint8_t   yAdvance;    // Newline distance (y axis)
 } GFXfont;
 
-inline uint16_t RGB(uint8_t r, uint8_t g, uint8_t b);
+//inline uint16_t RGB(uint8_t r, uint8_t g, uint8_t b);  // do not declare inline functions in headers like this! This is bad!
 
 //uint16_t LCD_ReadReg(uint16_t cmd);
 void LCD_Init(void);

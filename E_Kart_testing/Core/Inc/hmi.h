@@ -27,7 +27,6 @@ void ZeitAnzeige(void);
 void Menu_Oben(void);
 void Menu_Unten(void);
 void PasswordAnzeige_Init(uint8_t menuebene);
-//void Password_Init(uint8_t menuebene);  // delete canditdate
 void PasswordAnzeige(void);
 void GeschwindigkeitsAnzeige_Init(void);
 void GasAnzeige_Init(void);
@@ -40,7 +39,6 @@ void GasAnzeige(void);
 void BremsAnzeige(void);
 void Geschwindigkeitsanzeige(void);
 void LenkwinkelAnzeige(void);
-//void Batterie_Init(void);  // delete canditdate
 void GPIOAnzeige (void);
 void RCP_show_connect(uint8_t msg_switch);
 void RCP_show_status(uint8_t RCP_Mode_status);

@@ -15,7 +15,7 @@
 /* Exported constants ------------------------------------------------*/                             
 /* Macros ------------------------------------------------------------*/
 
-#define SOFTWAREVERSION "V2021.05" // dont forget to update if changed
+#define SOFTWAREVERSION "V2021.07" // dont forget to update if changed
 
 #define TRUE 1
 #define FALSE 0
@@ -46,11 +46,11 @@
 // In "struct" [TouchFunktion.c] sind die Eigenschaft von Slidern definiert
 
 #define TOUCH_AKTIV					  	// wenn definiert, Touch-Aktiv, durch auskommentieren, Touch-Inaktiv
-#define TEMPORARY_INVERTTOUCH			// TODO: define this to invert touch on LCD
+#define TEMPORARY_INVERTTOUCH			// TODO: define this to invert touch on LCD on the testing uC because the LCD there is flipped
 /* -------------------------------- FFR ----------------------------------------------  Motor-Controller-Daten --------------------------------*/
-#define SaveButton					0		// f�r bessere Lesbarkeit des Codes definiert
-
-#define MenuSelectDrivingMode		5
+//#define SaveButton					0		// f�r bessere Lesbarkeit des Codes definiert
+//
+//#define MenuSelectDrivingMode		5
 
 #define VorgabeDrehzahl				0 // Speed mode is not implemented. Torque control mode is default
 #define VorgabeMoment				1
@@ -100,10 +100,10 @@
 #define MOTOR_RAD_RATIO	    	  	25 		// 25 = 2.5, Motor zu Rad �bersetzung = Motor_Drehzahl / Rad_Drehzahl
 
 /* -------------------------------- Differenzial ---------------------------*/
-#define Lenkuebersetzung			15 		// Lenkradwinkel/Lenkwinkel = 90�/6� = 15
+//#define Lenkuebersetzung			15 		// Lenkradwinkel/Lenkwinkel = 90�/6� = 15
 
 /* -------------------------------- Batteriemanagement ---------------------------*/
-#define BM	 					    0		// Batteriemanagement, 0 - nicht vorhanden, 1 - vorhanden
+//#define BM	 					    0		// Batteriemanagement, 0 - nicht vorhanden, 1 - vorhanden
 
 /* -------------------------------- Gas und Bremspedal-Daten ---------------------*/
 #define DUTY_CYCLE_GAS_MIN			84 		// Tastverh�ltnis in Grundstellung in 10*%, 0 .. 100,0 % = 0 .. 1000
@@ -198,11 +198,11 @@
 #define Drehzahl					5
 #define Beschleunigung				6
 // Speed mode is not implemented. Torque control mode is default
-#define Speed_mode					7			// 7-8 f�r Speedmode, Vorgabedrehzahl
-#define Traction_control_mode1		8
-#define Torque_mode					9			// 9-11 f�r Torquemode, Vorgabemoment
-#define Traction_control_mode0  	10
-#define Maximum_torque				11
+//#define Speed_mode					7			// 7-8 f�r Speedmode, Vorgabedrehzahl
+//#define Traction_control_mode1		8
+//#define Torque_mode					9			// 9-11 f�r Torquemode, Vorgabemoment
+//#define Traction_control_mode0  	10
+//#define Maximum_torque				11
 
 #define Throttle_Flags0				12		// 12,14,16,18 f�r Torque-mode; 13,15,17,19 f�r Speed-mode
 #define Throttle_Flags1				13

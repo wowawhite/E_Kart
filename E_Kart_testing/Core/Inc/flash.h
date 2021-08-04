@@ -27,14 +27,10 @@
 #define FLASH_USER_START_ADDR   ADDR_FLASH_SECTOR_5   /* Start @ of user Flash area */
 #define FLASH_USER_END_ADDR     ADDR_FLASH_SECTOR_5  +  GetSectorSize(ADDR_FLASH_SECTOR_8) -1 /* End @ of user Flash area : sector start address + sector size -1 */
 
-
-
 void flash_init(void);
 void TransferListElements(int8_t x);
-static uint32_t GetSector(uint32_t Address);
-static uint32_t GetSectorSize(uint32_t Sector);
 void LoadfromFlash(void);
 void SavetoFlash(void);
-
+// do not declare static functions in header files! This is bad practice.
 
 #endif /* FLASH_H_ */
