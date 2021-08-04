@@ -994,8 +994,12 @@ void RCP_show_connect(uint8_t msg_switch)
 	} else {
 		LCD_Rect_Fill(56,29,208,18,BLACK);
 	}
+}
 
-
+void RCP_show_status(uint8_t RCP_Mode_status)
+{
+	LCD_Rect_Fill(130,80,16,16,BLACK);
+	LCD_Font(130,80,getStatusString(RCP_Mode_status),_8_Retro,1,WHITE);
 }
 
 void EKartZustand(void)
@@ -1205,8 +1209,7 @@ void Anzeige_Init(uint8_t menuebene)
     	LCD_Rect_Fill(0, 0, 320, 240, BLACK);  // clean previous screen
 
     	LCD_Font(0,80,"RCP-Mode Status:", _8_Retro,1,WHITE);
-    	LCD_Rect_Fill(130,80,16,16,BLACK);
-    	LCD_Font(130,80,getStatusString(RCP_Mode_status),_8_Retro,1,WHITE);
+
 
     	LCD_Font(0,105,"RCP-Mode Errorcode:", _8_Retro,1,WHITE);
     	LCD_Rect_Fill(130,105,16,16,BLACK);
@@ -2714,6 +2717,7 @@ void Anzeige(uint_fast8_t menuebene)
 		{
 			ZeitAnzeige();
 			RCP_show_connect(RCP_Mode_pending);
+			RCP_show_status(RCP_Mode_status);
 		}
 		break;
 		#ifdef EX_PLOT
