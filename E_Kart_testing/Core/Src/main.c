@@ -27,7 +27,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "Parameter.h"
+
 #include "hmi.h"
 #include "control.h"
 #include "flash.h"
