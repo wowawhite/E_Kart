@@ -69,8 +69,8 @@ uint16_t Spannung_Zellen_r[8];
 uint8_t touchIRQ = 0;
 // RCP-Mode global communication variables
 uint8_t RCP_Mode_status= 0;		// actual RCP state status
-uint8_t RCP_Mode_selected = 0;  // connection/disconnection request. 1 == selected
-uint8_t RCP_Mode_pending= 0;	// state while connecting/disconnecting to rcp module
+uint8_t RCP_Mode_selected = FALSE;  // connection/disconnection request. 1 == selected
+uint8_t RCP_Mode_pending = FALSE;	// state while connecting/disconnecting to rcp module
 
 uint8_t RCP_Mode_errorcode = 0;
 uint8_t Heartbeat_RCP = 0;
@@ -150,17 +150,28 @@ void HAL_SYSTICK_Callback(void)
 		txData[0] = 0;
 		HAL_CAN_AddTxMessage(&hcan1,&TxMessage,txData,(uint32_t *)Mailbox);
 	}
-
-	/*Heartbeat FFR*/
-	if((Sp_mSek==5) && (Sp_mSek_mul10==0))
+	#ifdef EX_PLOT
+	if(Sp_mSek_mul10 == 2)  // read ist-drehzahl sometimes
 	{
-		TxMessage.StdId = ID_Heartbeat_FFR ;    // Standart Identifier
-		TxMessage.ExtId = ID_Heartbeat_FFR;     // extended Identifier
-		TxMessage.RTR = CAN_RTR_DATA;             // Data frame
-		TxMessage.IDE = CAN_ID_STD;               // use Standart Identifier
-		TxMessage.DLC = 1;                        // length of the frame in Bytes
-		txData[0] = Msg_Heartbeat_FFR;
-		HAL_CAN_AddTxMessage(&hcan1,&TxMessage,txData,(uint32_t *)Mailbox);
+
+		pointBuffer[pointArrayPointer].left = Motor_Drehzahl_l;  // ist-drehzahl links
+		pointBuffer[pointArrayPointer].right = Motor_Drehzahl_r;  // ist-drehzahl rechts
+		pointArrayPointer = pointArrayPointer%POINTBUF_SIZE;
+	}
+	#endif
+
+	if(Sp_mSek == 3)
+	{
+	    /*NMT*/
+		TxMessage.StdId = ID_NMT ;     // Standart Identifier
+	    TxMessage.ExtId = ID_NMT ;     // extended Identifier
+	    TxMessage.RTR = CAN_RTR_DATA;       // Data frame
+	    TxMessage.IDE = CAN_ID_STD;         // use Standart Identifier
+	    TxMessage.DLC = 2;                  // length of the frame in Bytes
+	    txData[0] = 0x01;  		// 0. Byte  , Little Endian
+	    txData[1] = 0x00;  		// 0. Byte  , Little Endian
+
+	    HAL_CAN_AddTxMessage(&hcan1, &TxMessage,txData,(uint32_t *)Mailbox);     // Message �bertragen
 	}
 
 	/*Send TxPDO1: Gas, Brake and direction*/
@@ -177,35 +188,22 @@ void HAL_SYSTICK_Callback(void)
 
 		HAL_CAN_AddTxMessage(&hcan1,&TxMessage,txData,(uint32_t *)Mailbox);
 	}
-	if(Sp_mSek == 3)
+	/*Heartbeat FFR*/
+	if((Sp_mSek==5) && (Sp_mSek_mul10==0))
 	{
-	    /*NMT*/
-		TxMessage.StdId = ID_NMT ;     // Standart Identifier
-	    TxMessage.ExtId = ID_NMT ;     // extended Identifier
-	    TxMessage.RTR = CAN_RTR_DATA;       // Data frame
-	    TxMessage.IDE = CAN_ID_STD;         // use Standart Identifier
-	    TxMessage.DLC = 2;                  // length of the frame in Bytes
-	    txData[0] = 0x01;  		// 0. Byte  , Little Endian
-	    txData[1] = 0x00;  		// 0. Byte  , Little Endian
-
-	    HAL_CAN_AddTxMessage(&hcan1, &TxMessage,txData,(uint32_t *)Mailbox);     // Message �bertragen
-
+		TxMessage.StdId = ID_Heartbeat_FFR ;    // Standart Identifier
+		TxMessage.ExtId = ID_Heartbeat_FFR;     // extended Identifier
+		TxMessage.RTR = CAN_RTR_DATA;             // Data frame
+		TxMessage.IDE = CAN_ID_STD;               // use Standart Identifier
+		TxMessage.DLC = 1;                        // length of the frame in Bytes
+		txData[0] = Msg_Heartbeat_FFR;
+		HAL_CAN_AddTxMessage(&hcan1,&TxMessage,txData,(uint32_t *)Mailbox);
 	}
-	#ifdef EX_PLOT
-	if(Sp_mSek_mul10 == 2)  // read ist-drehzahl sometimes
-	{
-
-		pointBuffer[pointArrayPointer].left = Motor_Drehzahl_l;  // ist-drehzahl links
-		pointBuffer[pointArrayPointer].right = Motor_Drehzahl_r;  // ist-drehzahl rechts
-		pointArrayPointer = pointArrayPointer%POINTBUF_SIZE;
-	}
-	#endif
-
 
 	/*Turn RCP-Mode on or off*/
 	if(RCP_Mode_pending)
 	{
-		if(Motor_Drehzahl <= 1 && Vorgabe_Moment == 0)
+		if(Motor_Drehzahl <= 1 && Vorgabe_Moment == 0)  // If Ekart is not moving
 		{
 			TxMessage.StdId = ID_SDO_RCP_Rx;	// Standart Identifier
 			TxMessage.ExtId = ID_SDO_RCP_Rx;	// extended Identifier
@@ -218,9 +216,15 @@ void HAL_SYSTICK_Callback(void)
 			txData[3] = 0x01;
 			txData[4] = RCP_Mode_selected;
 			HAL_CAN_AddTxMessage(&hcan1,&TxMessage,txData,(uint32_t *)Mailbox);
-			//maybe no wait time is needed and ack can be read here
-			RCP_Mode_pending = 0;
+			if(RCP_Mode_errorcode == RCP_MOVING_ERROR)
+			{
+				RCP_Mode_errorcode = NO_ERROR;
+			}
+		} else {
+			// Ekart is moving. Throw error and cancel.
+			RCP_Mode_errorcode = RCP_MOVING_ERROR;
 		}
+		RCP_Mode_pending = FALSE;  // RCP pending procedure finished
 	}
 
 
@@ -236,9 +240,9 @@ void HAL_SYSTICK_Callback(void)
 				RCP_Mode_errorcode = NO_ERROR;
 			}
 
-			if(RCP_Mode_status== 1)
+			if(RCP_Mode_status == TRUE)
 			{
-				if(Heartbeat_RCP == 0) //kein Heartbeat -> NO_RCP_HEARTBEAT
+				if(Heartbeat_RCP == FALSE) //kein Heartbeat -> NO_RCP_HEARTBEAT
 				{
 					Emergency_Stop();
 					RCP_Mode_errorcode = NO_RCP_HEARTBEAT;
@@ -341,7 +345,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 	if ((sCanRxHeader.StdId == ID_Heartbeat_RCP)&&(sCanRxHeader.IDE == CAN_ID_STD) && (sCanRxHeader.DLC == 1))
 	{
 		Heartbeat_RCP = RxMessage[0];
-	}
+	} // TODO: RCP Heatbeat error here
 
 	/*SDO Tx RCP*/
 	if ((sCanRxHeader.StdId == ID_SDO_RCP_Tx)&&(sCanRxHeader.IDE == CAN_ID_STD) && (sCanRxHeader.DLC == 8))
@@ -657,59 +661,51 @@ void Emergency_Stop()
 
 	HAL_CAN_AddTxMessage(&hcan1, &TxMessage,txData,(uint32_t *)Mailbox);     // Message �bertragen
 }
-
+// this function is wrong. Timeout does not work
 uint8_t RCP_connection_request(void)
 {
-	// try connecting 10 times
-	uint8_t timeout_counter = 10;  // if the counter is decremented to 0, timeout is triggered
-	while(timeout_counter)
+	// check if Ekart is moving
+	if(Motor_Drehzahl <= 1 && Vorgabe_Moment == 0)
 	{
-		// check if Ekart is moving
-		if(Motor_Drehzahl <= 1 && Vorgabe_Moment == 0)
+		// at t=200ms send request
+		if (Sp_mSek_mul100 == 2)
 		{
-			// at t=700ms send request
-			if (Sp_mSek_mul100 == 2)
+			TxMessage.StdId = ID_SDO_RCP_Rx;	// Standart Identifier
+			TxMessage.ExtId = ID_SDO_RCP_Rx;	// extended Identifier
+			TxMessage.RTR = CAN_RTR_DATA;   // Data frame
+			TxMessage.IDE = CAN_ID_STD;     // use Standart Identifier
+			TxMessage.DLC = 8;              // length of the frame in Bytes
+			txData[0] = 0x2F;
+			txData[1] = 0x00;
+			txData[2] = 0x20;
+			txData[3] = 0x01;
+			txData[4] = RCP_Mode_selected;
+			HAL_CAN_AddTxMessage(&hcan1,&TxMessage,txData,(uint32_t *)Mailbox);
+
+		}// end sending if
+		// this should be a separate function
+		if (Sp_mSek_mul100 == 8)// 100ms later check for acknowledge
+		{
+			if(SDOack == Msg_SDO_RCP_ack_OK)  //
 			{
-				TxMessage.StdId = ID_SDO_RCP_Rx;	// Standart Identifier
-				TxMessage.ExtId = ID_SDO_RCP_Rx;	// extended Identifier
-				TxMessage.RTR = CAN_RTR_DATA;   // Data frame
-				TxMessage.IDE = CAN_ID_STD;     // use Standart Identifier
-				TxMessage.DLC = 8;              // length of the frame in Bytes
-				txData[0] = 0x2F;
-				txData[1] = 0x00;
-				txData[2] = 0x20;
-				txData[3] = 0x01;
-				txData[4] = RCP_Mode_selected;
-				HAL_CAN_AddTxMessage(&hcan1,&TxMessage,txData,(uint32_t *)Mailbox);
-				//maybe no wait time is needed and ack can be read here
-			}// end sending if
-
-			if (Sp_mSek_mul100 == 8)// 100ms later check for acknowledge
-			{
-
-
-				if(SDOack == Msg_SDO_RCP_ack_OK)
+				// connection established. Set flags and return.
+				if (RCP_Mode_errorcode == RCP_TIMEOUT)
 				{
-					// connection established. Set flags and return.
-					if (RCP_Mode_errorcode == RCP_TIMEOUT)
-					{
-						RCP_Mode_errorcode = NO_ERROR;
-					}
-					RCP_Mode_status = RCP_Mode_selected;
-					RCP_Mode_pending = 0;
-					return TRUE;
-				} // end SDOack check
-			} // end receiving if
+					RCP_Mode_errorcode = NO_ERROR;
+				}
+				RCP_Mode_status = RCP_Mode_selected;
+				RCP_Mode_pending = 0;
+				return TRUE;
+			} // end SDOack check
+		} // end receiving if
 
-		} else {
-			// Ekart is moving. Throw error and cancel.
-			RCP_Mode_errorcode = RCP_MOVING_ERROR;
-			RCP_Mode_pending = 0;
-			return FALSE;
-		}
+	} else {
+		// Ekart is moving. Throw error and cancel.
+		RCP_Mode_errorcode = RCP_MOVING_ERROR;
+		RCP_Mode_pending = 0;
+		return FALSE;
+	}
 
-		timeout_counter--;
-	} // end while loop == timeout triggered
 	RCP_Mode_errorcode = RCP_TIMEOUT;
 	RCP_Mode_pending = 0;
 	return FALSE;

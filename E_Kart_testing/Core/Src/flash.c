@@ -225,7 +225,7 @@ static uint32_t GetSector(uint32_t Address)
 
 /**
   * @brief  Gets sector Size
-  * @param  None
+  * @param  uint32_t Input target sector
   * @retval The size of a given sector
   */
 static uint32_t GetSectorSize(uint32_t Sector)

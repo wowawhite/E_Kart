@@ -15,7 +15,7 @@
 /* Exported constants ------------------------------------------------*/                             
 /* Macros ------------------------------------------------------------*/
 
-#define SOFTWAREVERSION "V2021.07" // dont forget to update if changed
+#define SOFTWAREVERSION "V2021.07" // dont forget to increment if changed
 
 #define TRUE 1
 #define FALSE 0
@@ -46,7 +46,7 @@
 // In "struct" [TouchFunktion.c] sind die Eigenschaft von Slidern definiert
 
 #define TOUCH_AKTIV					  	// wenn definiert, Touch-Aktiv, durch auskommentieren, Touch-Inaktiv
-//#define TEMPORARY_INVERTTOUCH	// TODO: define this to invert touch on the testing uC LCD because the LCD there is flipped
+#define TEMPORARY_INVERTTOUCH	// TODO: define this to invert touch on the testing Board LCD because the touch coordinates there is flipped
 /* -------------------------------- FFR ----------------------------------------------  Motor-Controller-Daten --------------------------------*/
 #define VorgabeDrehzahl				0 // Speed mode is not implemented. Torque control mode is default
 #define VorgabeMoment				1

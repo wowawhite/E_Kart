@@ -1,7 +1,7 @@
 /*
  * hmi.c - one line comments only!
  *  Created on: 05.11.2018
- *  Updated on: 2021.07 - Added RCP-Mode. LCD is 320x240 pixels
+ *  Updated on: 2021.07 - Added RCP-Mode.
  */
 // Includes and defines here:
 #include "hmi.h"
@@ -44,8 +44,7 @@ extern uint8_t Temperatur_Zellen_r[8];
 extern uint16_t Spannung_Zellen_l[8];
 extern uint16_t Spannung_Zellen_r[8];
 
-uint16_t touchX = 0, touchY = 0;
-//uint16_t Flash_New_Parameters_List[NumberOfSavedParameter];
+uint16_t touchX = 0, touchY = 0;  // LCD is 320x240 pixels
 
 extern uint16_t Flash_Memory_List[NumberOfSavedParameter];
 extern uint16_t Flash_New_Parameters_List[NumberOfSavedParameter];
@@ -2648,7 +2647,7 @@ void Menuestruktur(void)
 #endif
 }
 
-// Diese Funktion sorgt für ein Update der tatsächlich angezeigten GUI-Struktur
+// Diese Funktion sorgt für ein Update der tatsaechlich angezeigten GUI-Struktur
 void Anzeige(uint_fast8_t menuebene)
 {
 	switch(menuebene)
@@ -2734,7 +2733,7 @@ void Anzeige(uint_fast8_t menuebene)
 	}
 }
 
-// TODO experimental ringbuffer here
+
 #ifdef EX_PLOT
 
 void RCP_plot_graph(void)
