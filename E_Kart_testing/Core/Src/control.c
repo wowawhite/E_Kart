@@ -70,7 +70,7 @@ uint8_t RCP_Mode_pending = FALSE;	// state while connecting/disconnecting to rcp
 uint8_t RCP_Mode_errorcode = NO_ERROR;
 uint8_t Heartbeat_RCP = FALSE;
 uint8_t SDOack = 0;
-
+uint16_t Heartbeat_RCP_counter = 0;
 
 void HAL_SYSTICK_Callback(void)
 {
@@ -174,6 +174,11 @@ void HAL_SYSTICK_Callback(void)
 	    HAL_CAN_AddTxMessage(&hcan1, &TxMessage,txData,(uint32_t *)Mailbox);     // Message �bertragen
 
 	}
+	if(Sp_Sek%3==1) //reset every 3 seconds
+	{
+		RCP_check_heartbeat();
+	}
+
 
 	/*Turn RCP-Mode on or off*/
 	if(RCP_Mode_pending)
@@ -191,7 +196,6 @@ void HAL_SYSTICK_Callback(void)
 			txData[3] = 0x01;
 			txData[4] = RCP_Mode_selected;
 			HAL_CAN_AddTxMessage(&hcan1,&TxMessage,txData,(uint32_t *)Mailbox);
-			RCP_Mode_pending = FALSE;
 			if(RCP_Mode_errorcode == RCP_MOVING_ERROR)
 			{
 				RCP_Mode_errorcode = NO_ERROR;
@@ -208,6 +212,7 @@ void HAL_SYSTICK_Callback(void)
 	{
 		if ( (Heartbeat_MC_rechts==Msg_Heartbeat_MC_rechts) &&	(Heartbeat_MC_links==Msg_Heartbeat_MC_links) )
 		{
+
 			/*************************************************************************************************************************/
 			/*****************************************************RCP-Mode************************************************************/
 			/*************************************************************************************************************************/
@@ -215,7 +220,6 @@ void HAL_SYSTICK_Callback(void)
 			{
 				RCP_Mode_errorcode = NO_ERROR;
 			}
-
 			if(RCP_Mode_status== 1)
 			{
 				if(Heartbeat_RCP == 0) //kein Heartbeat -> NO_RCP_HEARTBEAT
@@ -252,7 +256,6 @@ void HAL_SYSTICK_Callback(void)
 					Drehrichtung_Moment_links = Motor_Moment_REV;// Nachrichteninhalt �ber define setzen
 					Drehrichtung_Moment_rechts = Motor_Moment_FWD; // Nachrichteninhalt �ber define setzen
 				}
-
 				else  // front gear
 				{
 					Vorgabe_Moment_rechts=Vorgabe_Moment;
@@ -260,7 +263,6 @@ void HAL_SYSTICK_Callback(void)
 					Drehrichtung_Moment_links = Motor_Moment_FWD;// Nachrichteninhalt �ber define setzen
 					Drehrichtung_Moment_rechts = Motor_Moment_REV; // Nachrichteninhalt �ber define setzen
 				}
-
 
 				TxMessage.StdId = ID_MC_rechts ;    // Standart Identifier
 				TxMessage.ExtId = ID_MC_rechts;     // extended Identifier
@@ -623,6 +625,27 @@ void Emergency_Stop()
 	txData[2] = Drehrichtung_Moment_links;
 
 	HAL_CAN_AddTxMessage(&hcan1, &TxMessage,txData,(uint32_t *)Mailbox);     // Message �bertragen
+}
+
+void RCP_check_heartbeat(void)
+{
+	switch(Heartbeat_RCP)
+	{
+	case 0:
+		Heartbeat_RCP_counter++;
+		if(Heartbeat_RCP_counter > 2000){
+			RCP_Mode_errorcode = NO_RCP_HEARTBEAT;
+		}
+		break;
+	case 5:
+		if(RCP_Mode_errorcode == NO_RCP_HEARTBEAT)
+		{
+			RCP_Mode_errorcode = NO_ERROR;
+		}
+		Heartbeat_RCP_counter = 0;
+		Heartbeat_RCP = 0;
+		break;
+	}
 }
 
 

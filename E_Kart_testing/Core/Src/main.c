@@ -156,8 +156,6 @@ int main(void)
     Menuestruktur();
     Anzeige_Init(menuebene);
     Motor_Init();
-    HAL_Delay(1000);
-
 
 
 //    HAL_TIM_Base_Start_IT(&htim2);

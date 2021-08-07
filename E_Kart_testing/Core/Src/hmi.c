@@ -59,7 +59,8 @@ extern uint8_t RCP_Mode_status;  // actual rcp status: FALSE == 0 == disconnecte
 extern uint8_t RCP_Mode_selected;  // indicates if user wants connect/disconnect
 extern uint8_t RCP_Mode_pending;  // indicates connection/disconnection event ongoing
 extern uint8_t RCP_Mode_errorcode;  // contaims gĺobal RCP errocodes
-
+uint8_t RCP_status_renew = 0;
+uint8_t RCP_error_renew = 0;
 // Typedefs here:
 struct SwitchButton
 {
@@ -976,17 +977,19 @@ void RCP_show_connect(uint8_t pending)
 	}
 }
 
-void RCP_show_status(uint8_t RCP_Mode_status)
+void RCP_show_status(uint8_t RCP_Mode_status, uint8_t RCP_Mode_error)
 {
-	LCD_Rect_Fill(130,80,100,16,BLACK);
-	LCD_Font(130,80,getStatusString(RCP_Mode_status),_8_Retro,1,WHITE);
+	if(RCP_Mode_status != RCP_status_renew || RCP_Mode_error != RCP_error_renew)
+	{
+		LCD_Rect_Fill(150,60,150,80,BLACK);
+		LCD_Font(150,80,getStatusString(RCP_Mode_status),_8_Retro,1,WHITE);
+		LCD_Font(150,105,getErrorString(RCP_Mode_error),_8_Retro,1,WHITE);
+		RCP_status_renew = RCP_Mode_status;
+		RCP_error_renew = RCP_Mode_error;
+	}
+
 }
 
-void RCP_show_error(uint8_t RCP_Mode_error)
-{
-	LCD_Rect_Fill(150,105,100,16,BLACK);
-	LCD_Font(150,105,getErrorString(RCP_Mode_error),_8_Retro,1,WHITE);
-}
 
 void EKartZustand(void)
 {
@@ -2643,8 +2646,7 @@ void Anzeige(uint_fast8_t menuebene)
 		{
 			ZeitAnzeige();
 			RCP_show_connect(RCP_Mode_pending);
-			RCP_show_status(RCP_Mode_status);
-			RCP_show_error(RCP_Mode_errorcode);
+			RCP_show_status(RCP_Mode_status, RCP_Mode_errorcode);
 		}
 		break;
 		default: break;

@@ -41,7 +41,7 @@ void Geschwindigkeitsanzeige(void);
 void LenkwinkelAnzeige(void);
 void GPIOAnzeige (void);
 void RCP_show_connect(uint8_t msg_switch);
-void RCP_show_status(uint8_t RCP_Mode_status);
+void RCP_show_status(uint8_t RCP_Mode_status, uint8_t RCP_Mode_error);
 void EKartZustand(void);
 void Anzeige_Init(uint8_t menuebene);
 void getTouch(void);

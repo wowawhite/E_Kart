@@ -171,6 +171,7 @@
 #define DL_Spannung_Zellen_l		8 // Datenl�nge in Bytes der Nachricht, 0-8 Bytes
 
 #define ID_Heartbeat_RCP			0x70A
+#define Msg_Heartbeat_RCP	    	5 // Message-Inhalt des Heartbeats
 
 // SDO-Parameters senden & Empfangen
 #define ID_SDO_MC_rechts			0x606 // Nachrichten-ID f�r SDO-Parameters von Motorcontroller rechts, Senden
