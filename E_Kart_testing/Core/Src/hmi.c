@@ -1198,12 +1198,13 @@ void Anzeige_Init(uint8_t menuebene)
     	LCD_Rect_Fill(0, 0, 320, 240, BLACK);  // clean previous screen
 
     	LCD_Font(0,80,"RCP-Mode Status:", _8_Retro,1,WHITE);
-
-
     	LCD_Font(0,105,"RCP-Mode Errorcode:", _8_Retro,1,WHITE);
+		LCD_Font(150,80,getStatusString(RCP_Mode_status),_8_Retro,1,WHITE);
+		LCD_Font(150,105,getErrorString(RCP_Mode_errorcode),_8_Retro,1,WHITE);
 		Menu_Oben();                     // �berschrift, Fahrzeugrechner
     	WriteButton(11,0);	           // Switch-Button zurueck zum "Hauptmenu"
     	WriteButton(11,1);			// Switch-Button RCP Connect
+
 	}
 	break;
 
