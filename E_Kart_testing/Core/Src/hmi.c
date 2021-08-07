@@ -10,10 +10,6 @@
 #include "messages.h"
 #include "fonts/Font_8_Retro.h"
 
-#ifdef EX_PLOT
-#include "plotter.h"
-#endif
-
 #define _8_Retro               &Font_8_Retro
 
 // Variables here:
@@ -99,21 +95,6 @@ volatile struct GleitBlock
 	uint16_t  Farbe;	 		 // Farbe
 } Slider[max_Menuebenen][max_sliders];
 
-// TODO experimental ringbuffer here
-#ifdef EX_PLOT
-
-typedef struct{
-	int32_t left;
-	int32_t right;
-}hmi_plotPoint;
-extern size_t plotArrayPointer;
-extern hmi_plotPoint pointContainer;
-extern hmi_plotPoint *pointBuffer;
-extern size_t plotArrayPointer = 0;
-
-#endif
-
-
 // functions here
 void WriteButton(uint_fast8_t Menuenummer, uint8_t Buttonnummer)
 {
@@ -134,7 +115,7 @@ char * getErrorString(uint8_t errorcode)
 	switch(errorcode)
 	 {
 		case 0: tmpptr = NO_ERROR_MSG; break;
-		case 1: tmpptr = RCP_TIMEOUT_MSG; break;
+		case 1: tmpptr = RCP_CONNECTIONERR_MSG; break;
 		case 2: tmpptr = NO_RCP_HEARTBEAT_MSG; break;
 		case 3: tmpptr = NO_MOTOR_HEARTBEAT_MSG; break;
 		case 4: tmpptr = RCP_MOVING_ERROR_MSG; break;
@@ -819,9 +800,9 @@ void BatterieAnzeige_Init(void)
 void RCPstatusAnzeige_Init(void)
 {
 	const uint8_t xposition = 200;
-	const uint8_t yposition = 185;
+	const uint8_t yposition = 170;
 	LCD_Font(xposition,yposition,"RCP Mode:",_8_Retro,1,WHITE);
-	LCD_Rect_Fill(80,170,16,16,BLACK);
+	LCD_Rect_Fill(xposition,yposition,200,16,BLACK);
 	LCD_Font(xposition+80,yposition,getStatusString(RCP_Mode_status),_8_Retro,1,WHITE);
 
 }
@@ -984,9 +965,9 @@ void GPIOAnzeige (void)
 	MerkerReverseGear = ReverseGear;
 }
 
-void RCP_show_connect(uint8_t msg_switch)
+void RCP_show_connect(uint8_t pending)
 {
-	if(msg_switch)
+	if(pending)
 	{
 		LCD_Rect_Fill(56,29,208,18,RED);
 		LCD_Font(56,45,RCP_CONNECTING,_8_Retro,1,WHITE);
@@ -997,14 +978,14 @@ void RCP_show_connect(uint8_t msg_switch)
 
 void RCP_show_status(uint8_t RCP_Mode_status)
 {
-	LCD_Rect_Fill(130,80,16,16,BLACK);
+	LCD_Rect_Fill(130,80,100,16,BLACK);
 	LCD_Font(130,80,getStatusString(RCP_Mode_status),_8_Retro,1,WHITE);
 }
 
 void RCP_show_error(uint8_t RCP_Mode_error)
 {
-	LCD_Rect_Fill(130,105,16,16,BLACK);
-	LCD_Font(150,105,getErrorString(RCP_Mode_errorcode),_8_Retro,1,WHITE);
+	LCD_Rect_Fill(150,105,100,16,BLACK);
+	LCD_Font(150,105,getErrorString(RCP_Mode_error),_8_Retro,1,WHITE);
 }
 
 void EKartZustand(void)
@@ -1672,41 +1653,8 @@ uint8_t TouchAction(uint8_t menuenummer)
 
 				ret = S_Button[menuenummer][1].Menueverlinkung;
 			}
-			#ifdef EX_PLOT
-			if (S_Button[menuenummer][2].x1<touchX&&S_Button[menuenummer][1].x2>touchX&&S_Button[menuenummer][1].y1<touchY&&S_Button[menuenummer][1].y2>touchY)
-			{
-				// button go to plotter
-
-				ret = S_Button[menuenummer][2].Menueverlinkung;
-			}
-			#endif
 		}
 		break;
-		#ifdef EX_PLOT
-		case 12:			//Buttons in "RCP-Plotter" menu
-		{
-			if (S_Button[menuenummer][0].x1<touchX&&S_Button[menuenummer][0].x2>touchX&&S_Button[menuenummer][0].y1<touchY&&S_Button[menuenummer][0].y2>touchY)
-			{
-				// Just go back to "Main Menu"
-				Anzeige_Init(S_Button[menuenummer][0].Menueverlinkung);
-				ret = S_Button[menuenummer][0].Menueverlinkung;
-			}
-			if (S_Button[menuenummer][1].x1<touchX&&S_Button[menuenummer][1].x2>touchX&&S_Button[menuenummer][1].y1<touchY&&S_Button[menuenummer][1].y2>touchY)
-			{
-				RCP_Mode_selected = !RCP_Mode_selected;
-				RCP_Mode_pending = 1;
-
-				ret = S_Button[menuenummer][1].Menueverlinkung;
-			}
-			if (S_Button[menuenummer][2].x1<touchX&&S_Button[menuenummer][1].x2>touchX&&S_Button[menuenummer][1].y1<touchY&&S_Button[menuenummer][1].y2>touchY)
-			{
-				// button go to plotter
-
-				ret = S_Button[menuenummer][2].Menueverlinkung;
-			}
-		}
-		break;
-		#endif
 		default:break;
 
 		}
@@ -2624,31 +2572,6 @@ void Menuestruktur(void)
 	S_Button[menuenummer][buttonnummer].Text="RCP-Connect";
 	S_Button[menuenummer][buttonnummer].Textlaenge=11;
 
-
-#ifdef EX_PLOT
-	// Menuebene 12
-	// Menue "RCP-Plotter"// Experimental timeseries plot menu
-
-	buttonnummer=0;
-	S_Button[menuenummer][buttonnummer].x1=220;
-	S_Button[menuenummer][buttonnummer].y1=190;
-	S_Button[menuenummer][buttonnummer].x2=320;
-	S_Button[menuenummer][buttonnummer].y2=240;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=11; // "Zur�ck" verlinkt zur "Hauptmenu"
-	S_Button[menuenummer][buttonnummer].Text="Zurueck";
-	S_Button[menuenummer][buttonnummer].Textlaenge=7;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=2;
-
-	buttonnummer=1;                                  //Button sent RCP connection request
-	S_Button[menuenummer][buttonnummer].x1=110;
-	S_Button[menuenummer][buttonnummer].y1=190;
-	S_Button[menuenummer][buttonnummer].x2=215;
-	S_Button[menuenummer][buttonnummer].y2=240;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=12;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=3;
-	S_Button[menuenummer][buttonnummer].Text="Enable";
-	S_Button[menuenummer][buttonnummer].Textlaenge=11;
-#endif
 }
 
 // Diese Funktion sorgt für ein Update der tatsaechlich angezeigten GUI-Struktur
@@ -2724,39 +2647,12 @@ void Anzeige(uint_fast8_t menuebene)
 			RCP_show_error(RCP_Mode_errorcode);
 		}
 		break;
-		#ifdef EX_PLOT
-		case 12:
-		{
-			ZeitAnzeige();
-			#ifdef EX_PLOT
-			RCP_plot_graph();
-			#endif
-		}
-		break;
-		#endif
 		default: break;
 	}
 }
 
 
-#ifdef EX_PLOT
 
-void RCP_plot_graph(void)
-{
-	const int x_pixelOffset = 20;
-	size_t readArrayPointer = pointArrayPointer-1; // wrong
-	// get x and y coordinates
-	for(int i  = 0; i<POINTBUF_SIZE;i++)
-	{
-
-		pointBuffer[]
-		LCD_Pixel
-	}
-
-
-}
-
-#endif
 
 
 

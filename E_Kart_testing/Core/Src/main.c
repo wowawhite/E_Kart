@@ -156,6 +156,7 @@ int main(void)
     Menuestruktur();
     Anzeige_Init(menuebene);
     Motor_Init();
+    HAL_Delay(1000);
 
 
 

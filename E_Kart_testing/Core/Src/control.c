@@ -8,10 +8,6 @@
 #include "control.h"
 #include "can.h"
 
-#ifdef EX_PLOT
-#include "plotter.h"
-#endif
-
 CAN_RxHeaderTypeDef RxMessage;			    // CAN-Receive
 CAN_TxHeaderTypeDef TxMessage;	            // CAN-Transmit
 #define ABS(x) ((x) > 0 ? (x) : -(x))
@@ -69,24 +65,12 @@ uint16_t Spannung_Zellen_r[8];
 uint8_t touchIRQ = 0;
 // RCP-Mode global communication variables
 uint8_t RCP_Mode_status= 0;		// actual RCP state status
-uint8_t RCP_Mode_selected = FALSE;  // connection/disconnection request. 1 == selected
+uint8_t RCP_Mode_selected = FALSE;  // connection/disconnection request. TRUE == 1 == selected
 uint8_t RCP_Mode_pending = FALSE;	// state while connecting/disconnecting to rcp module
-
 uint8_t RCP_Mode_errorcode = NO_ERROR;
 uint8_t Heartbeat_RCP = FALSE;
 uint8_t SDOack = 0;
 
-#ifdef EX_PLOT
-#define POINTBUF_SIZE 300
-
-typedef struct{
-	int32_t left;
-	int32_t right;
-}hmi_plotPoint;
-size_t pointArrayPointer = 0;
-hmi_plotPoint pointBuffer[POINTBUF_SIZE+1];
-
-#endif
 
 void HAL_SYSTICK_Callback(void)
 {
@@ -190,16 +174,6 @@ void HAL_SYSTICK_Callback(void)
 	    HAL_CAN_AddTxMessage(&hcan1, &TxMessage,txData,(uint32_t *)Mailbox);     // Message �bertragen
 
 	}
-	#ifdef EX_PLOT
-	if(Sp_mSek_mul10 == 2)  // read ist-drehzahl sometimes
-	{
-
-		pointBuffer[pointArrayPointer].left = Motor_Drehzahl_l;  // ist-drehzahl links
-		pointBuffer[pointArrayPointer].right = Motor_Drehzahl_r;  // ist-drehzahl rechts
-		pointArrayPointer = pointArrayPointer%POINTBUF_SIZE;
-	}
-	#endif
-
 
 	/*Turn RCP-Mode on or off*/
 	if(RCP_Mode_pending)
@@ -217,8 +191,15 @@ void HAL_SYSTICK_Callback(void)
 			txData[3] = 0x01;
 			txData[4] = RCP_Mode_selected;
 			HAL_CAN_AddTxMessage(&hcan1,&TxMessage,txData,(uint32_t *)Mailbox);
-			//maybe no wait time is needed and ack can be read here
-			RCP_Mode_pending = 0;
+			RCP_Mode_pending = FALSE;
+			if(RCP_Mode_errorcode == RCP_MOVING_ERROR)
+			{
+				RCP_Mode_errorcode = NO_ERROR;
+			}
+		}
+		else {
+			RCP_Mode_errorcode = RCP_MOVING_ERROR;
+			RCP_Mode_pending = FALSE;
 		}
 	}
 
@@ -244,7 +225,7 @@ void HAL_SYSTICK_Callback(void)
 				}
 			}
 			/*************************************************************************************************************************/
-
+			// default FFR motor control algorithm
 			else
 			{
 				if (Bremse>=Bremse_SchwelleVerGas)
@@ -264,7 +245,7 @@ void HAL_SYSTICK_Callback(void)
 						Vorgabe_Moment=0;
 					}
 				}
-				if(ReverseGear)
+				if(ReverseGear)  // reverse gear
 				{
 					Vorgabe_Moment_rechts=Rueckwaert*(-1);
 					Vorgabe_Moment_links=Rueckwaert;
@@ -272,7 +253,7 @@ void HAL_SYSTICK_Callback(void)
 					Drehrichtung_Moment_rechts = Motor_Moment_FWD; // Nachrichteninhalt �ber define setzen
 				}
 
-				else
+				else  // front gear
 				{
 					Vorgabe_Moment_rechts=Vorgabe_Moment;
 					Vorgabe_Moment_links=Vorgabe_Moment*(-1);
@@ -306,7 +287,7 @@ void HAL_SYSTICK_Callback(void)
 			}
 
 		}
-		/*Heartbeat Motorcontroller*/
+		/*Heartbeat Motorcontroller not available*/
 		else
 		{
 			Emergency_Stop();
@@ -345,18 +326,9 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 	if ((sCanRxHeader.StdId == ID_SDO_RCP_Tx)&&(sCanRxHeader.IDE == CAN_ID_STD) && (sCanRxHeader.DLC == 8))
 	{
 		SDOack= RxMessage[0];
-
 		if(SDOack == Msg_SDO_RCP_ack_OK)
 		{
-			RCP_Mode_status = RCP_Mode_selected;
-			RCP_Mode_pending = FALSE;
-			// connection established. Set flags and return.
-			if (RCP_Mode_errorcode == RCP_TIMEOUT)
-			{
-				RCP_Mode_errorcode = NO_ERROR;
-			}
-		} else {
-			RCP_Mode_errorcode = RCP_TIMEOUT;
+			RCP_Mode_status = RCP_Mode_selected;  // connection established. Set flags and return.
 			RCP_Mode_pending = FALSE;
 		} // end SDOack check
 	} // End CanRxHeader
@@ -653,11 +625,4 @@ void Emergency_Stop()
 	HAL_CAN_AddTxMessage(&hcan1, &TxMessage,txData,(uint32_t *)Mailbox);     // Message �bertragen
 }
 
-#ifdef EX_PLOT
-// TODO maybe this function in hmi.c
-int32_t scale_Yvalue(uint32_t inputvalue)
-{
-	const int32_t maxvalue = 5000; // max drehzahl value(geschaetzt)
-	return (170-(inputvalue/maxvalue) * 170);  // relativ zur maximalen pixelhoehe
-}
-#endif
+
