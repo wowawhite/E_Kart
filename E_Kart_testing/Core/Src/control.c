@@ -222,10 +222,11 @@ void HAL_SYSTICK_Callback(void)
 			}
 			if(RCP_Mode_status== 1)
 			{
-				if(Heartbeat_RCP == 0) //kein Heartbeat -> NO_RCP_HEARTBEAT
+				RCP_check_heartbeat();
+				if(RCP_Mode_errorcode == NO_RCP_HEARTBEAT) //kein Heartbeat -> NO_RCP_HEARTBEAT
 				{
 					Emergency_Stop();
-					RCP_Mode_errorcode = NO_RCP_HEARTBEAT;
+					//TODO: disable RCP mode maybe?
 				}
 			}
 			/*************************************************************************************************************************/
