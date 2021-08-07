@@ -149,28 +149,17 @@ void HAL_SYSTICK_Callback(void)
 		txData[0] = 0;
 		HAL_CAN_AddTxMessage(&hcan1,&TxMessage,txData,(uint32_t *)Mailbox);
 	}
-	#ifdef EX_PLOT
-	if(Sp_mSek_mul10 == 2)  // read actual speed sometimes
+
+	/*Heartbeat FFR*/
+	if((Sp_mSek==5) && (Sp_mSek_mul10==0))
 	{
-
-		pointBuffer[pointArrayPointer].left = Motor_Drehzahl_l;  // ist-drehzahl links
-		pointBuffer[pointArrayPointer].right = Motor_Drehzahl_r;  // ist-drehzahl rechts
-		pointArrayPointer = pointArrayPointer%POINTBUF_SIZE;
-	}
-	#endif
-
-	if(Sp_mSek == 3)
-	{
-	    /*NMT*/
-		TxMessage.StdId = ID_NMT ;     // Standart Identifier
-	    TxMessage.ExtId = ID_NMT ;     // extended Identifier
-	    TxMessage.RTR = CAN_RTR_DATA;       // Data frame
-	    TxMessage.IDE = CAN_ID_STD;         // use Standart Identifier
-	    TxMessage.DLC = 2;                  // length of the frame in Bytes
-	    txData[0] = 0x01;  		// 0. Byte  , Little Endian
-	    txData[1] = 0x00;  		// 0. Byte  , Little Endian
-
-	    HAL_CAN_AddTxMessage(&hcan1, &TxMessage,txData,(uint32_t *)Mailbox);     // Message �bertragen
+		TxMessage.StdId = ID_Heartbeat_FFR ;    // Standart Identifier
+		TxMessage.ExtId = ID_Heartbeat_FFR;     // extended Identifier
+		TxMessage.RTR = CAN_RTR_DATA;             // Data frame
+		TxMessage.IDE = CAN_ID_STD;               // use Standart Identifier
+		TxMessage.DLC = 1;                        // length of the frame in Bytes
+		txData[0] = Msg_Heartbeat_FFR;
+		HAL_CAN_AddTxMessage(&hcan1,&TxMessage,txData,(uint32_t *)Mailbox);
 	}
 
 	/*Send TxPDO1: Gas, Brake and direction*/
@@ -187,22 +176,35 @@ void HAL_SYSTICK_Callback(void)
 
 		HAL_CAN_AddTxMessage(&hcan1,&TxMessage,txData,(uint32_t *)Mailbox);
 	}
-	/*Heartbeat FFR*/
-	if((Sp_mSek==5) && (Sp_mSek_mul10==0))
+	if(Sp_mSek == 3)
 	{
-		TxMessage.StdId = ID_Heartbeat_FFR ;    // Standart Identifier
-		TxMessage.ExtId = ID_Heartbeat_FFR;     // extended Identifier
-		TxMessage.RTR = CAN_RTR_DATA;             // Data frame
-		TxMessage.IDE = CAN_ID_STD;               // use Standart Identifier
-		TxMessage.DLC = 1;                        // length of the frame in Bytes
-		txData[0] = Msg_Heartbeat_FFR;
-		HAL_CAN_AddTxMessage(&hcan1,&TxMessage,txData,(uint32_t *)Mailbox);
+	    /*NMT*/
+		TxMessage.StdId = ID_NMT ;     // Standart Identifier
+	    TxMessage.ExtId = ID_NMT ;     // extended Identifier
+	    TxMessage.RTR = CAN_RTR_DATA;       // Data frame
+	    TxMessage.IDE = CAN_ID_STD;         // use Standart Identifier
+	    TxMessage.DLC = 2;                  // length of the frame in Bytes
+	    txData[0] = 0x01;  		// 0. Byte  , Little Endian
+	    txData[1] = 0x00;  		// 0. Byte  , Little Endian
+
+	    HAL_CAN_AddTxMessage(&hcan1, &TxMessage,txData,(uint32_t *)Mailbox);     // Message �bertragen
+
 	}
+	#ifdef EX_PLOT
+	if(Sp_mSek_mul10 == 2)  // read ist-drehzahl sometimes
+	{
+
+		pointBuffer[pointArrayPointer].left = Motor_Drehzahl_l;  // ist-drehzahl links
+		pointBuffer[pointArrayPointer].right = Motor_Drehzahl_r;  // ist-drehzahl rechts
+		pointArrayPointer = pointArrayPointer%POINTBUF_SIZE;
+	}
+	#endif
+
 
 	/*Turn RCP-Mode on or off*/
 	if(RCP_Mode_pending)
 	{
-		if(Motor_Drehzahl <= 1 && Vorgabe_Moment == 0)  // If Ekart is not moving
+		if(Motor_Drehzahl <= 1 && Vorgabe_Moment == 0)
 		{
 			TxMessage.StdId = ID_SDO_RCP_Rx;	// Standart Identifier
 			TxMessage.ExtId = ID_SDO_RCP_Rx;	// extended Identifier
@@ -215,17 +217,12 @@ void HAL_SYSTICK_Callback(void)
 			txData[3] = 0x01;
 			txData[4] = RCP_Mode_selected;
 			HAL_CAN_AddTxMessage(&hcan1,&TxMessage,txData,(uint32_t *)Mailbox);
-			if(RCP_Mode_errorcode == RCP_MOVING_ERROR)
-			{
-				RCP_Mode_errorcode = NO_ERROR;
-			}
-		} else {
-			// Ekart is moving. Throw error and cancel.
-			RCP_Mode_pending = FALSE;  // RCP pending flag
-			RCP_Mode_errorcode = RCP_MOVING_ERROR;
+			//maybe no wait time is needed and ack can be read here
+			RCP_Mode_pending = 0;
 		}
 	}
-	// check if Motoc Controller heartbeats are fine
+
+
 	if (( Sp_mSek==3 ) || ( Sp_mSek==8 ))  // on every 300ms and 800ms
 	{
 		if ( (Heartbeat_MC_rechts==Msg_Heartbeat_MC_rechts) &&	(Heartbeat_MC_links==Msg_Heartbeat_MC_links) )
@@ -238,16 +235,17 @@ void HAL_SYSTICK_Callback(void)
 				RCP_Mode_errorcode = NO_ERROR;
 			}
 
-			if(RCP_Mode_status == 1)  // If RCP Mode is enabled skip the FFR motor control
+			if(RCP_Mode_status== 1)
 			{
-				if(Heartbeat_RCP == FALSE) //No RCP Heartbeat -> Stop motors and throw NO_RCP_HEARTBEAT
+				if(Heartbeat_RCP == 0) //kein Heartbeat -> NO_RCP_HEARTBEAT
 				{
 					Emergency_Stop();
 					RCP_Mode_errorcode = NO_RCP_HEARTBEAT;
 				}
 			}
 			/*************************************************************************************************************************/
-			else  // default FFR motor control algorithm
+
+			else
 			{
 				if (Bremse>=Bremse_SchwelleVerGas)
 				{
@@ -311,7 +309,6 @@ void HAL_SYSTICK_Callback(void)
 		/*Heartbeat Motorcontroller*/
 		else
 		{
-			RCP_Mode_pending = FALSE;  // RCP pending procedure finished
 			Emergency_Stop();
 			RCP_Mode_errorcode = NO_MOTOR_HEARTBEAT;
 		}
