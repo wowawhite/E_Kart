@@ -59,7 +59,7 @@ extern uint16_t *Pointer_BeschlProzent;   // Parameter dient zur Touch-Eingabe, 
 extern uint16_t *Pointer_Rueckwaert;
 
 // RCP-Mode global communication variables
-extern uint8_t RCP_Mode_status;  // actual rcp status: 0 == disconnected, 1 == connencted
+extern uint8_t RCP_Mode_status;  // actual rcp status: FALSE == 0 == disconnected, TRUE == 1 == connencted
 extern uint8_t RCP_Mode_selected;  // indicates if user wants connect/disconnect
 extern uint8_t RCP_Mode_pending;  // indicates connection/disconnection event ongoing
 extern uint8_t RCP_Mode_errorcode;  // contaims gĺobal RCP errocodes
@@ -1001,6 +1001,12 @@ void RCP_show_status(uint8_t RCP_Mode_status)
 	LCD_Font(130,80,getStatusString(RCP_Mode_status),_8_Retro,1,WHITE);
 }
 
+void RCP_show_error(uint8_t RCP_Mode_error)
+{
+	LCD_Rect_Fill(130,105,16,16,BLACK);
+	LCD_Font(150,105,getErrorString(RCP_Mode_errorcode),_8_Retro,1,WHITE);
+}
+
 void EKartZustand(void)
 {
 	ZeitAnzeige();
@@ -1211,8 +1217,6 @@ void Anzeige_Init(uint8_t menuebene)
 
 
     	LCD_Font(0,105,"RCP-Mode Errorcode:", _8_Retro,1,WHITE);
-    	LCD_Rect_Fill(130,105,16,16,BLACK);
-    	LCD_Font(150,105,getErrorString(RCP_Mode_errorcode),_8_Retro,1,WHITE);
 		Menu_Oben();                     // �berschrift, Fahrzeugrechner
     	WriteButton(11,0);	           // Switch-Button zurueck zum "Hauptmenu"
     	WriteButton(11,1);			// Switch-Button RCP Connect
@@ -1664,7 +1668,7 @@ uint8_t TouchAction(uint8_t menuenummer)
 			{
 				// button enable rcp mode
 				RCP_Mode_selected = !RCP_Mode_selected;
-				RCP_Mode_pending = 1;
+				RCP_Mode_pending = TRUE;
 
 				ret = S_Button[menuenummer][1].Menueverlinkung;
 			}
@@ -1842,7 +1846,7 @@ uint8_t TouchAction(uint8_t menuenummer)
  * 9. Strom
  * 10. Password
  * 11. Menue "RCP-Mode"
- * 12. Menue "RCP-Plotter"
+ * 12. Menue "RCP-Plotter" (not implemented yet)
  */
 
 
@@ -2717,6 +2721,7 @@ void Anzeige(uint_fast8_t menuebene)
 			ZeitAnzeige();
 			RCP_show_connect(RCP_Mode_pending);
 			RCP_show_status(RCP_Mode_status);
+			RCP_show_error(RCP_Mode_errorcode);
 		}
 		break;
 		#ifdef EX_PLOT
