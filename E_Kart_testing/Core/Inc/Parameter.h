@@ -15,10 +15,12 @@
 /* Exported constants ------------------------------------------------*/                             
 /* Macros ------------------------------------------------------------*/
 
-#define SOFTWAREVERSION "V2021.07" // dont forget to increment if changed
+#define SOFTWAREVERSION "V2021.08" // dont forget to increment if changed
 
 #define TRUE 1
 #define FALSE 0
+#define ON 1
+#define OFF 0
 
 //#define EX_PLOT  // this one turns on/off experimental plot feature
 //#ifdef EX_PLOT

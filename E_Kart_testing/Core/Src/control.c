@@ -64,7 +64,7 @@ uint16_t Spannung_Zellen_r[8];
 
 uint8_t touchIRQ = 0;
 // RCP-Mode global communication variables
-uint8_t RCP_Mode_status= 0;		// actual RCP state status
+uint8_t RCP_Mode_status = OFF;		// actual RCP state status
 uint8_t RCP_Mode_selected = FALSE;  // connection/disconnection request. TRUE == 1 == selected
 uint8_t RCP_Mode_pending = FALSE;	// state while connecting/disconnecting to rcp module
 uint8_t RCP_Mode_errorcode = NO_ERROR;
@@ -220,13 +220,13 @@ void HAL_SYSTICK_Callback(void)
 			{
 				RCP_Mode_errorcode = NO_ERROR;
 			}
-			if(RCP_Mode_status== 1)
+			if(RCP_Mode_status == ON)
 			{
 				RCP_check_heartbeat();
-				if(RCP_Mode_errorcode == NO_RCP_HEARTBEAT) //kein Heartbeat -> NO_RCP_HEARTBEAT
+				if(RCP_Mode_errorcode == NO_RCP_HEARTBEAT) //kein Heartbeat -> Disconnect rcp
 				{
 					Emergency_Stop();
-					//TODO: disable RCP mode maybe?
+					RCP_Mode_status = OFF;
 				}
 			}
 			/*************************************************************************************************************************/
@@ -295,6 +295,7 @@ void HAL_SYSTICK_Callback(void)
 		{
 			Emergency_Stop();
 			RCP_Mode_errorcode = NO_MOTOR_HEARTBEAT;
+			RCP_Mode_status = OFF;
 		}
 	}
 
@@ -632,13 +633,13 @@ void RCP_check_heartbeat(void)
 {
 	switch(Heartbeat_RCP)
 	{
-	case 0:
+	case 0:		// if heartbeat is missing after 2000 calls, throw RCP heartbeat error
 		Heartbeat_RCP_counter++;
 		if(Heartbeat_RCP_counter > 2000){
 			RCP_Mode_errorcode = NO_RCP_HEARTBEAT;
 		}
 		break;
-	case 5:
+	case 5:		// if rcp heartbeat arrives, clear counter and go on
 		if(RCP_Mode_errorcode == NO_RCP_HEARTBEAT)
 		{
 			RCP_Mode_errorcode = NO_ERROR;

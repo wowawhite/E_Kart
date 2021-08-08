@@ -800,11 +800,17 @@ void BatterieAnzeige_Init(void)
 
 void RCPstatusAnzeige_Init(void)
 {
+	static uint8_t RCP_flag = 0;
 	const uint8_t xposition = 200;
-	const uint8_t yposition = 170;
+	const uint8_t yposition = 185;
 	LCD_Font(xposition,yposition,"RCP Mode:",_8_Retro,1,WHITE);
 	LCD_Rect_Fill(xposition,yposition,200,16,BLACK);
 	LCD_Font(xposition+80,yposition,getStatusString(RCP_Mode_status),_8_Retro,1,WHITE);
+	if(RCP_flag != RCP_Mode_status){
+		RCP_flag = RCP_Mode_status;
+		LCD_Rect_Fill(xposition,yposition,200,16,BLACK);
+		LCD_Font(xposition+80,yposition,getStatusString(RCP_Mode_status),_8_Retro,1,WHITE);
+	}
 
 }
 
