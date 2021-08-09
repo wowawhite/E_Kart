@@ -25,7 +25,6 @@ extern int16_t  Bremse;				            // Bremswert, der �ber PWM-Sensor ermit
 extern uint8_t StateofCharge;
 char buf[4];
 char buf1[4];
-char longbuf[20];
 uint8_t PasswordCode[4]={1,2,3,4};
 uint8_t PasswordCodeUser[4];
 uint8_t sCode;                 // 0-4, eingegebene Zeichen des Password
@@ -282,7 +281,7 @@ void ZeitAnzeige(void)
 	static uint8_t Sp_Sek_Merker;				  // Merker, ob entsprechende Zeit vorangeschritten ist
     static uint8_t Sp_Min_Merker;				  // Merker, ob entsprechende Zeit vorangeschritten ist
     static uint8_t Sp_Stu_Merker;				  // Merker, ob entsprechende Zeit vorangeschritten ist
-    char Asci_Time[2];
+    char Asci_Time[3];
     // Initialisierung mit Menu_Oben() bewirkte Ausgabe: "00:00:00"
     // GUI_Text(250,1,"00:00:00",White,Black);
     // Zeichen sind 8 Pixel breit und 16 hoch

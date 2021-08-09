@@ -12,13 +12,13 @@
 
 char RCP_ON_MSG[] = "ON";
 char RCP_OFF_MSG[] = "OFF";
-char RCP_CONNECTING[] = "BREMSEN!Verbinde..."; //19 char
+char RCP_CONNECTING[] = "BREMSEN!Verbinde..."; //19 char + null terminator, so 20 max
 // RCP error strings
 char NO_ERROR_MSG[] = "No Error";
 char RCP_CONNECTIONERR_MSG[] = "Connection Error";
 char NO_RCP_HEARTBEAT_MSG[] = "No RCP Heartbeat";
-char NO_MOTOR_HEARTBEAT_MSG[] = "No Motor Heatbeat"; //17 char max
-char RCP_MOVING_ERROR_MSG[] = "Ekart moving!"; //17 char max
+char NO_MOTOR_HEARTBEAT_MSG[] = "No Motor Heatbeat"; //17+1 char max
+char RCP_MOVING_ERROR_MSG[] = "Ekart moving!"; //17+1 char max
 
 
 
