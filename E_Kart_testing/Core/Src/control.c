@@ -330,7 +330,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 	if ((sCanRxHeader.StdId == ID_SDO_RCP_Tx)&&(sCanRxHeader.IDE == CAN_ID_STD) && (sCanRxHeader.DLC == 8))
 	{
 		SDOack= RxMessage[0];
-		if(SDOack == Msg_SDO_RCP_ack_OK)
+		if(SDOack == Msg_SDO_RCP_ack_OK)  // If RCP controller responded, set flags
 		{
 			RCP_Mode_status = RCP_Mode_selected;  // connection established. Set flags and return.
 			RCP_Mode_pending = FALSE;
@@ -645,7 +645,7 @@ void RCP_check_heartbeat(void)
 			RCP_Mode_errorcode = NO_ERROR;
 		}
 		Heartbeat_RCP_counter = 0;
-		Heartbeat_RCP = 0;
+		Heartbeat_RCP = 0;  // clear heatbeat flag and wait for next heatbeat to set
 		break;
 	}
 }

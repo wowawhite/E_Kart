@@ -1795,7 +1795,7 @@ uint8_t TouchAction(uint8_t menuenummer)
 /* Menueebenen
  * 1. Zustand-Anzeige
  * 2."Menue"
- * 3. Ebene f�r mehr Daten von der Batterie
+ * 3. Batteriestatus
  * 4. "Fahrmodi - �bersicht"
  * 5. "FahrModi-Anfaenger"
  * 6. "FahrModi-Anfaenger"
@@ -1804,7 +1804,6 @@ uint8_t TouchAction(uint8_t menuenummer)
  * 9. Strom
  * 10. Password
  * 11. Menue "RCP-Mode"
- * 12. Menue "RCP-Plotter" (not implemented yet)
  */
 
 
@@ -1902,7 +1901,7 @@ void Menuestruktur(void)
 	S_Button[menuenummer][buttonnummer].bottonsanzahl=5;
 
 	// Menuebene 3
-	// Ebene f�r mehr Daten von der Batterie
+	// Batteriestatus
 	menuenummer=3;
 
 	buttonnummer=0;
