@@ -330,11 +330,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 	if ((sCanRxHeader.StdId == ID_SDO_RCP_Tx)&&(sCanRxHeader.IDE == CAN_ID_STD) && (sCanRxHeader.DLC == 8))
 	{
 		SDOack= RxMessage[0];
-		if(SDOack == Msg_SDO_RCP_ack_OK)  // If RCP controller responded, set flags
-		{
-			RCP_Mode_status = RCP_Mode_selected;  // connection established. Set flags and return.
-			RCP_Mode_pending = FALSE;
-		} // end SDOack check
+
 	} // End CanRxHeader
 
 
@@ -631,6 +627,7 @@ void Emergency_Stop()
 
 void RCP_check_heartbeat(void)
 {
+	RCP_can_readout();
 	switch(Heartbeat_RCP)
 	{
 	case 0:		// if heartbeat is missing after 2000 calls, throw RCP heartbeat error
@@ -650,4 +647,13 @@ void RCP_check_heartbeat(void)
 	}
 }
 
+void RCP_can_readout(void)
+{
+	if(SDOack == Msg_SDO_RCP_ack_OK)  // If RCP controller responded, set flags
+	{
+		RCP_Mode_status = RCP_Mode_selected;  // connection established. Set flags and return.
+		RCP_Mode_pending = FALSE;
+	} // end SDOack check
+
+}
 

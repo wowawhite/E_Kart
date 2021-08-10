@@ -15,4 +15,5 @@ void Motor_Init(void);
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin);
 void Emergency_Stop(void);
 void RCP_check_heartbeat(void);
+void RCP_can_readout(void);
 #endif /* CONTROL_H_ */
