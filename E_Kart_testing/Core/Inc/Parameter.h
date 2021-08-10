@@ -38,7 +38,7 @@
 #endif
 
 
-#define max_Menuebenen 19       // insgesamt 19 Menuebenen, 0.Menuebene wird nicht genutzt
+#define max_menuebenen 19       // insgesamt 19 Menuebenen, 0.Menuebene wird nicht genutzt
 #define max_buttons 13           // in jeder Menuebene kann man maximal 14(13) Switch-Bottons(0.Buttons z�hlt dazu) auslegen.
 // SwitchButton ist ein Button auf Display angezeigt und der verlinkt zu anderen Menuebenen
 // In "struct" [TouchFunktion.c] sind die Eigenschaft von SwitchButton definiert

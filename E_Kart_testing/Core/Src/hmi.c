@@ -67,12 +67,12 @@ struct SwitchButton
 	uint8_t    	y1;					  		// Startkoordinate Y P1
 	uint16_t   	x2;					  		// Startkoordinate x P2
 	uint8_t    	y2;					  		// Startkoordinate Y P2
-	uint8_t	  	Menueverlinkung;	// Auf welches Men� verlinkt wird beim klicken
+	uint8_t	  	Menuverlinkung;	// Auf welches Men� verlinkt wird beim klicken
 	uint8_t    	Wert;             // Werte f�r Code
 	char		*Text;				    // Buttontext
 	uint8_t    	Textlaenge;			  // Buttontext L�nge
 	uint8_t    	bottonsanzahl;    // Anzahl aller Buttons in einer Ebene
-} S_Button[max_Menuebenen][max_buttons];
+} S_Button[max_menuebenen][max_buttons];
 
 volatile struct GleitBlock
 {
@@ -93,20 +93,20 @@ volatile struct GleitBlock
 	uint32_t  min_wert;
 	char	  *Text;		// Beschriftung
 	uint16_t  Farbe;	 		 // Farbe
-} Slider[max_Menuebenen][max_sliders];
+} Slider[max_menuebenen][max_sliders];
 
 // functions here
-void WriteButton(uint_fast8_t Menuenummer, uint8_t Buttonnummer)
+void WriteButton(uint_fast8_t menunummer, uint8_t Buttonnummer)
 {
      uint16_t textposi_x, textposi_y;
      // Aufzeichnung des Buttons
-     LCD_Rect_Fill(S_Button[Menuenummer][Buttonnummer].x1,S_Button[Menuenummer][Buttonnummer].y1,S_Button[Menuenummer][Buttonnummer].x2-S_Button[Menuenummer][Buttonnummer].x1,S_Button[Menuenummer][Buttonnummer].y2-S_Button[Menuenummer][Buttonnummer].y1, WHITE);
+     LCD_Rect_Fill(S_Button[menunummer][Buttonnummer].x1,S_Button[menunummer][Buttonnummer].y1,S_Button[menunummer][Buttonnummer].x2-S_Button[menunummer][Buttonnummer].x1,S_Button[menunummer][Buttonnummer].y2-S_Button[menunummer][Buttonnummer].y1, WHITE);
      // Mit der Annahme das ein Buchstabe = 8 x 14 pixel gro� ist
 	 // Berechnung fuer die Position der Beschriftung
-     textposi_x=((S_Button[Menuenummer][Buttonnummer].x2+S_Button[Menuenummer][Buttonnummer].x1)/2)-S_Button[Menuenummer][Buttonnummer].Textlaenge*8/2;
-     textposi_y=((S_Button[Menuenummer][Buttonnummer].y2+S_Button[Menuenummer][Buttonnummer].y1)/2+14/2);
+     textposi_x=((S_Button[menunummer][Buttonnummer].x2+S_Button[menunummer][Buttonnummer].x1)/2)-S_Button[menunummer][Buttonnummer].Textlaenge*8/2;
+     textposi_y=((S_Button[menunummer][Buttonnummer].y2+S_Button[menunummer][Buttonnummer].y1)/2+14/2);
 	 // Ausgabe der Beschriftung auf Display
-	 LCD_Font(textposi_x, textposi_y, S_Button[Menuenummer][Buttonnummer].Text, _8_Retro, 1, BLACK);
+	 LCD_Font(textposi_x, textposi_y, S_Button[menunummer][Buttonnummer].Text, _8_Retro, 1, BLACK);
 }
 
 char * getErrorString(uint8_t errorcode)
@@ -136,96 +136,96 @@ char * getStatusString(uint8_t statuscode)
 }
 
 
-void MarkChosenButton(uint_fast8_t Menuenummer, uint8_t Buttonnummer)
+void MarkChosenButton(uint_fast8_t menunummer, uint8_t Buttonnummer)
 {
-	LCD_Rect(S_Button[Menuenummer][Buttonnummer].x1,S_Button[Menuenummer][Buttonnummer].y1,S_Button[Menuenummer][Buttonnummer].x2-S_Button[Menuenummer][Buttonnummer].x1,S_Button[Menuenummer][Buttonnummer].y2-S_Button[Menuenummer][Buttonnummer].y1,1,RED);
+	LCD_Rect(S_Button[menunummer][Buttonnummer].x1,S_Button[menunummer][Buttonnummer].y1,S_Button[menunummer][Buttonnummer].x2-S_Button[menunummer][Buttonnummer].x1,S_Button[menunummer][Buttonnummer].y2-S_Button[menunummer][Buttonnummer].y1,1,RED);
 }
 
-void UnmarkChosenButton(uint_fast8_t Menuenummer, uint8_t Buttonnummer)
+void UnmarkChosenButton(uint_fast8_t menunummer, uint8_t Buttonnummer)
 {
-	LCD_Rect(S_Button[Menuenummer][Buttonnummer].x1,S_Button[Menuenummer][Buttonnummer].y1,S_Button[Menuenummer][Buttonnummer].x2-S_Button[Menuenummer][Buttonnummer].x1,S_Button[Menuenummer][Buttonnummer].y2-S_Button[Menuenummer][Buttonnummer].y1,1,BLACK);
+	LCD_Rect(S_Button[menunummer][Buttonnummer].x1,S_Button[menunummer][Buttonnummer].y1,S_Button[menunummer][Buttonnummer].x2-S_Button[menunummer][Buttonnummer].x1,S_Button[menunummer][Buttonnummer].y2-S_Button[menunummer][Buttonnummer].y1,1,BLACK);
 }
 
-void BlinkChosenButton(uint_fast8_t Menuenummer, uint8_t Buttonnummer)
+void BlinkChosenButton(uint_fast8_t menunummer, uint8_t Buttonnummer)
 {
 	if (Sp_Sek%2){
-		MarkChosenButton(Menuenummer, Buttonnummer);
+		MarkChosenButton(menunummer, Buttonnummer);
 	} else {
-		UnmarkChosenButton(Menuenummer, Buttonnummer);
+		UnmarkChosenButton(menunummer, Buttonnummer);
 	}
 }
 
 /*******************************************************************************
 * Function Name  :  AnzeigeSliderInit
 * Description    :  Initiale Anzeige des Gleitblocksystems,(Gleitbahn, Grenzwert, Beschriftung)
-* Input          :  Menuenummer: welche Menuebene 1,2,3,4,5,6
+* Input          :  menunummer: welche menubene 1,2,3,4,5,6
                     slidernummer: welche Gleitblock 0,1,2
 * Output         :  None
 * Return         :  None
 *******************************************************************************/
-void AnzeigeSlider_Init(uint_fast8_t Menuenummer, uint_fast8_t slidernummer)
+void AnzeigeSlider_Init(uint_fast8_t menunummer, uint_fast8_t slidernummer)
 {
 	uint16_t delta;
 	char Asci_max_wert[11];         // Puffer-f�r uintToasci-Wandelung
 	char Asci_min_wert[11];         // Puffer-f�r uintToasci-Wandelung
 	// Grenzwert des Gleitblocksystems in Asci-Zeichen wandeln
-	utoa( Slider[Menuenummer][slidernummer].max_wert, Asci_max_wert ,10);
-	utoa( Slider[Menuenummer][slidernummer].min_wert, Asci_min_wert ,10);
+	utoa( Slider[menunummer][slidernummer].max_wert, Asci_max_wert ,10);
+	utoa( Slider[menunummer][slidernummer].min_wert, Asci_min_wert ,10);
 
 	// Ausgabe der Asci-Zeichen von Grenzwert auf Display
-	LCD_Font(Slider[Menuenummer][slidernummer].Bahn_x1-5, Slider[Menuenummer][slidernummer].Bahn_y2+21, Asci_min_wert, _8_Retro, 1, WHITE);
-	LCD_Font(Slider[Menuenummer][slidernummer].Bahn_x2-5,Slider[Menuenummer][slidernummer].Bahn_y2+21,Asci_max_wert,_8_Retro,1,WHITE);
+	LCD_Font(Slider[menunummer][slidernummer].Bahn_x1-5, Slider[menunummer][slidernummer].Bahn_y2+21, Asci_min_wert, _8_Retro, 1, WHITE);
+	LCD_Font(Slider[menunummer][slidernummer].Bahn_x2-5,Slider[menunummer][slidernummer].Bahn_y2+21,Asci_max_wert,_8_Retro,1,WHITE);
 	// Ausgabe der Beschriftung
-	LCD_Font(1,Slider[Menuenummer][slidernummer].Bahn_y2+5,Slider[Menuenummer][slidernummer].Text,_8_Retro,1,Slider[Menuenummer][slidernummer].Farbe);
+	LCD_Font(1,Slider[menunummer][slidernummer].Bahn_y2+5,Slider[menunummer][slidernummer].Text,_8_Retro,1,Slider[menunummer][slidernummer].Farbe);
 	// Aufzeichnen der Gleitbahn
-	LCD_Rect(Slider[Menuenummer][slidernummer].Bahn_x1,Slider[Menuenummer][slidernummer].Bahn_y1,Slider[Menuenummer][slidernummer].Bahn_x2-Slider[Menuenummer][slidernummer].Bahn_x1,Slider[Menuenummer][slidernummer].Bahn_y2-Slider[Menuenummer][slidernummer].Bahn_y1, 1, GRAY);
+	LCD_Rect(Slider[menunummer][slidernummer].Bahn_x1,Slider[menunummer][slidernummer].Bahn_y1,Slider[menunummer][slidernummer].Bahn_x2-Slider[menunummer][slidernummer].Bahn_x1,Slider[menunummer][slidernummer].Bahn_y2-Slider[menunummer][slidernummer].Bahn_y1, 1, GRAY);
 
 	//untere Begrenzung
-	if(Slider[Menuenummer][slidernummer].x<=Slider[Menuenummer][slidernummer].Bahn_x1)
+	if(Slider[menunummer][slidernummer].x<=Slider[menunummer][slidernummer].Bahn_x1)
 	{
-		Slider[Menuenummer][slidernummer].x=Slider[Menuenummer][slidernummer].Bahn_x1;
+		Slider[menunummer][slidernummer].x=Slider[menunummer][slidernummer].Bahn_x1;
 	}
 	// obere Begrenzung
-	if(Slider[Menuenummer][slidernummer].x>(Slider[Menuenummer][slidernummer].Bahn_x2))
+	if(Slider[menunummer][slidernummer].x>(Slider[menunummer][slidernummer].Bahn_x2))
 	{
-		Slider[Menuenummer][slidernummer].x=Slider[Menuenummer][slidernummer].Bahn_x2;
+		Slider[menunummer][slidernummer].x=Slider[menunummer][slidernummer].Bahn_x2;
 	}
 	// Berechnung des Anpassungsfaktors, Delta=(max-min)*1000/(laenge der Bahn)
-	delta=((Slider[Menuenummer][slidernummer].max_wert-Slider[Menuenummer][slidernummer].min_wert)*1000)/(Slider[Menuenummer][slidernummer].Bahn_x2-Slider[Menuenummer][slidernummer].Bahn_x1);
+	delta=((Slider[menunummer][slidernummer].max_wert-Slider[menunummer][slidernummer].min_wert)*1000)/(Slider[menunummer][slidernummer].Bahn_x2-Slider[menunummer][slidernummer].Bahn_x1);
 	// neuer Wert des Gleitblock
-	Slider[Menuenummer][slidernummer].SliderWert=(((Slider[Menuenummer][slidernummer].x-Slider[Menuenummer][slidernummer].Bahn_x1)*delta)/1000)+Slider[Menuenummer][slidernummer].min_wert;
+	Slider[menunummer][slidernummer].SliderWert=(((Slider[menunummer][slidernummer].x-Slider[menunummer][slidernummer].Bahn_x1)*delta)/1000)+Slider[menunummer][slidernummer].min_wert;
 
-	LCD_Rect_Fill(Slider[Menuenummer][slidernummer].x,Slider[Menuenummer][slidernummer].y,Slider[Menuenummer][slidernummer].Breite,Slider[Menuenummer][slidernummer].Laenge,GREEN);
-	utoa(Slider[Menuenummer][slidernummer].SliderWert,Asci_SliderWert,10);
-	LCD_Font(Slider[Menuenummer][slidernummer].x-5, Slider[Menuenummer][slidernummer].y-1, Asci_SliderWert, _8_Retro, 1, Slider[Menuenummer][slidernummer].Farbe);
+	LCD_Rect_Fill(Slider[menunummer][slidernummer].x,Slider[menunummer][slidernummer].y,Slider[menunummer][slidernummer].Breite,Slider[menunummer][slidernummer].Laenge,GREEN);
+	utoa(Slider[menunummer][slidernummer].SliderWert,Asci_SliderWert,10);
+	LCD_Font(Slider[menunummer][slidernummer].x-5, Slider[menunummer][slidernummer].y-1, Asci_SliderWert, _8_Retro, 1, Slider[menunummer][slidernummer].Farbe);
 }
 
-void TouchSlider(uint8_t menuenummer, uint8_t slidernummer)
+void TouchSlider(uint8_t menunummer, uint8_t slidernummer)
 {
 	uint16_t delta;
-	LCD_Rect_Fill(Slider[menuenummer][slidernummer].x,Slider[menuenummer][slidernummer].y,Slider[menuenummer][slidernummer].Breite,Slider[menuenummer][slidernummer].Laenge,BLACK);
-	LCD_Rect_Fill(Slider[menuenummer][slidernummer].x-5,Slider[menuenummer][slidernummer].y-16,8*4,16,BLACK);
-	LCD_Rect(Slider[menuenummer][slidernummer].Bahn_x1,Slider[menuenummer][slidernummer].Bahn_y1,Slider[menuenummer][slidernummer].Bahn_x2-Slider[menuenummer][slidernummer].Bahn_x1,Slider[menuenummer][slidernummer].Bahn_y2-Slider[menuenummer][slidernummer].Bahn_y1, 1, GRAY);
-	Slider[menuenummer][slidernummer].x=touchX;
+	LCD_Rect_Fill(Slider[menunummer][slidernummer].x,Slider[menunummer][slidernummer].y,Slider[menunummer][slidernummer].Breite,Slider[menunummer][slidernummer].Laenge,BLACK);
+	LCD_Rect_Fill(Slider[menunummer][slidernummer].x-5,Slider[menunummer][slidernummer].y-16,8*4,16,BLACK);
+	LCD_Rect(Slider[menunummer][slidernummer].Bahn_x1,Slider[menunummer][slidernummer].Bahn_y1,Slider[menunummer][slidernummer].Bahn_x2-Slider[menunummer][slidernummer].Bahn_x1,Slider[menunummer][slidernummer].Bahn_y2-Slider[menunummer][slidernummer].Bahn_y1, 1, GRAY);
+	Slider[menunummer][slidernummer].x=touchX;
 	//untere Begrenzung
-	if(Slider[menuenummer][slidernummer].x<=Slider[menuenummer][slidernummer].Bahn_x1)
+	if(Slider[menunummer][slidernummer].x<=Slider[menunummer][slidernummer].Bahn_x1)
 	{
-		Slider[menuenummer][slidernummer].x=Slider[menuenummer][slidernummer].Bahn_x1;
+		Slider[menunummer][slidernummer].x=Slider[menunummer][slidernummer].Bahn_x1;
 	}
 	// obere Begrenzung
-	if(Slider[menuenummer][slidernummer].x>(Slider[menuenummer][slidernummer].Bahn_x2))
+	if(Slider[menunummer][slidernummer].x>(Slider[menunummer][slidernummer].Bahn_x2))
 	{
-		Slider[menuenummer][slidernummer].x=Slider[menuenummer][slidernummer].Bahn_x2;
+		Slider[menunummer][slidernummer].x=Slider[menunummer][slidernummer].Bahn_x2;
 	}
 	// Berechnung des Anpassungsfaktors, Delta=(max-min)*1000/(laenge der Bahn)
-	delta=((Slider[menuenummer][slidernummer].max_wert-Slider[menuenummer][slidernummer].min_wert)*1000)/(Slider[menuenummer][slidernummer].Bahn_x2-Slider[menuenummer][slidernummer].Bahn_x1);
+	delta=((Slider[menunummer][slidernummer].max_wert-Slider[menunummer][slidernummer].min_wert)*1000)/(Slider[menunummer][slidernummer].Bahn_x2-Slider[menunummer][slidernummer].Bahn_x1);
 	// neuer Wert des Gleitblock
-	Slider[menuenummer][slidernummer].SliderWert=(((Slider[menuenummer][slidernummer].x-Slider[menuenummer][slidernummer].Bahn_x1)*delta)/1000)+Slider[menuenummer][slidernummer].min_wert;
+	Slider[menunummer][slidernummer].SliderWert=(((Slider[menunummer][slidernummer].x-Slider[menunummer][slidernummer].Bahn_x1)*delta)/1000)+Slider[menunummer][slidernummer].min_wert;
 
-	LCD_Rect_Fill(Slider[menuenummer][slidernummer].x,Slider[menuenummer][slidernummer].y,Slider[menuenummer][slidernummer].Breite,Slider[menuenummer][slidernummer].Laenge,GREEN);
-	utoa(Slider[menuenummer][slidernummer].SliderWert,Asci_SliderWert,10);
-	LCD_Font(Slider[menuenummer][slidernummer].x-5, Slider[menuenummer][slidernummer].y-1, Asci_SliderWert, _8_Retro, 1, Slider[menuenummer][slidernummer].Farbe);
-	//LCD_Rect(Slider[menuenummer][0].Bahn_x1,Slider[menuenummer][0].Bahn_y1,Slider[menuenummer][0].Bahn_x2-Slider[menuenummer][0].Bahn_x1,Slider[menuenummer][0].Bahn_y2-Slider[menuenummer][0].Bahn_y1, 1, GRAY);
+	LCD_Rect_Fill(Slider[menunummer][slidernummer].x,Slider[menunummer][slidernummer].y,Slider[menunummer][slidernummer].Breite,Slider[menunummer][slidernummer].Laenge,GREEN);
+	utoa(Slider[menunummer][slidernummer].SliderWert,Asci_SliderWert,10);
+	LCD_Font(Slider[menunummer][slidernummer].x-5, Slider[menunummer][slidernummer].y-1, Asci_SliderWert, _8_Retro, 1, Slider[menunummer][slidernummer].Farbe);
+	//LCD_Rect(Slider[menunummer][0].Bahn_x1,Slider[menunummer][0].Bahn_y1,Slider[menunummer][0].Bahn_x2-Slider[menunummer][0].Bahn_x1,Slider[menunummer][0].Bahn_y2-Slider[menunummer][0].Bahn_y1, 1, GRAY);
 
 }
 
@@ -361,14 +361,14 @@ void Menu_Unten(void)
 
 	//Button Mitte
 	LCD_Rect_Fill(100,210,120,27,WHITE);
-	LCD_Font(140, 232, "Menue", _8_Retro,1,BLACK);
+	LCD_Font(140, 232, "Menu", _8_Retro,1,BLACK);
 
 	//Pfeil rechts
 	LCD_Rect_Fill(225,210,95,27,WHITE);
 	LCD_Triangle(239,212,239,234,309,223,1,BLACK);
 }
 
-void PasswordAnzeige_Init(uint8_t menuebene)
+void PasswordAnzeige_Init(uint8_t menubene)
 {
 
 	//Anzeigesbereich des Paswort
@@ -379,19 +379,19 @@ void PasswordAnzeige_Init(uint8_t menuebene)
 
 
 	// 13 Buttons
-	WriteButton(menuebene, 0);
-	WriteButton(menuebene, 1);
-	WriteButton(menuebene, 2);
-	WriteButton(menuebene, 3);
-	WriteButton(menuebene, 4);
-	WriteButton(menuebene, 5);
-	WriteButton(menuebene, 6);
-	WriteButton(menuebene, 7);
-	WriteButton(menuebene, 8);
-	WriteButton(menuebene, 9);
-	WriteButton(menuebene, 10);		//Abbruch
-	WriteButton(menuebene, 11);		//Best�tigen
-	WriteButton(menuebene, 12);		//L�schen
+	WriteButton(menubene, 0);
+	WriteButton(menubene, 1);
+	WriteButton(menubene, 2);
+	WriteButton(menubene, 3);
+	WriteButton(menubene, 4);
+	WriteButton(menubene, 5);
+	WriteButton(menubene, 6);
+	WriteButton(menubene, 7);
+	WriteButton(menubene, 8);
+	WriteButton(menubene, 9);
+	WriteButton(menubene, 10);		//Abbruch
+	WriteButton(menubene, 11);		//Best�tigen
+	WriteButton(menubene, 12);		//L�schen
 
 }
 
@@ -1013,9 +1013,9 @@ void EKartZustand(void)
 }
 
 
-void Anzeige_Init(uint8_t menuebene)
+void Anzeige_Init(uint8_t menubene)
 {
-	switch(menuebene)
+	switch(menubene)
 	{
 	case 1:		//E-Kart Zustand
 	{
@@ -1037,12 +1037,12 @@ void Anzeige_Init(uint8_t menuebene)
 		Menu_Oben();					            // �berschrift, Fahrzeugrechner
 		//Menu_Unten();						        // Menu-Zeile unten, Optionen, Pfeile
 		LCD_Font(0,35,"Hauptmenu", _8_Retro,1,WHITE);
-		WriteButton(menuebene, 0);
-		WriteButton(menuebene, 1);
-		WriteButton(menuebene, 2);
-		WriteButton(menuebene, 3);
-		WriteButton(menuebene, 4);
-//		WriteButton(menuebene, 5);
+		WriteButton(menubene, 0);
+		WriteButton(menubene, 1);
+		WriteButton(menubene, 2);
+		WriteButton(menubene, 3);
+		WriteButton(menubene, 4);
+//		WriteButton(menubene, 5);
 	}
 	break;
 
@@ -1067,10 +1067,10 @@ void Anzeige_Init(uint8_t menuebene)
 
 		WriteButton(4,VorgabeDrehzahl);	           // Switch-Button ParameterAuswahl "Moment"
 		WriteButton(4,VorgabeMoment);               // Switch-Button ParameterAuswahl "Drehzahl"
-	    WriteButton(4,AnfaengerModeButton);         // Switch-Button "FahrModi Anfaenger"verlinkt 	6.Menuebene
-	    WriteButton(4,StandardModeButton);          // Switch-Button "FahrModi Standard" verlinkt 	7.Menuebene
-	    WriteButton(4,ProfiModeButton);             // Switch-Button "FahrModi Profi" 		verlinkt 	8.Menuebene
-		WriteButton(4,TestModeButton);              // Switch-Button "FahrModi Test" 		verlinkt 	9.Menuebene
+	    WriteButton(4,AnfaengerModeButton);         // Switch-Button "FahrModi Anfaenger"verlinkt 	6.menubene
+	    WriteButton(4,StandardModeButton);          // Switch-Button "FahrModi Standard" verlinkt 	7.menubene
+	    WriteButton(4,ProfiModeButton);             // Switch-Button "FahrModi Profi" 		verlinkt 	8.menubene
+		WriteButton(4,TestModeButton);              // Switch-Button "FahrModi Test" 		verlinkt 	9.menubene
 		WriteButton(4,6);   // Return to Men� (Ebene 4)
 		switch (Flash_New_Parameters_List[VorgabeMomentDrehzahl]) {
 			case VorgabeDrehzahl:
@@ -1180,7 +1180,7 @@ void Anzeige_Init(uint8_t menuebene)
     	LCD_Font(0,35,"Strom-Ansteuerung", _8_Retro,1,GREEN);
 		Menu_Oben();                     // �berschrift, Fahrzeugrechner
 //		LCD_Rect(100, 210, 120, 27, 1, WHITE);
-//		LCD_Font(140,231,"Menue", _8_Retro,1,WHITE);
+//		LCD_Font(140,231,"Menu", _8_Retro,1,WHITE);
     	WriteButton(9,0);	           // Switch-Button ParameterAuswahl "Moment"
     	WriteButton(9,1);
 		AnzeigeSlider_Init(9,0);          // initiale Anzeige 1.Gleiblocksystem
@@ -1192,7 +1192,7 @@ void Anzeige_Init(uint8_t menuebene)
     	LCD_Rect_Fill(0, 0, 320, 240, BLACK);
     	LCD_Font(45,23,"Code:", _8_Retro,1,WHITE);
     	ZeitAnzeige_Init();
-		PasswordAnzeige_Init(menuebene);
+		PasswordAnzeige_Init(menubene);
 		//AnzeigeSliderInit(13,0);          // initiale Anzeige 1.Gleiblocksystem
 	}
 	break;
@@ -1223,7 +1223,7 @@ void getTouch(void)
 	touchY = getY();
 }
 
-uint8_t TouchAction(uint8_t menuenummer)
+uint8_t TouchAction(uint8_t menunummer)
 {
 	static uint8_t ret=1;
 	static uint8_t touch=0;
@@ -1231,96 +1231,96 @@ uint8_t TouchAction(uint8_t menuenummer)
 	if ((touchX && touchY) && (touch == 0))
 	{
 		touch=1;
-		switch(menuenummer)
+		switch(menunummer)
 		{
 		case 1:			//Buttons in der E-Kart Anzeige
 		{
-			if (S_Button[menuenummer][0].x1<touchX&&S_Button[menuenummer][0].x2>touchX&&S_Button[menuenummer][0].y1<touchY&&S_Button[menuenummer][0].y2>touchY)
+			if (S_Button[menunummer][0].x1<touchX&&S_Button[menunummer][0].x2>touchX&&S_Button[menunummer][0].y1<touchY&&S_Button[menunummer][0].y2>touchY)
 			{
-				Anzeige_Init(S_Button[menuenummer][0].Menueverlinkung);
-				ret = S_Button[menuenummer][0].Menueverlinkung;
+				Anzeige_Init(S_Button[menunummer][0].Menuverlinkung);
+				ret = S_Button[menunummer][0].Menuverlinkung;
 			}
-			if (S_Button[menuenummer][1].x1<touchX&&S_Button[menuenummer][1].x2>touchX&&S_Button[menuenummer][1].y1<touchY&&S_Button[menuenummer][1].y2>touchY)
+			if (S_Button[menunummer][1].x1<touchX&&S_Button[menunummer][1].x2>touchX&&S_Button[menunummer][1].y1<touchY&&S_Button[menunummer][1].y2>touchY)
 			{
-				Anzeige_Init(S_Button[menuenummer][1].Menueverlinkung);
-				ret = S_Button[menuenummer][1].Menueverlinkung;
+				Anzeige_Init(S_Button[menunummer][1].Menuverlinkung);
+				ret = S_Button[menunummer][1].Menuverlinkung;
 			}
-			if (S_Button[menuenummer][2].x1<touchX&&S_Button[menuenummer][2].x2>touchX&&S_Button[menuenummer][2].y1<touchY&&S_Button[menuenummer][2].y2>touchY)
+			if (S_Button[menunummer][2].x1<touchX&&S_Button[menunummer][2].x2>touchX&&S_Button[menunummer][2].y1<touchY&&S_Button[menunummer][2].y2>touchY)
 			{
-				Anzeige_Init(S_Button[menuenummer][2].Menueverlinkung);
-				ret = S_Button[menuenummer][2].Menueverlinkung;
+				Anzeige_Init(S_Button[menunummer][2].Menuverlinkung);
+				ret = S_Button[menunummer][2].Menuverlinkung;
 			}
 		}
 		break;
 
 		case 2:			//Buttons im Hauptmenu
 		{
-			if (S_Button[menuenummer][4].x1<touchX&&S_Button[menuenummer][4].x2>touchX&&S_Button[menuenummer][4].y1<touchY&&S_Button[menuenummer][4].y2>touchY)
+			if (S_Button[menunummer][4].x1<touchX&&S_Button[menunummer][4].x2>touchX&&S_Button[menunummer][4].y1<touchY&&S_Button[menunummer][4].y2>touchY)
 			{
-				Anzeige_Init(S_Button[menuenummer][4].Menueverlinkung);
-				ret = S_Button[menuenummer][4].Menueverlinkung;
+				Anzeige_Init(S_Button[menunummer][4].Menuverlinkung);
+				ret = S_Button[menunummer][4].Menuverlinkung;
 			}
-			if (S_Button[menuenummer][1].x1<touchX&&S_Button[menuenummer][1].x2>touchX&&S_Button[menuenummer][1].y1<touchY&&S_Button[menuenummer][1].y2>touchY)
+			if (S_Button[menunummer][1].x1<touchX&&S_Button[menunummer][1].x2>touchX&&S_Button[menunummer][1].y1<touchY&&S_Button[menunummer][1].y2>touchY)
 			{
-				Anzeige_Init(S_Button[menuenummer][1].Menueverlinkung);
-				ret = S_Button[menuenummer][1].Menueverlinkung;
+				Anzeige_Init(S_Button[menunummer][1].Menuverlinkung);
+				ret = S_Button[menunummer][1].Menuverlinkung;
 			}
-			if (S_Button[menuenummer][2].x1<touchX&&S_Button[menuenummer][2].x2>touchX&&S_Button[menuenummer][2].y1<touchY&&S_Button[menuenummer][2].y2>touchY)
+			if (S_Button[menunummer][2].x1<touchX&&S_Button[menunummer][2].x2>touchX&&S_Button[menunummer][2].y1<touchY&&S_Button[menunummer][2].y2>touchY)
 			{
-				Anzeige_Init(S_Button[menuenummer][2].Menueverlinkung);
-				ret = S_Button[menuenummer][2].Menueverlinkung;
+				Anzeige_Init(S_Button[menunummer][2].Menuverlinkung);
+				ret = S_Button[menunummer][2].Menuverlinkung;
 			}
-			if (S_Button[menuenummer][3].x1<touchX&&S_Button[menuenummer][3].x2>touchX&&S_Button[menuenummer][3].y1<touchY&&S_Button[menuenummer][3].y2>touchY)
+			if (S_Button[menunummer][3].x1<touchX&&S_Button[menunummer][3].x2>touchX&&S_Button[menunummer][3].y1<touchY&&S_Button[menunummer][3].y2>touchY)
 			{
-				Anzeige_Init(S_Button[menuenummer][3].Menueverlinkung);
-				ret = S_Button[menuenummer][3].Menueverlinkung;
+				Anzeige_Init(S_Button[menunummer][3].Menuverlinkung);
+				ret = S_Button[menunummer][3].Menuverlinkung;
 			}
 
-			if (S_Button[menuenummer][0].x1<touchX&&S_Button[menuenummer][0].x2>touchX&&S_Button[menuenummer][0].y1<touchY&&S_Button[menuenummer][0].y2>touchY)
+			if (S_Button[menunummer][0].x1<touchX&&S_Button[menunummer][0].x2>touchX&&S_Button[menunummer][0].y1<touchY&&S_Button[menunummer][0].y2>touchY)
 			{
-				Anzeige_Init(S_Button[menuenummer][0].Menueverlinkung);
-				ret = S_Button[menuenummer][0].Menueverlinkung;
+				Anzeige_Init(S_Button[menunummer][0].Menuverlinkung);
+				ret = S_Button[menunummer][0].Menuverlinkung;
 			}
 		}
 		break;
 
 		case 3:			//Buttons in der Batterieanzeige
 		{
-			if (S_Button[menuenummer][0].x1<touchX&&S_Button[menuenummer][0].x2>touchX&&S_Button[menuenummer][0].y1<touchY&&S_Button[menuenummer][0].y2>touchY)
+			if (S_Button[menunummer][0].x1<touchX&&S_Button[menunummer][0].x2>touchX&&S_Button[menunummer][0].y1<touchY&&S_Button[menunummer][0].y2>touchY)
 			{
-				Anzeige_Init(S_Button[menuenummer][0].Menueverlinkung);
-				ret = S_Button[menuenummer][0].Menueverlinkung;
+				Anzeige_Init(S_Button[menunummer][0].Menuverlinkung);
+				ret = S_Button[menunummer][0].Menuverlinkung;
 			}
-			if (S_Button[menuenummer][1].x1<touchX&&S_Button[menuenummer][1].x2>touchX&&S_Button[menuenummer][1].y1<touchY&&S_Button[menuenummer][1].y2>touchY)
+			if (S_Button[menunummer][1].x1<touchX&&S_Button[menunummer][1].x2>touchX&&S_Button[menunummer][1].y1<touchY&&S_Button[menunummer][1].y2>touchY)
 			{
-				Anzeige_Init(S_Button[menuenummer][1].Menueverlinkung);
-				ret = S_Button[menuenummer][1].Menueverlinkung;
+				Anzeige_Init(S_Button[menunummer][1].Menuverlinkung);
+				ret = S_Button[menunummer][1].Menuverlinkung;
 			}
-			if (S_Button[menuenummer][2].x1<touchX&&S_Button[menuenummer][2].x2>touchX&&S_Button[menuenummer][2].y1<touchY&&S_Button[menuenummer][2].y2>touchY)
+			if (S_Button[menunummer][2].x1<touchX&&S_Button[menunummer][2].x2>touchX&&S_Button[menunummer][2].y1<touchY&&S_Button[menunummer][2].y2>touchY)
 			{
-				Anzeige_Init(S_Button[menuenummer][2].Menueverlinkung);
-				ret = S_Button[menuenummer][2].Menueverlinkung;
+				Anzeige_Init(S_Button[menunummer][2].Menuverlinkung);
+				ret = S_Button[menunummer][2].Menuverlinkung;
 			}
 		}
 		break;
 
 		case 4:			//Buttons im Fahrmodus �bersicht Menu
 		{
-			if (S_Button[menuenummer][0].x1<touchX&&S_Button[menuenummer][0].x2>touchX&&S_Button[menuenummer][0].y1<touchY&&S_Button[menuenummer][0].y2>touchY)
+			if (S_Button[menunummer][0].x1<touchX&&S_Button[menunummer][0].x2>touchX&&S_Button[menunummer][0].y1<touchY&&S_Button[menunummer][0].y2>touchY)
 			{
 //				Flash_New_Parameters_List[VorgabeMomentDrehzahl]=VorgabeDrehzahl;
 
-				Anzeige_Init(S_Button[menuenummer][0].Menueverlinkung);
-				ret = S_Button[menuenummer][0].Menueverlinkung;
+				Anzeige_Init(S_Button[menunummer][0].Menuverlinkung);
+				ret = S_Button[menunummer][0].Menuverlinkung;
 			}
-			if (S_Button[menuenummer][1].x1<touchX&&S_Button[menuenummer][1].x2>touchX&&S_Button[menuenummer][1].y1<touchY&&S_Button[menuenummer][1].y2>touchY)
+			if (S_Button[menunummer][1].x1<touchX&&S_Button[menunummer][1].x2>touchX&&S_Button[menunummer][1].y1<touchY&&S_Button[menunummer][1].y2>touchY)
 			{
 				Flash_New_Parameters_List[VorgabeMomentDrehzahl]=VorgabeMoment;
 
-				Anzeige_Init(S_Button[menuenummer][1].Menueverlinkung);
-				ret = S_Button[menuenummer][1].Menueverlinkung;
+				Anzeige_Init(S_Button[menunummer][1].Menuverlinkung);
+				ret = S_Button[menunummer][1].Menuverlinkung;
 			}
-			if (S_Button[menuenummer][2].x1<touchX&&S_Button[menuenummer][2].x2>touchX&&S_Button[menuenummer][2].y1<touchY&&S_Button[menuenummer][2].y2>touchY)
+			if (S_Button[menunummer][2].x1<touchX&&S_Button[menunummer][2].x2>touchX&&S_Button[menunummer][2].y1<touchY&&S_Button[menunummer][2].y2>touchY)
 			{
 				Flash_New_Parameters_List[ChosenDrivingMode]=AnfaengerModeButton;
 
@@ -1328,10 +1328,10 @@ uint8_t TouchAction(uint8_t menuenummer)
 				Pointer_BeschlProzent=&Flash_New_Parameters_List[Anfaenger_BeschlProzent];	// f�r �nderungen in stm32f10x_it.c
 				Pointer_Rueckwaert=&Flash_New_Parameters_List[Anfaenger_Rueckwaert];
 
-				Anzeige_Init(S_Button[menuenummer][2].Menueverlinkung);
-				ret = S_Button[menuenummer][2].Menueverlinkung;
+				Anzeige_Init(S_Button[menunummer][2].Menuverlinkung);
+				ret = S_Button[menunummer][2].Menuverlinkung;
 			}
-			if (S_Button[menuenummer][3].x1<touchX&&S_Button[menuenummer][3].x2>touchX&&S_Button[menuenummer][3].y1<touchY&&S_Button[menuenummer][3].y2>touchY)
+			if (S_Button[menunummer][3].x1<touchX&&S_Button[menunummer][3].x2>touchX&&S_Button[menunummer][3].y1<touchY&&S_Button[menunummer][3].y2>touchY)
 			{
 				Flash_New_Parameters_List[ChosenDrivingMode]=StandardModeButton;
 
@@ -1339,10 +1339,10 @@ uint8_t TouchAction(uint8_t menuenummer)
 				Pointer_BeschlProzent=&Flash_New_Parameters_List[Standard_BeschlProzent];
 				Pointer_Rueckwaert=&Flash_New_Parameters_List[Standard_Rueckwaert];
 
-				Anzeige_Init(S_Button[menuenummer][3].Menueverlinkung);
-				ret = S_Button[menuenummer][3].Menueverlinkung;
+				Anzeige_Init(S_Button[menunummer][3].Menuverlinkung);
+				ret = S_Button[menunummer][3].Menuverlinkung;
 			}
-			if (S_Button[menuenummer][4].x1<touchX&&S_Button[menuenummer][4].x2>touchX&&S_Button[menuenummer][4].y1<touchY&&S_Button[menuenummer][4].y2>touchY)
+			if (S_Button[menunummer][4].x1<touchX&&S_Button[menunummer][4].x2>touchX&&S_Button[menunummer][4].y1<touchY&&S_Button[menunummer][4].y2>touchY)
 			{
 				Flash_New_Parameters_List[ChosenDrivingMode]=ProfiModeButton;
 
@@ -1350,10 +1350,10 @@ uint8_t TouchAction(uint8_t menuenummer)
 				Pointer_BeschlProzent=&Flash_New_Parameters_List[Profi_BeschlProzent];
 				Pointer_Rueckwaert=&Flash_New_Parameters_List[Profi_Rueckwaert];
 
-				Anzeige_Init(S_Button[menuenummer][4].Menueverlinkung);
-				ret = S_Button[menuenummer][4].Menueverlinkung;
+				Anzeige_Init(S_Button[menunummer][4].Menuverlinkung);
+				ret = S_Button[menunummer][4].Menuverlinkung;
 			}
-			if (S_Button[menuenummer][5].x1<touchX&&S_Button[menuenummer][5].x2>touchX&&S_Button[menuenummer][5].y1<touchY&&S_Button[menuenummer][5].y2>touchY)
+			if (S_Button[menunummer][5].x1<touchX&&S_Button[menunummer][5].x2>touchX&&S_Button[menunummer][5].y1<touchY&&S_Button[menunummer][5].y2>touchY)
 			{
 				Flash_New_Parameters_List[ChosenDrivingMode]=TestModeButton;
 
@@ -1361,264 +1361,264 @@ uint8_t TouchAction(uint8_t menuenummer)
 				Pointer_BeschlProzent=&Flash_New_Parameters_List[Test_BeschlProzent];
 				Pointer_Rueckwaert=&Flash_New_Parameters_List[Test_Rueckwaert];
 
-				Anzeige_Init(S_Button[menuenummer][5].Menueverlinkung);
-				ret = S_Button[menuenummer][5].Menueverlinkung;
+				Anzeige_Init(S_Button[menunummer][5].Menuverlinkung);
+				ret = S_Button[menunummer][5].Menuverlinkung;
 			}
-			if (S_Button[menuenummer][6].x1<touchX&&S_Button[menuenummer][6].x2>touchX&&S_Button[menuenummer][6].y1<touchY&&S_Button[menuenummer][6].y2>touchY)
+			if (S_Button[menunummer][6].x1<touchX&&S_Button[menunummer][6].x2>touchX&&S_Button[menunummer][6].y1<touchY&&S_Button[menunummer][6].y2>touchY)
 			{
-				Anzeige_Init(S_Button[menuenummer][6].Menueverlinkung);
-				ret = S_Button[menuenummer][6].Menueverlinkung;
+				Anzeige_Init(S_Button[menunummer][6].Menuverlinkung);
+				ret = S_Button[menunummer][6].Menuverlinkung;
 			}
 		}
 		break;
 
 		case 5:			//Buttons im Anfaenger Fahrmodus Menu
 		{
-			if (S_Button[menuenummer][0].x1<touchX&&S_Button[menuenummer][0].x2>touchX&&S_Button[menuenummer][0].y1<touchY&&S_Button[menuenummer][0].y2>touchY)
+			if (S_Button[menunummer][0].x1<touchX&&S_Button[menunummer][0].x2>touchX&&S_Button[menunummer][0].y1<touchY&&S_Button[menunummer][0].y2>touchY)
 			{
 //				TransferListElements(0);
 
-//				Flash_New_Parameters_List[Anfaenger_GasProzent]=Slider[menuenummer][0].SliderWert;
-//				Flash_New_Parameters_List[10]=Slider[menuenummer][0].x;
-//				Flash_New_Parameters_List[Anfaenger_BeschlProzent]=Slider[menuenummer][1].SliderWert;
-//				Flash_New_Parameters_List[11]=Slider[menuenummer][1].x;
-//				Flash_New_Parameters_List[Anfaenger_Rueckwaert]=Slider[menuenummer][2].SliderWert;
-//				Flash_New_Parameters_List[26]=Slider[menuenummer][2].x;
-				Anzeige_Init(S_Button[menuenummer][0].Menueverlinkung);
-				ret = S_Button[menuenummer][0].Menueverlinkung;
+//				Flash_New_Parameters_List[Anfaenger_GasProzent]=Slider[menunummer][0].SliderWert;
+//				Flash_New_Parameters_List[10]=Slider[menunummer][0].x;
+//				Flash_New_Parameters_List[Anfaenger_BeschlProzent]=Slider[menunummer][1].SliderWert;
+//				Flash_New_Parameters_List[11]=Slider[menunummer][1].x;
+//				Flash_New_Parameters_List[Anfaenger_Rueckwaert]=Slider[menunummer][2].SliderWert;
+//				Flash_New_Parameters_List[26]=Slider[menunummer][2].x;
+				Anzeige_Init(S_Button[menunummer][0].Menuverlinkung);
+				ret = S_Button[menunummer][0].Menuverlinkung;
 			}
-			if (S_Button[menuenummer][1].x1<touchX&&S_Button[menuenummer][1].x2>touchX&&S_Button[menuenummer][1].y1<touchY&&S_Button[menuenummer][1].y2>touchY)
+			if (S_Button[menunummer][1].x1<touchX&&S_Button[menunummer][1].x2>touchX&&S_Button[menunummer][1].y1<touchY&&S_Button[menunummer][1].y2>touchY)
 			{
-//				Flash_New_Parameters_List[Anfaenger_GasProzent]=Slider[menuenummer][0].SliderWert;
-//				Flash_New_Parameters_List[10]=Slider[menuenummer][0].x;
-//				Flash_New_Parameters_List[Anfaenger_BeschlProzent]=Slider[menuenummer][1].SliderWert;
-//				Flash_New_Parameters_List[11]=Slider[menuenummer][1].x;
-//				Flash_New_Parameters_List[Anfaenger_Rueckwaert]=Slider[menuenummer][2].SliderWert;
-//				Flash_New_Parameters_List[26]=Slider[menuenummer][2].x;
+//				Flash_New_Parameters_List[Anfaenger_GasProzent]=Slider[menunummer][0].SliderWert;
+//				Flash_New_Parameters_List[10]=Slider[menunummer][0].x;
+//				Flash_New_Parameters_List[Anfaenger_BeschlProzent]=Slider[menunummer][1].SliderWert;
+//				Flash_New_Parameters_List[11]=Slider[menunummer][1].x;
+//				Flash_New_Parameters_List[Anfaenger_Rueckwaert]=Slider[menunummer][2].SliderWert;
+//				Flash_New_Parameters_List[26]=Slider[menunummer][2].x;
 				TransferListElements(1);
 				SavetoFlash();
-				Anzeige_Init(S_Button[menuenummer][0].Menueverlinkung);
-				ret = S_Button[menuenummer][0].Menueverlinkung;
+				Anzeige_Init(S_Button[menunummer][0].Menuverlinkung);
+				ret = S_Button[menunummer][0].Menuverlinkung;
 			}
 		}
 		break;
 
 		case 6:			//Buttons im Standart Fahrmodus Menu
 		{
-			if (S_Button[menuenummer][0].x1<touchX&&S_Button[menuenummer][0].x2>touchX&&S_Button[menuenummer][0].y1<touchY&&S_Button[menuenummer][0].y2>touchY)
+			if (S_Button[menunummer][0].x1<touchX&&S_Button[menunummer][0].x2>touchX&&S_Button[menunummer][0].y1<touchY&&S_Button[menunummer][0].y2>touchY)
 			{
 //				TransferListElements(0);
 
-//				Flash_New_Parameters_List[Standard_GasProzent]=Slider[menuenummer][0].SliderWert;
-//				Flash_New_Parameters_List[12]=Slider[menuenummer][0].x;
-//				Flash_New_Parameters_List[Standard_BeschlProzent]=Slider[menuenummer][1].SliderWert;
-//				Flash_New_Parameters_List[13]=Slider[menuenummer][1].x;
-//				Flash_New_Parameters_List[Standard_Rueckwaert]=Slider[menuenummer][2].SliderWert;
-//				Flash_New_Parameters_List[27]=Slider[menuenummer][2].x;
-				Anzeige_Init(S_Button[menuenummer][0].Menueverlinkung);
-				ret = S_Button[menuenummer][0].Menueverlinkung;
+//				Flash_New_Parameters_List[Standard_GasProzent]=Slider[menunummer][0].SliderWert;
+//				Flash_New_Parameters_List[12]=Slider[menunummer][0].x;
+//				Flash_New_Parameters_List[Standard_BeschlProzent]=Slider[menunummer][1].SliderWert;
+//				Flash_New_Parameters_List[13]=Slider[menunummer][1].x;
+//				Flash_New_Parameters_List[Standard_Rueckwaert]=Slider[menunummer][2].SliderWert;
+//				Flash_New_Parameters_List[27]=Slider[menunummer][2].x;
+				Anzeige_Init(S_Button[menunummer][0].Menuverlinkung);
+				ret = S_Button[menunummer][0].Menuverlinkung;
 			}
-			if (S_Button[menuenummer][1].x1<touchX&&S_Button[menuenummer][1].x2>touchX&&S_Button[menuenummer][1].y1<touchY&&S_Button[menuenummer][1].y2>touchY)
+			if (S_Button[menunummer][1].x1<touchX&&S_Button[menunummer][1].x2>touchX&&S_Button[menunummer][1].y1<touchY&&S_Button[menunummer][1].y2>touchY)
 			{
-//				Flash_New_Parameters_List[Standard_GasProzent]=Slider[menuenummer][0].SliderWert;
-//				Flash_New_Parameters_List[12]=Slider[menuenummer][0].x;
-//				Flash_New_Parameters_List[Standard_BeschlProzent]=Slider[menuenummer][1].SliderWert;
-//				Flash_New_Parameters_List[13]=Slider[menuenummer][1].x;
-//				Flash_New_Parameters_List[Standard_Rueckwaert]=Slider[menuenummer][2].SliderWert;
-//				Flash_New_Parameters_List[27]=Slider[menuenummer][2].x;
+//				Flash_New_Parameters_List[Standard_GasProzent]=Slider[menunummer][0].SliderWert;
+//				Flash_New_Parameters_List[12]=Slider[menunummer][0].x;
+//				Flash_New_Parameters_List[Standard_BeschlProzent]=Slider[menunummer][1].SliderWert;
+//				Flash_New_Parameters_List[13]=Slider[menunummer][1].x;
+//				Flash_New_Parameters_List[Standard_Rueckwaert]=Slider[menunummer][2].SliderWert;
+//				Flash_New_Parameters_List[27]=Slider[menunummer][2].x;
 				TransferListElements(1);
 				SavetoFlash();
-				Anzeige_Init(S_Button[menuenummer][0].Menueverlinkung);
-				ret = S_Button[menuenummer][0].Menueverlinkung;
+				Anzeige_Init(S_Button[menunummer][0].Menuverlinkung);
+				ret = S_Button[menunummer][0].Menuverlinkung;
 			}
 		}
 		break;
 
 		case 7:			//Buttons im Profi Fahrmodus Menu
 		{
-			if (S_Button[menuenummer][0].x1<touchX&&S_Button[menuenummer][0].x2>touchX&&S_Button[menuenummer][0].y1<touchY&&S_Button[menuenummer][0].y2>touchY)
+			if (S_Button[menunummer][0].x1<touchX&&S_Button[menunummer][0].x2>touchX&&S_Button[menunummer][0].y1<touchY&&S_Button[menunummer][0].y2>touchY)
 			{
 //				TransferListElements(0);
 
-//				Flash_New_Parameters_List[Profi_GasProzent]=Slider[menuenummer][0].SliderWert;
-//				Flash_New_Parameters_List[14]=Slider[menuenummer][0].x;
-//				Flash_New_Parameters_List[Profi_BeschlProzent]=Slider[menuenummer][1].SliderWert;
-//				Flash_New_Parameters_List[15]=Slider[menuenummer][1].x;
-//				Flash_New_Parameters_List[Profi_Rueckwaert]=Slider[menuenummer][2].SliderWert;
-//				Flash_New_Parameters_List[28]=Slider[menuenummer][2].x;
-				Anzeige_Init(S_Button[menuenummer][0].Menueverlinkung);
-				ret = S_Button[menuenummer][0].Menueverlinkung;
+//				Flash_New_Parameters_List[Profi_GasProzent]=Slider[menunummer][0].SliderWert;
+//				Flash_New_Parameters_List[14]=Slider[menunummer][0].x;
+//				Flash_New_Parameters_List[Profi_BeschlProzent]=Slider[menunummer][1].SliderWert;
+//				Flash_New_Parameters_List[15]=Slider[menunummer][1].x;
+//				Flash_New_Parameters_List[Profi_Rueckwaert]=Slider[menunummer][2].SliderWert;
+//				Flash_New_Parameters_List[28]=Slider[menunummer][2].x;
+				Anzeige_Init(S_Button[menunummer][0].Menuverlinkung);
+				ret = S_Button[menunummer][0].Menuverlinkung;
 			}
-			if (S_Button[menuenummer][1].x1<touchX&&S_Button[menuenummer][1].x2>touchX&&S_Button[menuenummer][1].y1<touchY&&S_Button[menuenummer][1].y2>touchY)
+			if (S_Button[menunummer][1].x1<touchX&&S_Button[menunummer][1].x2>touchX&&S_Button[menunummer][1].y1<touchY&&S_Button[menunummer][1].y2>touchY)
 			{
-//				Flash_New_Parameters_List[Profi_GasProzent]=Slider[menuenummer][0].SliderWert;
-//				Flash_New_Parameters_List[14]=Slider[menuenummer][0].x;
-//				Flash_New_Parameters_List[Profi_BeschlProzent]=Slider[menuenummer][1].SliderWert;
-//				Flash_New_Parameters_List[15]=Slider[menuenummer][1].x;
-//				Flash_New_Parameters_List[Profi_Rueckwaert]=Slider[menuenummer][2].SliderWert;
-//				Flash_New_Parameters_List[28]=Slider[menuenummer][2].x;
+//				Flash_New_Parameters_List[Profi_GasProzent]=Slider[menunummer][0].SliderWert;
+//				Flash_New_Parameters_List[14]=Slider[menunummer][0].x;
+//				Flash_New_Parameters_List[Profi_BeschlProzent]=Slider[menunummer][1].SliderWert;
+//				Flash_New_Parameters_List[15]=Slider[menunummer][1].x;
+//				Flash_New_Parameters_List[Profi_Rueckwaert]=Slider[menunummer][2].SliderWert;
+//				Flash_New_Parameters_List[28]=Slider[menunummer][2].x;
 				TransferListElements(1);
 				SavetoFlash();
-				Anzeige_Init(S_Button[menuenummer][0].Menueverlinkung);
-				ret = S_Button[menuenummer][0].Menueverlinkung;
+				Anzeige_Init(S_Button[menunummer][0].Menuverlinkung);
+				ret = S_Button[menunummer][0].Menuverlinkung;
 			}
 		}
 		break;
 
 		case 8:			//Buttons im Test Fahrmodus Menu
 		{
-			if (S_Button[menuenummer][0].x1<touchX&&S_Button[menuenummer][0].x2>touchX&&S_Button[menuenummer][0].y1<touchY&&S_Button[menuenummer][0].y2>touchY)
+			if (S_Button[menunummer][0].x1<touchX&&S_Button[menunummer][0].x2>touchX&&S_Button[menunummer][0].y1<touchY&&S_Button[menunummer][0].y2>touchY)
 			{
 //				TransferListElements(0);
 
-//				Flash_New_Parameters_List[Test_GasProzent]=Slider[menuenummer][0].SliderWert;
-//				Flash_New_Parameters_List[16]=Slider[menuenummer][0].x;
-//				Flash_New_Parameters_List[Test_BeschlProzent]=Slider[menuenummer][1].SliderWert;
-//				Flash_New_Parameters_List[17]=Slider[menuenummer][1].x;
-//				Flash_New_Parameters_List[Test_Rueckwaert]=Slider[menuenummer][2].SliderWert;
-//				Flash_New_Parameters_List[29]=Slider[menuenummer][2].x;
-				Anzeige_Init(S_Button[menuenummer][0].Menueverlinkung);
-				ret = S_Button[menuenummer][0].Menueverlinkung;
+//				Flash_New_Parameters_List[Test_GasProzent]=Slider[menunummer][0].SliderWert;
+//				Flash_New_Parameters_List[16]=Slider[menunummer][0].x;
+//				Flash_New_Parameters_List[Test_BeschlProzent]=Slider[menunummer][1].SliderWert;
+//				Flash_New_Parameters_List[17]=Slider[menunummer][1].x;
+//				Flash_New_Parameters_List[Test_Rueckwaert]=Slider[menunummer][2].SliderWert;
+//				Flash_New_Parameters_List[29]=Slider[menunummer][2].x;
+				Anzeige_Init(S_Button[menunummer][0].Menuverlinkung);
+				ret = S_Button[menunummer][0].Menuverlinkung;
 			}
-			if (S_Button[menuenummer][1].x1<touchX&&S_Button[menuenummer][1].x2>touchX&&S_Button[menuenummer][1].y1<touchY&&S_Button[menuenummer][1].y2>touchY)
+			if (S_Button[menunummer][1].x1<touchX&&S_Button[menunummer][1].x2>touchX&&S_Button[menunummer][1].y1<touchY&&S_Button[menunummer][1].y2>touchY)
 			{
-//				Flash_New_Parameters_List[Test_GasProzent]=Slider[menuenummer][0].SliderWert;
-//				Flash_New_Parameters_List[16]=Slider[menuenummer][0].x;
-//				Flash_New_Parameters_List[Test_BeschlProzent]=Slider[menuenummer][1].SliderWert;
-//				Flash_New_Parameters_List[17]=Slider[menuenummer][1].x;
-//				Flash_New_Parameters_List[Test_Rueckwaert]=Slider[menuenummer][2].SliderWert;
-//				Flash_New_Parameters_List[29]=Slider[menuenummer][2].x;
+//				Flash_New_Parameters_List[Test_GasProzent]=Slider[menunummer][0].SliderWert;
+//				Flash_New_Parameters_List[16]=Slider[menunummer][0].x;
+//				Flash_New_Parameters_List[Test_BeschlProzent]=Slider[menunummer][1].SliderWert;
+//				Flash_New_Parameters_List[17]=Slider[menunummer][1].x;
+//				Flash_New_Parameters_List[Test_Rueckwaert]=Slider[menunummer][2].SliderWert;
+//				Flash_New_Parameters_List[29]=Slider[menunummer][2].x;
 				TransferListElements(1);
 				SavetoFlash();
-				Anzeige_Init(S_Button[menuenummer][0].Menueverlinkung);
-				ret = S_Button[menuenummer][0].Menueverlinkung;
+				Anzeige_Init(S_Button[menunummer][0].Menuverlinkung);
+				ret = S_Button[menunummer][0].Menuverlinkung;
 			}
 		}
 		break;
 
 		case 9:			//Buttons in Strom Einstellung Menu
 		{
-			if (S_Button[menuenummer][0].x1<touchX&&S_Button[menuenummer][0].x2>touchX&&S_Button[menuenummer][0].y1<touchY&&S_Button[menuenummer][0].y2>touchY)
+			if (S_Button[menunummer][0].x1<touchX&&S_Button[menunummer][0].x2>touchX&&S_Button[menunummer][0].y1<touchY&&S_Button[menunummer][0].y2>touchY)
 			{
 //				TransferListElements(0);
 
-				Anzeige_Init(S_Button[menuenummer][0].Menueverlinkung);
-				ret = S_Button[menuenummer][0].Menueverlinkung;
+				Anzeige_Init(S_Button[menunummer][0].Menuverlinkung);
+				ret = S_Button[menunummer][0].Menuverlinkung;
 			}
-			if (S_Button[menuenummer][1].x1<touchX&&S_Button[menuenummer][1].x2>touchX&&S_Button[menuenummer][1].y1<touchY&&S_Button[menuenummer][1].y2>touchY)
+			if (S_Button[menunummer][1].x1<touchX&&S_Button[menunummer][1].x2>touchX&&S_Button[menunummer][1].y1<touchY&&S_Button[menunummer][1].y2>touchY)
 			{
 				TransferListElements(1);
 				SavetoFlash();
-				Anzeige_Init(S_Button[menuenummer][0].Menueverlinkung);
-				ret = S_Button[menuenummer][0].Menueverlinkung;
+				Anzeige_Init(S_Button[menunummer][0].Menuverlinkung);
+				ret = S_Button[menunummer][0].Menuverlinkung;
 			}
 		}
 		break;
 
 		case 10:		//Buttons im Password Menu
 		{
-			if (S_Button[menuenummer][0].x1<touchX&&S_Button[menuenummer][0].x2>touchX&&S_Button[menuenummer][0].y1<touchY&&S_Button[menuenummer][0].y2>touchY)
+			if (S_Button[menunummer][0].x1<touchX&&S_Button[menunummer][0].x2>touchX&&S_Button[menunummer][0].y1<touchY&&S_Button[menunummer][0].y2>touchY)
 			{
 				if(sCode <= 3)
 				{
 					sCode++;
-					PasswordCodeUser[sCode-1] = S_Button[menuenummer][0].Wert;
+					PasswordCodeUser[sCode-1] = S_Button[menunummer][0].Wert;
 				}
-				ret = S_Button[menuenummer][0].Menueverlinkung;
+				ret = S_Button[menunummer][0].Menuverlinkung;
 			}
-			if (S_Button[menuenummer][1].x1<touchX&&S_Button[menuenummer][1].x2>touchX&&S_Button[menuenummer][1].y1<touchY&&S_Button[menuenummer][1].y2>touchY)
+			if (S_Button[menunummer][1].x1<touchX&&S_Button[menunummer][1].x2>touchX&&S_Button[menunummer][1].y1<touchY&&S_Button[menunummer][1].y2>touchY)
 			{
 				if(sCode <= 3)
 				{
 					sCode++;
-					PasswordCodeUser[sCode-1] = S_Button[menuenummer][1].Wert;
+					PasswordCodeUser[sCode-1] = S_Button[menunummer][1].Wert;
 				}
-				ret = S_Button[menuenummer][1].Menueverlinkung;
+				ret = S_Button[menunummer][1].Menuverlinkung;
 			}
-			if (S_Button[menuenummer][2].x1<touchX&&S_Button[menuenummer][2].x2>touchX&&S_Button[menuenummer][2].y1<touchY&&S_Button[menuenummer][2].y2>touchY)
+			if (S_Button[menunummer][2].x1<touchX&&S_Button[menunummer][2].x2>touchX&&S_Button[menunummer][2].y1<touchY&&S_Button[menunummer][2].y2>touchY)
 			{
 				if(sCode <= 3)
 				{
 					sCode++;
-					PasswordCodeUser[sCode-1] = S_Button[menuenummer][2].Wert;
+					PasswordCodeUser[sCode-1] = S_Button[menunummer][2].Wert;
 				}
-				ret = S_Button[menuenummer][2].Menueverlinkung;
+				ret = S_Button[menunummer][2].Menuverlinkung;
 			}
-			if (S_Button[menuenummer][3].x1<touchX&&S_Button[menuenummer][3].x2>touchX&&S_Button[menuenummer][3].y1<touchY&&S_Button[menuenummer][3].y2>touchY)
+			if (S_Button[menunummer][3].x1<touchX&&S_Button[menunummer][3].x2>touchX&&S_Button[menunummer][3].y1<touchY&&S_Button[menunummer][3].y2>touchY)
 			{
 				if(sCode <= 3)
 				{
 					sCode++;
-					PasswordCodeUser[sCode-1] = S_Button[menuenummer][3].Wert;
+					PasswordCodeUser[sCode-1] = S_Button[menunummer][3].Wert;
 				}
-				ret = S_Button[menuenummer][3].Menueverlinkung;
+				ret = S_Button[menunummer][3].Menuverlinkung;
 			}
-			if (S_Button[menuenummer][4].x1<touchX&&S_Button[menuenummer][4].x2>touchX&&S_Button[menuenummer][4].y1<touchY&&S_Button[menuenummer][4].y2>touchY)
+			if (S_Button[menunummer][4].x1<touchX&&S_Button[menunummer][4].x2>touchX&&S_Button[menunummer][4].y1<touchY&&S_Button[menunummer][4].y2>touchY)
 			{
 				if(sCode <= 3)
 				{
 					sCode++;
-					PasswordCodeUser[sCode-1] = S_Button[menuenummer][4].Wert;
+					PasswordCodeUser[sCode-1] = S_Button[menunummer][4].Wert;
 				}
-				ret = S_Button[menuenummer][4].Menueverlinkung;
+				ret = S_Button[menunummer][4].Menuverlinkung;
 			}
-			if (S_Button[menuenummer][5].x1<touchX&&S_Button[menuenummer][5].x2>touchX&&S_Button[menuenummer][5].y1<touchY&&S_Button[menuenummer][5].y2>touchY)
+			if (S_Button[menunummer][5].x1<touchX&&S_Button[menunummer][5].x2>touchX&&S_Button[menunummer][5].y1<touchY&&S_Button[menunummer][5].y2>touchY)
 			{
 				if(sCode <= 3)
 				{
 					sCode++;
-					PasswordCodeUser[sCode-1] = S_Button[menuenummer][5].Wert;
+					PasswordCodeUser[sCode-1] = S_Button[menunummer][5].Wert;
 				}
-				ret = S_Button[menuenummer][5].Menueverlinkung;
+				ret = S_Button[menunummer][5].Menuverlinkung;
 			}
-			if (S_Button[menuenummer][6].x1<touchX&&S_Button[menuenummer][6].x2>touchX&&S_Button[menuenummer][6].y1<touchY&&S_Button[menuenummer][6].y2>touchY)
+			if (S_Button[menunummer][6].x1<touchX&&S_Button[menunummer][6].x2>touchX&&S_Button[menunummer][6].y1<touchY&&S_Button[menunummer][6].y2>touchY)
 			{
 				if(sCode <= 3)
 				{
 					sCode++;
-					PasswordCodeUser[sCode-1] = S_Button[menuenummer][6].Wert;
+					PasswordCodeUser[sCode-1] = S_Button[menunummer][6].Wert;
 				}
-				ret = S_Button[menuenummer][6].Menueverlinkung;
+				ret = S_Button[menunummer][6].Menuverlinkung;
 			}
-			if (S_Button[menuenummer][7].x1<touchX&&S_Button[menuenummer][7].x2>touchX&&S_Button[menuenummer][7].y1<touchY&&S_Button[menuenummer][7].y2>touchY)
+			if (S_Button[menunummer][7].x1<touchX&&S_Button[menunummer][7].x2>touchX&&S_Button[menunummer][7].y1<touchY&&S_Button[menunummer][7].y2>touchY)
 			{
 				if(sCode <= 3)
 				{
 					sCode++;
-					PasswordCodeUser[sCode-1] = S_Button[menuenummer][7].Wert;
+					PasswordCodeUser[sCode-1] = S_Button[menunummer][7].Wert;
 				}
-				ret = S_Button[menuenummer][7].Menueverlinkung;
+				ret = S_Button[menunummer][7].Menuverlinkung;
 			}
-			if (S_Button[menuenummer][8].x1<touchX&&S_Button[menuenummer][8].x2>touchX&&S_Button[menuenummer][8].y1<touchY&&S_Button[menuenummer][8].y2>touchY)
+			if (S_Button[menunummer][8].x1<touchX&&S_Button[menunummer][8].x2>touchX&&S_Button[menunummer][8].y1<touchY&&S_Button[menunummer][8].y2>touchY)
 			{
 				if(sCode <= 3)
 				{
 					sCode++;
-					PasswordCodeUser[sCode-1] = S_Button[menuenummer][8].Wert;;
+					PasswordCodeUser[sCode-1] = S_Button[menunummer][8].Wert;;
 				}
-				ret = S_Button[menuenummer][8].Menueverlinkung;
+				ret = S_Button[menunummer][8].Menuverlinkung;
 			}
-			if (S_Button[menuenummer][9].x1<touchX&&S_Button[menuenummer][9].x2>touchX&&S_Button[menuenummer][9].y1<touchY&&S_Button[menuenummer][9].y2>touchY)
+			if (S_Button[menunummer][9].x1<touchX&&S_Button[menunummer][9].x2>touchX&&S_Button[menunummer][9].y1<touchY&&S_Button[menunummer][9].y2>touchY)
 			{
 				if(sCode <= 3)
 				{
 					sCode++;
-					PasswordCodeUser[sCode-1] = S_Button[menuenummer][9].Wert;
+					PasswordCodeUser[sCode-1] = S_Button[menunummer][9].Wert;
 				}
-				ret = S_Button[menuenummer][9].Menueverlinkung;
+				ret = S_Button[menunummer][9].Menuverlinkung;
 
 			}
-			if (S_Button[menuenummer][10].x1<touchX&&S_Button[menuenummer][10].x2>touchX&&S_Button[menuenummer][10].y1<touchY&&S_Button[menuenummer][10].y2>touchY)
+			if (S_Button[menunummer][10].x1<touchX&&S_Button[menunummer][10].x2>touchX&&S_Button[menunummer][10].y1<touchY&&S_Button[menunummer][10].y2>touchY)
 			{
 				PasswordCodeUser[0]=0;
 				PasswordCodeUser[1]=0;
 				PasswordCodeUser[2]=0;
 				PasswordCodeUser[3]=0;
 				sCode=0;
-				Anzeige_Init(S_Button[menuenummer][10].Menueverlinkung);
-				ret = S_Button[menuenummer][10].Menueverlinkung;
+				Anzeige_Init(S_Button[menunummer][10].Menuverlinkung);
+				ret = S_Button[menunummer][10].Menuverlinkung;
 			}
-			if (S_Button[menuenummer][11].x1<touchX&&S_Button[menuenummer][11].x2>touchX&&S_Button[menuenummer][11].y1<touchY&&S_Button[menuenummer][11].y2>touchY)
+			if (S_Button[menunummer][11].x1<touchX&&S_Button[menunummer][11].x2>touchX&&S_Button[menunummer][11].y1<touchY&&S_Button[menunummer][11].y2>touchY)
 			{
 				if((sCode == 4) && (PasswordCode[0] == PasswordCodeUser[0]) && (PasswordCode[1] == PasswordCodeUser[1]) && (PasswordCode[2] == PasswordCodeUser[2]) && (PasswordCode[3] == PasswordCodeUser[3]))
 				{
@@ -1627,40 +1627,40 @@ uint8_t TouchAction(uint8_t menuenummer)
 					PasswordCodeUser[2]=0;
 					PasswordCodeUser[3]=0;
 					sCode=0;
-					Anzeige_Init(S_Button[menuenummer][11].Menueverlinkung);
-					ret = S_Button[menuenummer][11].Menueverlinkung;
+					Anzeige_Init(S_Button[menunummer][11].Menuverlinkung);
+					ret = S_Button[menunummer][11].Menuverlinkung;
 				}
 				else
 				{
-					ret = menuenummer;
+					ret = menunummer;
 				}
 			}
-			if (S_Button[menuenummer][12].x1<touchX&&S_Button[menuenummer][12].x2>touchX&&S_Button[menuenummer][12].y1<touchY&&S_Button[menuenummer][12].y2>touchY)
+			if (S_Button[menunummer][12].x1<touchX&&S_Button[menunummer][12].x2>touchX&&S_Button[menunummer][12].y1<touchY&&S_Button[menunummer][12].y2>touchY)
 			{
 				if(sCode >= 1)
 				{
 					sCode--;
 				}
-				ret = S_Button[menuenummer][12].Menueverlinkung;
+				ret = S_Button[menunummer][12].Menuverlinkung;
 			}
 
 		}
 		break;
 		case 11:			//Buttons in "RCP-Mode" menu
 		{
-			if (S_Button[menuenummer][0].x1<touchX&&S_Button[menuenummer][0].x2>touchX&&S_Button[menuenummer][0].y1<touchY&&S_Button[menuenummer][0].y2>touchY)
+			if (S_Button[menunummer][0].x1<touchX&&S_Button[menunummer][0].x2>touchX&&S_Button[menunummer][0].y1<touchY&&S_Button[menunummer][0].y2>touchY)
 			{
 				// button Just go back to "Main Menu"
-				Anzeige_Init(S_Button[menuenummer][0].Menueverlinkung);
-				ret = S_Button[menuenummer][0].Menueverlinkung;
+				Anzeige_Init(S_Button[menunummer][0].Menuverlinkung);
+				ret = S_Button[menunummer][0].Menuverlinkung;
 			}
-			if (S_Button[menuenummer][1].x1<touchX&&S_Button[menuenummer][1].x2>touchX&&S_Button[menuenummer][1].y1<touchY&&S_Button[menuenummer][1].y2>touchY)
+			if (S_Button[menunummer][1].x1<touchX&&S_Button[menunummer][1].x2>touchX&&S_Button[menunummer][1].y1<touchY&&S_Button[menunummer][1].y2>touchY)
 			{
 				// button enable rcp mode
 				RCP_Mode_selected = !RCP_Mode_selected;
 				RCP_Mode_pending = TRUE;
 
-				ret = S_Button[menuenummer][1].Menueverlinkung;
+				ret = S_Button[menunummer][1].Menuverlinkung;
 			}
 		}
 		break;
@@ -1670,111 +1670,111 @@ uint8_t TouchAction(uint8_t menuenummer)
 	}
 	else if ((touchX && touchY) && (touch == 1))
 	{
-		switch(menuenummer)
+		switch(menunummer)
 		{
 		case 5:			//Slider im Anfaenger Fahrmodus Menu
 		{
-			if((touchX>Slider[menuenummer][0].Touch_x1) && (touchX<Slider[menuenummer][0].Touch_x2) && (touchY>Slider[menuenummer][0].Touch_y1) && (touchY<Slider[menuenummer][0].Touch_y2))
+			if((touchX>Slider[menunummer][0].Touch_x1) && (touchX<Slider[menunummer][0].Touch_x2) && (touchY>Slider[menunummer][0].Touch_y1) && (touchY<Slider[menunummer][0].Touch_y2))
 			{
-				TouchSlider(menuenummer,0);
-				Flash_New_Parameters_List[Anfaenger_GasProzent]=Slider[menuenummer][0].SliderWert;
-				Flash_New_Parameters_List[10]=Slider[menuenummer][0].x;
+				TouchSlider(menunummer,0);
+				Flash_New_Parameters_List[Anfaenger_GasProzent]=Slider[menunummer][0].SliderWert;
+				Flash_New_Parameters_List[10]=Slider[menunummer][0].x;
 			}
-			if((touchX>Slider[menuenummer][1].Touch_x1) && (touchX<Slider[menuenummer][1].Touch_x2) && (touchY>Slider[menuenummer][1].Touch_y1) && (touchY<Slider[menuenummer][1].Touch_y2))
+			if((touchX>Slider[menunummer][1].Touch_x1) && (touchX<Slider[menunummer][1].Touch_x2) && (touchY>Slider[menunummer][1].Touch_y1) && (touchY<Slider[menunummer][1].Touch_y2))
 			{
-				TouchSlider(menuenummer,1);
-				Flash_New_Parameters_List[Anfaenger_BeschlProzent]=Slider[menuenummer][1].SliderWert;
-				Flash_New_Parameters_List[11]=Slider[menuenummer][1].x;
+				TouchSlider(menunummer,1);
+				Flash_New_Parameters_List[Anfaenger_BeschlProzent]=Slider[menunummer][1].SliderWert;
+				Flash_New_Parameters_List[11]=Slider[menunummer][1].x;
 			}
-			if((touchX>Slider[menuenummer][2].Touch_x1) && (touchX<Slider[menuenummer][2].Touch_x2) && (touchY>Slider[menuenummer][2].Touch_y1) && (touchY<Slider[menuenummer][2].Touch_y2))
+			if((touchX>Slider[menunummer][2].Touch_x1) && (touchX<Slider[menunummer][2].Touch_x2) && (touchY>Slider[menunummer][2].Touch_y1) && (touchY<Slider[menunummer][2].Touch_y2))
 			{
-				TouchSlider(menuenummer,2);
-				Flash_New_Parameters_List[Anfaenger_Rueckwaert]=Slider[menuenummer][2].SliderWert;
-				Flash_New_Parameters_List[26]=Slider[menuenummer][2].x;
+				TouchSlider(menunummer,2);
+				Flash_New_Parameters_List[Anfaenger_Rueckwaert]=Slider[menunummer][2].SliderWert;
+				Flash_New_Parameters_List[26]=Slider[menunummer][2].x;
 			}
 		}
 		break;
 
 		case 6:			//Slider im Standart Fahrmodus Menu
 		{
-			if((touchX>Slider[menuenummer][0].Touch_x1) && (touchX<Slider[menuenummer][0].Touch_x2) && (touchY>Slider[menuenummer][0].Touch_y1) && (touchY<Slider[menuenummer][0].Touch_y2))
+			if((touchX>Slider[menunummer][0].Touch_x1) && (touchX<Slider[menunummer][0].Touch_x2) && (touchY>Slider[menunummer][0].Touch_y1) && (touchY<Slider[menunummer][0].Touch_y2))
 			{
-				TouchSlider(menuenummer,0);
-				Flash_New_Parameters_List[Standard_GasProzent]=Slider[menuenummer][0].SliderWert;
-				Flash_New_Parameters_List[12]=Slider[menuenummer][0].x;
+				TouchSlider(menunummer,0);
+				Flash_New_Parameters_List[Standard_GasProzent]=Slider[menunummer][0].SliderWert;
+				Flash_New_Parameters_List[12]=Slider[menunummer][0].x;
 			}
-			if((touchX>Slider[menuenummer][1].Touch_x1) && (touchX<Slider[menuenummer][1].Touch_x2) && (touchY>Slider[menuenummer][1].Touch_y1) && (touchY<Slider[menuenummer][1].Touch_y2))
+			if((touchX>Slider[menunummer][1].Touch_x1) && (touchX<Slider[menunummer][1].Touch_x2) && (touchY>Slider[menunummer][1].Touch_y1) && (touchY<Slider[menunummer][1].Touch_y2))
 			{
-				TouchSlider(menuenummer,1);
-				Flash_New_Parameters_List[Standard_BeschlProzent]=Slider[menuenummer][1].SliderWert;
-				Flash_New_Parameters_List[13]=Slider[menuenummer][1].x;
+				TouchSlider(menunummer,1);
+				Flash_New_Parameters_List[Standard_BeschlProzent]=Slider[menunummer][1].SliderWert;
+				Flash_New_Parameters_List[13]=Slider[menunummer][1].x;
 			}
-			if((touchX>Slider[menuenummer][2].Touch_x1) && (touchX<Slider[menuenummer][2].Touch_x2) && (touchY>Slider[menuenummer][2].Touch_y1) && (touchY<Slider[menuenummer][2].Touch_y2))
+			if((touchX>Slider[menunummer][2].Touch_x1) && (touchX<Slider[menunummer][2].Touch_x2) && (touchY>Slider[menunummer][2].Touch_y1) && (touchY<Slider[menunummer][2].Touch_y2))
 			{
-				TouchSlider(menuenummer,2);
-				Flash_New_Parameters_List[Standard_Rueckwaert]=Slider[menuenummer][2].SliderWert;
-				Flash_New_Parameters_List[27]=Slider[menuenummer][2].x;
+				TouchSlider(menunummer,2);
+				Flash_New_Parameters_List[Standard_Rueckwaert]=Slider[menunummer][2].SliderWert;
+				Flash_New_Parameters_List[27]=Slider[menunummer][2].x;
 			}
 		}
 		break;
 
 		case 7:			//Slider im Profi Fahrmodus Menu
 		{
-			if((touchX>Slider[menuenummer][0].Touch_x1) && (touchX<Slider[menuenummer][0].Touch_x2) && (touchY>Slider[menuenummer][0].Touch_y1) && (touchY<Slider[menuenummer][0].Touch_y2))
+			if((touchX>Slider[menunummer][0].Touch_x1) && (touchX<Slider[menunummer][0].Touch_x2) && (touchY>Slider[menunummer][0].Touch_y1) && (touchY<Slider[menunummer][0].Touch_y2))
 			{
-				TouchSlider(menuenummer,0);
-				Flash_New_Parameters_List[Profi_GasProzent]=Slider[menuenummer][0].SliderWert;
-				Flash_New_Parameters_List[14]=Slider[menuenummer][0].x;
+				TouchSlider(menunummer,0);
+				Flash_New_Parameters_List[Profi_GasProzent]=Slider[menunummer][0].SliderWert;
+				Flash_New_Parameters_List[14]=Slider[menunummer][0].x;
 			}
-			if((touchX>Slider[menuenummer][1].Touch_x1) && (touchX<Slider[menuenummer][1].Touch_x2) && (touchY>Slider[menuenummer][1].Touch_y1) && (touchY<Slider[menuenummer][1].Touch_y2))
+			if((touchX>Slider[menunummer][1].Touch_x1) && (touchX<Slider[menunummer][1].Touch_x2) && (touchY>Slider[menunummer][1].Touch_y1) && (touchY<Slider[menunummer][1].Touch_y2))
 			{
-				TouchSlider(menuenummer,1);
-				Flash_New_Parameters_List[Profi_BeschlProzent]=Slider[menuenummer][1].SliderWert;
-				Flash_New_Parameters_List[15]=Slider[menuenummer][1].x;
+				TouchSlider(menunummer,1);
+				Flash_New_Parameters_List[Profi_BeschlProzent]=Slider[menunummer][1].SliderWert;
+				Flash_New_Parameters_List[15]=Slider[menunummer][1].x;
 			}
-			if((touchX>Slider[menuenummer][2].Touch_x1) && (touchX<Slider[menuenummer][2].Touch_x2) && (touchY>Slider[menuenummer][2].Touch_y1) && (touchY<Slider[menuenummer][2].Touch_y2))
+			if((touchX>Slider[menunummer][2].Touch_x1) && (touchX<Slider[menunummer][2].Touch_x2) && (touchY>Slider[menunummer][2].Touch_y1) && (touchY<Slider[menunummer][2].Touch_y2))
 			{
-				TouchSlider(menuenummer,2);
-				Flash_New_Parameters_List[Profi_Rueckwaert]=Slider[menuenummer][2].SliderWert;
-				Flash_New_Parameters_List[28]=Slider[menuenummer][2].x;
+				TouchSlider(menunummer,2);
+				Flash_New_Parameters_List[Profi_Rueckwaert]=Slider[menunummer][2].SliderWert;
+				Flash_New_Parameters_List[28]=Slider[menunummer][2].x;
 			}
 		}
 		break;
 
 		case 8:			//Slider im Test Fahrmodus Menu
 		{
-			if((touchX>Slider[menuenummer][0].Touch_x1) && (touchX<Slider[menuenummer][0].Touch_x2) && (touchY>Slider[menuenummer][0].Touch_y1) && (touchY<Slider[menuenummer][0].Touch_y2))
+			if((touchX>Slider[menunummer][0].Touch_x1) && (touchX<Slider[menunummer][0].Touch_x2) && (touchY>Slider[menunummer][0].Touch_y1) && (touchY<Slider[menunummer][0].Touch_y2))
 			{
-				TouchSlider(menuenummer,0);
-				Flash_New_Parameters_List[Test_GasProzent]=Slider[menuenummer][0].SliderWert;
-				Flash_New_Parameters_List[16]=Slider[menuenummer][0].x;
+				TouchSlider(menunummer,0);
+				Flash_New_Parameters_List[Test_GasProzent]=Slider[menunummer][0].SliderWert;
+				Flash_New_Parameters_List[16]=Slider[menunummer][0].x;
 			}
-			if((touchX>Slider[menuenummer][1].Touch_x1) && (touchX<Slider[menuenummer][1].Touch_x2) && (touchY>Slider[menuenummer][1].Touch_y1) && (touchY<Slider[menuenummer][1].Touch_y2))
+			if((touchX>Slider[menunummer][1].Touch_x1) && (touchX<Slider[menunummer][1].Touch_x2) && (touchY>Slider[menunummer][1].Touch_y1) && (touchY<Slider[menunummer][1].Touch_y2))
 			{
-				TouchSlider(menuenummer,1);
-				Flash_New_Parameters_List[Test_BeschlProzent]=Slider[menuenummer][1].SliderWert;
-				Flash_New_Parameters_List[17]=Slider[menuenummer][1].x;
+				TouchSlider(menunummer,1);
+				Flash_New_Parameters_List[Test_BeschlProzent]=Slider[menunummer][1].SliderWert;
+				Flash_New_Parameters_List[17]=Slider[menunummer][1].x;
 			}
-			if((touchX>Slider[menuenummer][2].Touch_x1) && (touchX<Slider[menuenummer][2].Touch_x2) && (touchY>Slider[menuenummer][2].Touch_y1) && (touchY<Slider[menuenummer][2].Touch_y2))
+			if((touchX>Slider[menunummer][2].Touch_x1) && (touchX<Slider[menunummer][2].Touch_x2) && (touchY>Slider[menunummer][2].Touch_y1) && (touchY<Slider[menunummer][2].Touch_y2))
 			{
-				TouchSlider(menuenummer,2);
-				Flash_New_Parameters_List[Test_Rueckwaert]=Slider[menuenummer][2].SliderWert;
-				Flash_New_Parameters_List[29]=Slider[menuenummer][2].x;
+				TouchSlider(menunummer,2);
+				Flash_New_Parameters_List[Test_Rueckwaert]=Slider[menunummer][2].SliderWert;
+				Flash_New_Parameters_List[29]=Slider[menunummer][2].x;
 			}
 		}
 		break;
 
 		case 9:			//Slider im Strom Einstellung Menu
 		{
-			if((touchX>Slider[menuenummer][0].Touch_x1) && (touchX<Slider[menuenummer][0].Touch_x2) && (touchY>Slider[menuenummer][0].Touch_y1) && (touchY<Slider[menuenummer][0].Touch_y2))
+			if((touchX>Slider[menunummer][0].Touch_x1) && (touchX<Slider[menunummer][0].Touch_x2) && (touchY>Slider[menunummer][0].Touch_y1) && (touchY<Slider[menunummer][0].Touch_y2))
 			{
-				TouchSlider(menuenummer,0);
-				Flash_New_Parameters_List[Strom]=Slider[menuenummer][0].SliderWert;
+				TouchSlider(menunummer,0);
+				Flash_New_Parameters_List[Strom]=Slider[menunummer][0].SliderWert;
 			}
 		}
 		break;
 
-		default: ret = menuenummer;
+		default: ret = menunummer;
 		}
 	}
 	else if (!(touchX && touchY) && (touch == 1)) touch=0;
@@ -1785,15 +1785,15 @@ uint8_t TouchAction(uint8_t menuenummer)
 /*******************************************************************************
 * Function Name  :  WriteButton
 * Description    :  Aufzeichnung des Buttons
-* Input          :  Menuenummer: welche Menuebene 1,2,3,4,5,6,7,8,9,10
+* Input          :  menunummer: welche menubene 1,2,3,4,5,6,7,8,9,10
                     Buttonnummer: welcher Button 0,1,2,3,4,5
 * Output         :  None
 * Return         :  None
 *******************************************************************************/
 
-/* Menueebenen
+/* Menuebenen
  * 1. Zustand-Anzeige
- * 2."Menue"
+ * 2."Menu"
  * 3. Batteriestatus
  * 4. "Fahrmodi - �bersicht"
  * 5. "FahrModi-Anfaenger"
@@ -1802,790 +1802,790 @@ uint8_t TouchAction(uint8_t menuenummer)
  * 8. "FahrModi-Test"
  * 9. Strom
  * 10. Password
- * 11. Menue "RCP-Mode"
+ * 11. Menu "RCP-Mode"
  */
 
 
 
 
-void Menuestruktur(void)
+void Menustruktur(void)
 {
-	uint8_t menuenummer;
+	uint8_t menunummer;
 	uint8_t buttonnummer;
 	uint8_t slidernummer;
 
-	// Menuebene 1
+	// menubene 1
 	// Zustand-Anzeige f�r EKART
-	menuenummer=1;
+	menunummer=1;
 
 	buttonnummer=0;
-	S_Button[menuenummer][buttonnummer].x1=1;
-	S_Button[menuenummer][buttonnummer].y1=210;
-	S_Button[menuenummer][buttonnummer].x2=95;
-	S_Button[menuenummer][buttonnummer].y2=237;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=3;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=3;
+	S_Button[menunummer][buttonnummer].x1=1;
+	S_Button[menunummer][buttonnummer].y1=210;
+	S_Button[menunummer][buttonnummer].x2=95;
+	S_Button[menunummer][buttonnummer].y2=237;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=3;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=3;
 
 
 	buttonnummer=1;
-	S_Button[menuenummer][buttonnummer].x1=100;
-	S_Button[menuenummer][buttonnummer].y1=210;
-	S_Button[menuenummer][buttonnummer].x2=220;
-	S_Button[menuenummer][buttonnummer].y2=237;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=10;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=3;
+	S_Button[menunummer][buttonnummer].x1=100;
+	S_Button[menunummer][buttonnummer].y1=210;
+	S_Button[menunummer][buttonnummer].x2=220;
+	S_Button[menunummer][buttonnummer].y2=237;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=10;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=3;
 
 
 	buttonnummer=2;
-	S_Button[menuenummer][buttonnummer].x1=225;
-	S_Button[menuenummer][buttonnummer].y1=210;
-	S_Button[menuenummer][buttonnummer].x2=318;
-	S_Button[menuenummer][buttonnummer].y2=237;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=3;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=3;
+	S_Button[menunummer][buttonnummer].x1=225;
+	S_Button[menunummer][buttonnummer].y1=210;
+	S_Button[menunummer][buttonnummer].x2=318;
+	S_Button[menunummer][buttonnummer].y2=237;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=3;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=3;
 
-	// Menuebene 2
-	// "Menue"
-	menuenummer=2;
+	// menubene 2
+	// "Menu"
+	menunummer=2;
 
 	buttonnummer=0;
-	S_Button[menuenummer][buttonnummer].x1=10;
-	S_Button[menuenummer][buttonnummer].y1=50;
-	S_Button[menuenummer][buttonnummer].x2=155;
-	S_Button[menuenummer][buttonnummer].y2=100;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=11;
-	S_Button[menuenummer][buttonnummer].Text="RCP-Mode";
-	S_Button[menuenummer][buttonnummer].Textlaenge=8;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=5;
+	S_Button[menunummer][buttonnummer].x1=10;
+	S_Button[menunummer][buttonnummer].y1=50;
+	S_Button[menunummer][buttonnummer].x2=155;
+	S_Button[menunummer][buttonnummer].y2=100;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=11;
+	S_Button[menunummer][buttonnummer].Text="RCP-Mode";
+	S_Button[menunummer][buttonnummer].Textlaenge=8;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=5;
 
 	buttonnummer=1;
-	S_Button[menuenummer][buttonnummer].x1=165;
-	S_Button[menuenummer][buttonnummer].y1=50;
-	S_Button[menuenummer][buttonnummer].x2=310;
-	S_Button[menuenummer][buttonnummer].y2=100;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=3;
-	S_Button[menuenummer][buttonnummer].Text="Batterie";
-	S_Button[menuenummer][buttonnummer].Textlaenge=8;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=5;
+	S_Button[menunummer][buttonnummer].x1=165;
+	S_Button[menunummer][buttonnummer].y1=50;
+	S_Button[menunummer][buttonnummer].x2=310;
+	S_Button[menunummer][buttonnummer].y2=100;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=3;
+	S_Button[menunummer][buttonnummer].Text="Batterie";
+	S_Button[menunummer][buttonnummer].Textlaenge=8;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=5;
 
 	buttonnummer=2;
-	S_Button[menuenummer][buttonnummer].x1=10;
-	S_Button[menuenummer][buttonnummer].y1=110;
-	S_Button[menuenummer][buttonnummer].x2=155;
-	S_Button[menuenummer][buttonnummer].y2=160;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=4;
-	S_Button[menuenummer][buttonnummer].Text="FahrModi";
-	S_Button[menuenummer][buttonnummer].Textlaenge=8;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=5;
+	S_Button[menunummer][buttonnummer].x1=10;
+	S_Button[menunummer][buttonnummer].y1=110;
+	S_Button[menunummer][buttonnummer].x2=155;
+	S_Button[menunummer][buttonnummer].y2=160;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=4;
+	S_Button[menunummer][buttonnummer].Text="FahrModi";
+	S_Button[menunummer][buttonnummer].Textlaenge=8;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=5;
 
 	buttonnummer=3;
-	S_Button[menuenummer][buttonnummer].x1=165;
-	S_Button[menuenummer][buttonnummer].y1=110;
-	S_Button[menuenummer][buttonnummer].x2=310;
-	S_Button[menuenummer][buttonnummer].y2=160;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=9;
-	S_Button[menuenummer][buttonnummer].Text="Strom";
-	S_Button[menuenummer][buttonnummer].Textlaenge=5;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=5;
+	S_Button[menunummer][buttonnummer].x1=165;
+	S_Button[menunummer][buttonnummer].y1=110;
+	S_Button[menunummer][buttonnummer].x2=310;
+	S_Button[menunummer][buttonnummer].y2=160;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=9;
+	S_Button[menunummer][buttonnummer].Text="Strom";
+	S_Button[menunummer][buttonnummer].Textlaenge=5;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=5;
 
 
 	buttonnummer=4;
-	S_Button[menuenummer][buttonnummer].x1=10;
-	S_Button[menuenummer][buttonnummer].y1=170;
-	S_Button[menuenummer][buttonnummer].x2=310;
-	S_Button[menuenummer][buttonnummer].y2=220;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=1;
-	S_Button[menuenummer][buttonnummer].Text="Aktueller Zustand vom EKART";
-	S_Button[menuenummer][buttonnummer].Textlaenge=27;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=5;
+	S_Button[menunummer][buttonnummer].x1=10;
+	S_Button[menunummer][buttonnummer].y1=170;
+	S_Button[menunummer][buttonnummer].x2=310;
+	S_Button[menunummer][buttonnummer].y2=220;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=1;
+	S_Button[menunummer][buttonnummer].Text="Aktueller Zustand vom EKART";
+	S_Button[menunummer][buttonnummer].Textlaenge=27;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=5;
 
-	// Menuebene 3
+	// menubene 3
 	// Batteriestatus
-	menuenummer=3;
+	menunummer=3;
 
 	buttonnummer=0;
-	S_Button[menuenummer][buttonnummer].x1=1;
-	S_Button[menuenummer][buttonnummer].y1=210;
-	S_Button[menuenummer][buttonnummer].x2=95;
-	S_Button[menuenummer][buttonnummer].y2=237;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=1;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=3;
+	S_Button[menunummer][buttonnummer].x1=1;
+	S_Button[menunummer][buttonnummer].y1=210;
+	S_Button[menunummer][buttonnummer].x2=95;
+	S_Button[menunummer][buttonnummer].y2=237;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=1;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=3;
 
 
 	buttonnummer=1;
-	S_Button[menuenummer][buttonnummer].x1=100;
-	S_Button[menuenummer][buttonnummer].y1=210;
-	S_Button[menuenummer][buttonnummer].x2=220;
-	S_Button[menuenummer][buttonnummer].y2=237;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=10;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=3;
+	S_Button[menunummer][buttonnummer].x1=100;
+	S_Button[menunummer][buttonnummer].y1=210;
+	S_Button[menunummer][buttonnummer].x2=220;
+	S_Button[menunummer][buttonnummer].y2=237;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=10;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=3;
 
 
 	buttonnummer=2;
-	S_Button[menuenummer][buttonnummer].x1=225;
-	S_Button[menuenummer][buttonnummer].y1=210;
-	S_Button[menuenummer][buttonnummer].x2=318;
-	S_Button[menuenummer][buttonnummer].y2=237;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=1;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=3;
+	S_Button[menunummer][buttonnummer].x1=225;
+	S_Button[menunummer][buttonnummer].y1=210;
+	S_Button[menunummer][buttonnummer].x2=318;
+	S_Button[menunummer][buttonnummer].y2=237;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=1;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=3;
 
-	// Menuebene 4
+	// menubene 4
 	// "Fahrmodi - �bersicht"
-	menuenummer=4;
+	menunummer=4;
 
 	buttonnummer=VorgabeDrehzahl;
-	S_Button[menuenummer][buttonnummer].x1=135;
-	S_Button[menuenummer][buttonnummer].y1=30;
-	S_Button[menuenummer][buttonnummer].x2=215;
-	S_Button[menuenummer][buttonnummer].y2=80;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=4;
-	S_Button[menuenummer][buttonnummer].Text="Drehzahl";
-	S_Button[menuenummer][buttonnummer].Textlaenge=8;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=7;
+	S_Button[menunummer][buttonnummer].x1=135;
+	S_Button[menunummer][buttonnummer].y1=30;
+	S_Button[menunummer][buttonnummer].x2=215;
+	S_Button[menunummer][buttonnummer].y2=80;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=4;
+	S_Button[menunummer][buttonnummer].Text="Drehzahl";
+	S_Button[menunummer][buttonnummer].Textlaenge=8;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=7;
 
 
 	buttonnummer=VorgabeMoment;
-	S_Button[menuenummer][buttonnummer].x1=230;
-	S_Button[menuenummer][buttonnummer].y1=30;
-	S_Button[menuenummer][buttonnummer].x2=310;
-	S_Button[menuenummer][buttonnummer].y2=80;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=4;
-	S_Button[menuenummer][buttonnummer].Text="Moment";
-	S_Button[menuenummer][buttonnummer].Textlaenge=6;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=7;
+	S_Button[menunummer][buttonnummer].x1=230;
+	S_Button[menunummer][buttonnummer].y1=30;
+	S_Button[menunummer][buttonnummer].x2=310;
+	S_Button[menunummer][buttonnummer].y2=80;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=4;
+	S_Button[menunummer][buttonnummer].Text="Moment";
+	S_Button[menunummer][buttonnummer].Textlaenge=6;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=7;
 
 
 	buttonnummer=AnfaengerModeButton;
-	S_Button[menuenummer][buttonnummer].x1=90;
-	S_Button[menuenummer][buttonnummer].y1=105;
-	S_Button[menuenummer][buttonnummer].x2=190;
-	S_Button[menuenummer][buttonnummer].y2=155;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=5;
-	S_Button[menuenummer][buttonnummer].Text="Anfaenger";
-	S_Button[menuenummer][buttonnummer].Textlaenge=9;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=7;
+	S_Button[menunummer][buttonnummer].x1=90;
+	S_Button[menunummer][buttonnummer].y1=105;
+	S_Button[menunummer][buttonnummer].x2=190;
+	S_Button[menunummer][buttonnummer].y2=155;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=5;
+	S_Button[menunummer][buttonnummer].Text="Anfaenger";
+	S_Button[menunummer][buttonnummer].Textlaenge=9;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=7;
 
 
 	buttonnummer=StandardModeButton;
-	S_Button[menuenummer][buttonnummer].x1=210;
-	S_Button[menuenummer][buttonnummer].y1=105;
-	S_Button[menuenummer][buttonnummer].x2=310;
-	S_Button[menuenummer][buttonnummer].y2=155;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=6;
-	S_Button[menuenummer][buttonnummer].Text="Standard";
-	S_Button[menuenummer][buttonnummer].Textlaenge=8;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=7;
+	S_Button[menunummer][buttonnummer].x1=210;
+	S_Button[menunummer][buttonnummer].y1=105;
+	S_Button[menunummer][buttonnummer].x2=310;
+	S_Button[menunummer][buttonnummer].y2=155;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=6;
+	S_Button[menunummer][buttonnummer].Text="Standard";
+	S_Button[menunummer][buttonnummer].Textlaenge=8;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=7;
 
 	buttonnummer=ProfiModeButton;
-	S_Button[menuenummer][buttonnummer].x1=90;
-	S_Button[menuenummer][buttonnummer].y1=175;
-	S_Button[menuenummer][buttonnummer].x2=190;								// max Wert: 320 (mit 10 mm von rechts zum Rand => 310)
-	S_Button[menuenummer][buttonnummer].y2=225;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=7;
-	S_Button[menuenummer][buttonnummer].Text="Profi";
-	S_Button[menuenummer][buttonnummer].Textlaenge=5;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=7;
+	S_Button[menunummer][buttonnummer].x1=90;
+	S_Button[menunummer][buttonnummer].y1=175;
+	S_Button[menunummer][buttonnummer].x2=190;								// max Wert: 320 (mit 10 mm von rechts zum Rand => 310)
+	S_Button[menunummer][buttonnummer].y2=225;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=7;
+	S_Button[menunummer][buttonnummer].Text="Profi";
+	S_Button[menunummer][buttonnummer].Textlaenge=5;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=7;
 
 
 
 	buttonnummer=TestModeButton;
-	S_Button[menuenummer][buttonnummer].x1=210;
-	S_Button[menuenummer][buttonnummer].y1=175;
-	S_Button[menuenummer][buttonnummer].x2=310;
-	S_Button[menuenummer][buttonnummer].y2=225;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=8;
-	S_Button[menuenummer][buttonnummer].Text="Test";
-	S_Button[menuenummer][buttonnummer].Textlaenge=4;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=7;
+	S_Button[menunummer][buttonnummer].x1=210;
+	S_Button[menunummer][buttonnummer].y1=175;
+	S_Button[menunummer][buttonnummer].x2=310;
+	S_Button[menunummer][buttonnummer].y2=225;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=8;
+	S_Button[menunummer][buttonnummer].Text="Test";
+	S_Button[menunummer][buttonnummer].Textlaenge=4;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=7;
 
 	buttonnummer=6;																						// Return zu Men� - Ebene
-	S_Button[menuenummer][buttonnummer].x1=10;
-	S_Button[menuenummer][buttonnummer].y1=105;
-	S_Button[menuenummer][buttonnummer].x2=70;
-	S_Button[menuenummer][buttonnummer].y2=225;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=2;
-	S_Button[menuenummer][buttonnummer].Text="Menue";
-	S_Button[menuenummer][buttonnummer].Textlaenge=5;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=7;
+	S_Button[menunummer][buttonnummer].x1=10;
+	S_Button[menunummer][buttonnummer].y1=105;
+	S_Button[menunummer][buttonnummer].x2=70;
+	S_Button[menunummer][buttonnummer].y2=225;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=2;
+	S_Button[menunummer][buttonnummer].Text="Hauptmenu";
+	S_Button[menunummer][buttonnummer].Textlaenge=5;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=7;
 
-	// Menuebene 5
+	// menubene 5
 	// "FahrModi-Anfaenger"
-	menuenummer=5;
+	menunummer=5;
 
 
 	//---------> die Buttons f�r "Menu_Fahrmodi()"
 	buttonnummer=0;
-	S_Button[menuenummer][buttonnummer].x1=240;
-	S_Button[menuenummer][buttonnummer].y1=30;
-	S_Button[menuenummer][buttonnummer].x2=310;
-	S_Button[menuenummer][buttonnummer].y2=80;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=4;					// "Zur�ck" verlinkt zur "Fahrmodi"
-	S_Button[menuenummer][buttonnummer].Text="Zurueck";
-	S_Button[menuenummer][buttonnummer].Textlaenge=7;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=2;
+	S_Button[menunummer][buttonnummer].x1=240;
+	S_Button[menunummer][buttonnummer].y1=30;
+	S_Button[menunummer][buttonnummer].x2=310;
+	S_Button[menunummer][buttonnummer].y2=80;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=4;					// "Zur�ck" verlinkt zur "Fahrmodi"
+	S_Button[menunummer][buttonnummer].Text="Zurueck";
+	S_Button[menunummer][buttonnummer].Textlaenge=7;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=2;
 
 	buttonnummer=1;                                  //Button f�r Best�tigen
-	S_Button[menuenummer][buttonnummer].x1=120;
-	S_Button[menuenummer][buttonnummer].y1=30;
-	S_Button[menuenummer][buttonnummer].x2=230;
-	S_Button[menuenummer][buttonnummer].y2=80;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=4;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=2;
-	S_Button[menuenummer][buttonnummer].Text="Flashen";
-	S_Button[menuenummer][buttonnummer].Textlaenge=7;
+	S_Button[menunummer][buttonnummer].x1=120;
+	S_Button[menunummer][buttonnummer].y1=30;
+	S_Button[menunummer][buttonnummer].x2=230;
+	S_Button[menunummer][buttonnummer].y2=80;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=4;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=2;
+	S_Button[menunummer][buttonnummer].Text="Flashen";
+	S_Button[menunummer][buttonnummer].Textlaenge=7;
 
 
 
 	slidernummer=0;
-	Slider[menuenummer][slidernummer].x=Flash_New_Parameters_List[10];
-	Slider[menuenummer][slidernummer].y=100;
-	Slider[menuenummer][slidernummer].Laenge=20;
-	Slider[menuenummer][slidernummer].Breite=10;
-	Slider[menuenummer][slidernummer].Bahn_x1=90;
-	Slider[menuenummer][slidernummer].Bahn_y1=105;
-	Slider[menuenummer][slidernummer].Bahn_x2=290;
-	Slider[menuenummer][slidernummer].Bahn_y2=115;
-	Slider[menuenummer][slidernummer].Touch_x1=Slider[menuenummer][slidernummer].Bahn_x1-20; //70
-	Slider[menuenummer][slidernummer].Touch_y1=Slider[menuenummer][slidernummer].Bahn_y1-5;  //100
-	Slider[menuenummer][slidernummer].Touch_x2=Slider[menuenummer][slidernummer].Bahn_x2+20; //310
-	Slider[menuenummer][slidernummer].Touch_y2=Slider[menuenummer][slidernummer].Bahn_y2+25; //140
-	Slider[menuenummer][slidernummer].max_wert=100;
-	Slider[menuenummer][slidernummer].min_wert=0;
-	Slider[menuenummer][slidernummer].SliderWert=Flash_New_Parameters_List[Anfaenger_GasProzent];
-	Slider[menuenummer][slidernummer].Text="GasProzent:";
-	Slider[menuenummer][slidernummer].Farbe=GREEN;
+	Slider[menunummer][slidernummer].x=Flash_New_Parameters_List[10];
+	Slider[menunummer][slidernummer].y=100;
+	Slider[menunummer][slidernummer].Laenge=20;
+	Slider[menunummer][slidernummer].Breite=10;
+	Slider[menunummer][slidernummer].Bahn_x1=90;
+	Slider[menunummer][slidernummer].Bahn_y1=105;
+	Slider[menunummer][slidernummer].Bahn_x2=290;
+	Slider[menunummer][slidernummer].Bahn_y2=115;
+	Slider[menunummer][slidernummer].Touch_x1=Slider[menunummer][slidernummer].Bahn_x1-20; //70
+	Slider[menunummer][slidernummer].Touch_y1=Slider[menunummer][slidernummer].Bahn_y1-5;  //100
+	Slider[menunummer][slidernummer].Touch_x2=Slider[menunummer][slidernummer].Bahn_x2+20; //310
+	Slider[menunummer][slidernummer].Touch_y2=Slider[menunummer][slidernummer].Bahn_y2+25; //140
+	Slider[menunummer][slidernummer].max_wert=100;
+	Slider[menunummer][slidernummer].min_wert=0;
+	Slider[menunummer][slidernummer].SliderWert=Flash_New_Parameters_List[Anfaenger_GasProzent];
+	Slider[menunummer][slidernummer].Text="GasProzent:";
+	Slider[menunummer][slidernummer].Farbe=GREEN;
 
 
 
 	slidernummer=1;
-	Slider[menuenummer][slidernummer].x=Flash_New_Parameters_List[11];
-	Slider[menuenummer][slidernummer].y=150;
-	Slider[menuenummer][slidernummer].Laenge=20;
-	Slider[menuenummer][slidernummer].Breite=10;
-	Slider[menuenummer][slidernummer].Bahn_x1=90;
-	Slider[menuenummer][slidernummer].Bahn_y1=155;
-	Slider[menuenummer][slidernummer].Bahn_x2=290;
-	Slider[menuenummer][slidernummer].Bahn_y2=165;
-	Slider[menuenummer][slidernummer].Touch_x1=Slider[menuenummer][slidernummer].Bahn_x1-20; //70
-	Slider[menuenummer][slidernummer].Touch_y1=Slider[menuenummer][slidernummer].Bahn_y1-5;  //150
-	Slider[menuenummer][slidernummer].Touch_x2=Slider[menuenummer][slidernummer].Bahn_x2+20; //310
-	Slider[menuenummer][slidernummer].Touch_y2=Slider[menuenummer][slidernummer].Bahn_y2+25; //190
-	Slider[menuenummer][slidernummer].max_wert=100;
-	Slider[menuenummer][slidernummer].min_wert=0;
-	Slider[menuenummer][slidernummer].SliderWert=Flash_New_Parameters_List[Anfaenger_BeschlProzent];
-	Slider[menuenummer][slidernummer].Text="Beschl.:";
-	Slider[menuenummer][slidernummer].Farbe=GREEN;
+	Slider[menunummer][slidernummer].x=Flash_New_Parameters_List[11];
+	Slider[menunummer][slidernummer].y=150;
+	Slider[menunummer][slidernummer].Laenge=20;
+	Slider[menunummer][slidernummer].Breite=10;
+	Slider[menunummer][slidernummer].Bahn_x1=90;
+	Slider[menunummer][slidernummer].Bahn_y1=155;
+	Slider[menunummer][slidernummer].Bahn_x2=290;
+	Slider[menunummer][slidernummer].Bahn_y2=165;
+	Slider[menunummer][slidernummer].Touch_x1=Slider[menunummer][slidernummer].Bahn_x1-20; //70
+	Slider[menunummer][slidernummer].Touch_y1=Slider[menunummer][slidernummer].Bahn_y1-5;  //150
+	Slider[menunummer][slidernummer].Touch_x2=Slider[menunummer][slidernummer].Bahn_x2+20; //310
+	Slider[menunummer][slidernummer].Touch_y2=Slider[menunummer][slidernummer].Bahn_y2+25; //190
+	Slider[menunummer][slidernummer].max_wert=100;
+	Slider[menunummer][slidernummer].min_wert=0;
+	Slider[menunummer][slidernummer].SliderWert=Flash_New_Parameters_List[Anfaenger_BeschlProzent];
+	Slider[menunummer][slidernummer].Text="Beschl.:";
+	Slider[menunummer][slidernummer].Farbe=GREEN;
 
 
 
 	slidernummer=2;
-	Slider[menuenummer][slidernummer].x=Flash_New_Parameters_List[26];
-	Slider[menuenummer][slidernummer].y=200;
-	Slider[menuenummer][slidernummer].Laenge=20;
-	Slider[menuenummer][slidernummer].Breite=10;
-	Slider[menuenummer][slidernummer].Bahn_x1=90;
-	Slider[menuenummer][slidernummer].Bahn_y1=205;
-	Slider[menuenummer][slidernummer].Bahn_x2=290;
-	Slider[menuenummer][slidernummer].Bahn_y2=215;
-	Slider[menuenummer][slidernummer].Touch_x1=Slider[menuenummer][slidernummer].Bahn_x1-20; //70
-	Slider[menuenummer][slidernummer].Touch_y1=Slider[menuenummer][slidernummer].Bahn_y1-5;  //200
-	Slider[menuenummer][slidernummer].Touch_x2=Slider[menuenummer][slidernummer].Bahn_x2+20; //310
-	Slider[menuenummer][slidernummer].Touch_y2=Slider[menuenummer][slidernummer].Bahn_y2+25; //240
-	Slider[menuenummer][slidernummer].max_wert=100;
-	Slider[menuenummer][slidernummer].min_wert=0;
-	Slider[menuenummer][slidernummer].SliderWert=Flash_New_Parameters_List[Anfaenger_Rueckwaert];
-	Slider[menuenummer][slidernummer].Text="Rueckwaert:";
-	Slider[menuenummer][slidernummer].Farbe=GREEN;
+	Slider[menunummer][slidernummer].x=Flash_New_Parameters_List[26];
+	Slider[menunummer][slidernummer].y=200;
+	Slider[menunummer][slidernummer].Laenge=20;
+	Slider[menunummer][slidernummer].Breite=10;
+	Slider[menunummer][slidernummer].Bahn_x1=90;
+	Slider[menunummer][slidernummer].Bahn_y1=205;
+	Slider[menunummer][slidernummer].Bahn_x2=290;
+	Slider[menunummer][slidernummer].Bahn_y2=215;
+	Slider[menunummer][slidernummer].Touch_x1=Slider[menunummer][slidernummer].Bahn_x1-20; //70
+	Slider[menunummer][slidernummer].Touch_y1=Slider[menunummer][slidernummer].Bahn_y1-5;  //200
+	Slider[menunummer][slidernummer].Touch_x2=Slider[menunummer][slidernummer].Bahn_x2+20; //310
+	Slider[menunummer][slidernummer].Touch_y2=Slider[menunummer][slidernummer].Bahn_y2+25; //240
+	Slider[menunummer][slidernummer].max_wert=100;
+	Slider[menunummer][slidernummer].min_wert=0;
+	Slider[menunummer][slidernummer].SliderWert=Flash_New_Parameters_List[Anfaenger_Rueckwaert];
+	Slider[menunummer][slidernummer].Text="Rueckwaert:";
+	Slider[menunummer][slidernummer].Farbe=GREEN;
 
-	// Menuebene 6
+	// menubene 6
 	// "FahrModi-Standart"
-	menuenummer=6;
+	menunummer=6;
 
 
 	//---------> die Buttons f�r "Menu_Fahrmodi()"
 	buttonnummer=0;
-	S_Button[menuenummer][buttonnummer].x1=240;
-	S_Button[menuenummer][buttonnummer].y1=30;
-	S_Button[menuenummer][buttonnummer].x2=310;
-	S_Button[menuenummer][buttonnummer].y2=80;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=4;					// "Zur�ck" verlinkt zur "Fahrmodi"
-	S_Button[menuenummer][buttonnummer].Text="Zurueck";
-	S_Button[menuenummer][buttonnummer].Textlaenge=7;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=2;
+	S_Button[menunummer][buttonnummer].x1=240;
+	S_Button[menunummer][buttonnummer].y1=30;
+	S_Button[menunummer][buttonnummer].x2=310;
+	S_Button[menunummer][buttonnummer].y2=80;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=4;					// "Zur�ck" verlinkt zur "Fahrmodi"
+	S_Button[menunummer][buttonnummer].Text="Zurueck";
+	S_Button[menunummer][buttonnummer].Textlaenge=7;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=2;
 
 	buttonnummer=1;                                  //Button f�r Best�tigen
-	S_Button[menuenummer][buttonnummer].x1=120;
-	S_Button[menuenummer][buttonnummer].y1=30;
-	S_Button[menuenummer][buttonnummer].x2=230;
-	S_Button[menuenummer][buttonnummer].y2=80;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=4;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=2;
-	S_Button[menuenummer][buttonnummer].Text="Flashen";
-	S_Button[menuenummer][buttonnummer].Textlaenge=7;
+	S_Button[menunummer][buttonnummer].x1=120;
+	S_Button[menunummer][buttonnummer].y1=30;
+	S_Button[menunummer][buttonnummer].x2=230;
+	S_Button[menunummer][buttonnummer].y2=80;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=4;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=2;
+	S_Button[menunummer][buttonnummer].Text="Flashen";
+	S_Button[menunummer][buttonnummer].Textlaenge=7;
 
 
 
 	slidernummer=0;
-	Slider[menuenummer][slidernummer].x=Flash_New_Parameters_List[12];
-	Slider[menuenummer][slidernummer].y=100;
-	Slider[menuenummer][slidernummer].Laenge=20;
-	Slider[menuenummer][slidernummer].Breite=10;
-	Slider[menuenummer][slidernummer].Bahn_x1=90;
-	Slider[menuenummer][slidernummer].Bahn_y1=105;
-	Slider[menuenummer][slidernummer].Bahn_x2=290;
-	Slider[menuenummer][slidernummer].Bahn_y2=115;
-	Slider[menuenummer][slidernummer].Touch_x1=Slider[menuenummer][slidernummer].Bahn_x1-20; //70
-	Slider[menuenummer][slidernummer].Touch_y1=Slider[menuenummer][slidernummer].Bahn_y1-5;  //100
-	Slider[menuenummer][slidernummer].Touch_x2=Slider[menuenummer][slidernummer].Bahn_x2+20; //310
-	Slider[menuenummer][slidernummer].Touch_y2=Slider[menuenummer][slidernummer].Bahn_y2+25; //140
-	Slider[menuenummer][slidernummer].max_wert=100;
-	Slider[menuenummer][slidernummer].min_wert=0;
-	Slider[menuenummer][slidernummer].SliderWert=Flash_New_Parameters_List[Standard_GasProzent];
-	Slider[menuenummer][slidernummer].Text="GasProzent:";
-	Slider[menuenummer][slidernummer].Farbe=GREEN;
+	Slider[menunummer][slidernummer].x=Flash_New_Parameters_List[12];
+	Slider[menunummer][slidernummer].y=100;
+	Slider[menunummer][slidernummer].Laenge=20;
+	Slider[menunummer][slidernummer].Breite=10;
+	Slider[menunummer][slidernummer].Bahn_x1=90;
+	Slider[menunummer][slidernummer].Bahn_y1=105;
+	Slider[menunummer][slidernummer].Bahn_x2=290;
+	Slider[menunummer][slidernummer].Bahn_y2=115;
+	Slider[menunummer][slidernummer].Touch_x1=Slider[menunummer][slidernummer].Bahn_x1-20; //70
+	Slider[menunummer][slidernummer].Touch_y1=Slider[menunummer][slidernummer].Bahn_y1-5;  //100
+	Slider[menunummer][slidernummer].Touch_x2=Slider[menunummer][slidernummer].Bahn_x2+20; //310
+	Slider[menunummer][slidernummer].Touch_y2=Slider[menunummer][slidernummer].Bahn_y2+25; //140
+	Slider[menunummer][slidernummer].max_wert=100;
+	Slider[menunummer][slidernummer].min_wert=0;
+	Slider[menunummer][slidernummer].SliderWert=Flash_New_Parameters_List[Standard_GasProzent];
+	Slider[menunummer][slidernummer].Text="GasProzent:";
+	Slider[menunummer][slidernummer].Farbe=GREEN;
 
 
 
 	slidernummer=1;
-	Slider[menuenummer][slidernummer].x=Flash_New_Parameters_List[13];
-	Slider[menuenummer][slidernummer].y=150;
-	Slider[menuenummer][slidernummer].Laenge=20;
-	Slider[menuenummer][slidernummer].Breite=10;
-	Slider[menuenummer][slidernummer].Bahn_x1=90;
-	Slider[menuenummer][slidernummer].Bahn_y1=155;
-	Slider[menuenummer][slidernummer].Bahn_x2=290;
-	Slider[menuenummer][slidernummer].Bahn_y2=165;
-	Slider[menuenummer][slidernummer].Touch_x1=Slider[menuenummer][slidernummer].Bahn_x1-20; //70
-	Slider[menuenummer][slidernummer].Touch_y1=Slider[menuenummer][slidernummer].Bahn_y1-5;  //150
-	Slider[menuenummer][slidernummer].Touch_x2=Slider[menuenummer][slidernummer].Bahn_x2+20; //310
-	Slider[menuenummer][slidernummer].Touch_y2=Slider[menuenummer][slidernummer].Bahn_y2+25; //190
-	Slider[menuenummer][slidernummer].max_wert=100;
-	Slider[menuenummer][slidernummer].min_wert=0;
-	Slider[menuenummer][slidernummer].SliderWert=Flash_New_Parameters_List[Standard_BeschlProzent];
-	Slider[menuenummer][slidernummer].Text="Beschl.:";
-	Slider[menuenummer][slidernummer].Farbe=GREEN;
+	Slider[menunummer][slidernummer].x=Flash_New_Parameters_List[13];
+	Slider[menunummer][slidernummer].y=150;
+	Slider[menunummer][slidernummer].Laenge=20;
+	Slider[menunummer][slidernummer].Breite=10;
+	Slider[menunummer][slidernummer].Bahn_x1=90;
+	Slider[menunummer][slidernummer].Bahn_y1=155;
+	Slider[menunummer][slidernummer].Bahn_x2=290;
+	Slider[menunummer][slidernummer].Bahn_y2=165;
+	Slider[menunummer][slidernummer].Touch_x1=Slider[menunummer][slidernummer].Bahn_x1-20; //70
+	Slider[menunummer][slidernummer].Touch_y1=Slider[menunummer][slidernummer].Bahn_y1-5;  //150
+	Slider[menunummer][slidernummer].Touch_x2=Slider[menunummer][slidernummer].Bahn_x2+20; //310
+	Slider[menunummer][slidernummer].Touch_y2=Slider[menunummer][slidernummer].Bahn_y2+25; //190
+	Slider[menunummer][slidernummer].max_wert=100;
+	Slider[menunummer][slidernummer].min_wert=0;
+	Slider[menunummer][slidernummer].SliderWert=Flash_New_Parameters_List[Standard_BeschlProzent];
+	Slider[menunummer][slidernummer].Text="Beschl.:";
+	Slider[menunummer][slidernummer].Farbe=GREEN;
 
 
 
 	slidernummer=2;
-	Slider[menuenummer][slidernummer].x=Flash_New_Parameters_List[27];
-	Slider[menuenummer][slidernummer].y=200;
-	Slider[menuenummer][slidernummer].Laenge=20;
-	Slider[menuenummer][slidernummer].Breite=10;
-	Slider[menuenummer][slidernummer].Bahn_x1=90;
-	Slider[menuenummer][slidernummer].Bahn_y1=205;
-	Slider[menuenummer][slidernummer].Bahn_x2=290;
-	Slider[menuenummer][slidernummer].Bahn_y2=215;
-	Slider[menuenummer][slidernummer].Touch_x1=Slider[menuenummer][slidernummer].Bahn_x1-20; //70
-	Slider[menuenummer][slidernummer].Touch_y1=Slider[menuenummer][slidernummer].Bahn_y1-5;  //200
-	Slider[menuenummer][slidernummer].Touch_x2=Slider[menuenummer][slidernummer].Bahn_x2+20; //310
-	Slider[menuenummer][slidernummer].Touch_y2=Slider[menuenummer][slidernummer].Bahn_y2+25; //240
-	Slider[menuenummer][slidernummer].max_wert=100;
-	Slider[menuenummer][slidernummer].min_wert=0;
-	Slider[menuenummer][slidernummer].SliderWert=Flash_New_Parameters_List[Standard_Rueckwaert];
-	Slider[menuenummer][slidernummer].Text="Rueckwaert:";
-	Slider[menuenummer][slidernummer].Farbe=GREEN;
+	Slider[menunummer][slidernummer].x=Flash_New_Parameters_List[27];
+	Slider[menunummer][slidernummer].y=200;
+	Slider[menunummer][slidernummer].Laenge=20;
+	Slider[menunummer][slidernummer].Breite=10;
+	Slider[menunummer][slidernummer].Bahn_x1=90;
+	Slider[menunummer][slidernummer].Bahn_y1=205;
+	Slider[menunummer][slidernummer].Bahn_x2=290;
+	Slider[menunummer][slidernummer].Bahn_y2=215;
+	Slider[menunummer][slidernummer].Touch_x1=Slider[menunummer][slidernummer].Bahn_x1-20; //70
+	Slider[menunummer][slidernummer].Touch_y1=Slider[menunummer][slidernummer].Bahn_y1-5;  //200
+	Slider[menunummer][slidernummer].Touch_x2=Slider[menunummer][slidernummer].Bahn_x2+20; //310
+	Slider[menunummer][slidernummer].Touch_y2=Slider[menunummer][slidernummer].Bahn_y2+25; //240
+	Slider[menunummer][slidernummer].max_wert=100;
+	Slider[menunummer][slidernummer].min_wert=0;
+	Slider[menunummer][slidernummer].SliderWert=Flash_New_Parameters_List[Standard_Rueckwaert];
+	Slider[menunummer][slidernummer].Text="Rueckwaert:";
+	Slider[menunummer][slidernummer].Farbe=GREEN;
 
-	// Menuebene 7
+	// menubene 7
 	// "FahrModi-Profi"
-	menuenummer=7;
+	menunummer=7;
 
 
 	//---------> die Buttons f�r "Menu_Fahrmodi()"
 	buttonnummer=0;
-	S_Button[menuenummer][buttonnummer].x1=240;
-	S_Button[menuenummer][buttonnummer].y1=30;
-	S_Button[menuenummer][buttonnummer].x2=310;
-	S_Button[menuenummer][buttonnummer].y2=80;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=4;					// "Zur�ck" verlinkt zur "Fahrmodi"
-	S_Button[menuenummer][buttonnummer].Text="Zurueck";
-	S_Button[menuenummer][buttonnummer].Textlaenge=7;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=2;
+	S_Button[menunummer][buttonnummer].x1=240;
+	S_Button[menunummer][buttonnummer].y1=30;
+	S_Button[menunummer][buttonnummer].x2=310;
+	S_Button[menunummer][buttonnummer].y2=80;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=4;					// "Zur�ck" verlinkt zur "Fahrmodi"
+	S_Button[menunummer][buttonnummer].Text="Zurueck";
+	S_Button[menunummer][buttonnummer].Textlaenge=7;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=2;
 
 	buttonnummer=1;                                  //Button f�r Best�tigen
-	S_Button[menuenummer][buttonnummer].x1=120;
-	S_Button[menuenummer][buttonnummer].y1=30;
-	S_Button[menuenummer][buttonnummer].x2=230;
-	S_Button[menuenummer][buttonnummer].y2=80;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=4;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=2;
-	S_Button[menuenummer][buttonnummer].Text="Flashen";
-	S_Button[menuenummer][buttonnummer].Textlaenge=7;
+	S_Button[menunummer][buttonnummer].x1=120;
+	S_Button[menunummer][buttonnummer].y1=30;
+	S_Button[menunummer][buttonnummer].x2=230;
+	S_Button[menunummer][buttonnummer].y2=80;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=4;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=2;
+	S_Button[menunummer][buttonnummer].Text="Flashen";
+	S_Button[menunummer][buttonnummer].Textlaenge=7;
 
 
 
 	slidernummer=0;
-	Slider[menuenummer][slidernummer].x=Flash_New_Parameters_List[14];
-	Slider[menuenummer][slidernummer].y=100;
-	Slider[menuenummer][slidernummer].Laenge=20;
-	Slider[menuenummer][slidernummer].Breite=10;
-	Slider[menuenummer][slidernummer].Bahn_x1=90;
-	Slider[menuenummer][slidernummer].Bahn_y1=105;
-	Slider[menuenummer][slidernummer].Bahn_x2=290;
-	Slider[menuenummer][slidernummer].Bahn_y2=115;
-	Slider[menuenummer][slidernummer].Touch_x1=Slider[menuenummer][slidernummer].Bahn_x1-20; //70
-	Slider[menuenummer][slidernummer].Touch_y1=Slider[menuenummer][slidernummer].Bahn_y1-5;  //100
-	Slider[menuenummer][slidernummer].Touch_x2=Slider[menuenummer][slidernummer].Bahn_x2+20; //310
-	Slider[menuenummer][slidernummer].Touch_y2=Slider[menuenummer][slidernummer].Bahn_y2+25; //140
-	Slider[menuenummer][slidernummer].max_wert=100;
-	Slider[menuenummer][slidernummer].min_wert=0;
-	Slider[menuenummer][slidernummer].SliderWert=Flash_New_Parameters_List[Profi_GasProzent];
-	Slider[menuenummer][slidernummer].Text="GasProzent:";
-	Slider[menuenummer][slidernummer].Farbe=GREEN;
+	Slider[menunummer][slidernummer].x=Flash_New_Parameters_List[14];
+	Slider[menunummer][slidernummer].y=100;
+	Slider[menunummer][slidernummer].Laenge=20;
+	Slider[menunummer][slidernummer].Breite=10;
+	Slider[menunummer][slidernummer].Bahn_x1=90;
+	Slider[menunummer][slidernummer].Bahn_y1=105;
+	Slider[menunummer][slidernummer].Bahn_x2=290;
+	Slider[menunummer][slidernummer].Bahn_y2=115;
+	Slider[menunummer][slidernummer].Touch_x1=Slider[menunummer][slidernummer].Bahn_x1-20; //70
+	Slider[menunummer][slidernummer].Touch_y1=Slider[menunummer][slidernummer].Bahn_y1-5;  //100
+	Slider[menunummer][slidernummer].Touch_x2=Slider[menunummer][slidernummer].Bahn_x2+20; //310
+	Slider[menunummer][slidernummer].Touch_y2=Slider[menunummer][slidernummer].Bahn_y2+25; //140
+	Slider[menunummer][slidernummer].max_wert=100;
+	Slider[menunummer][slidernummer].min_wert=0;
+	Slider[menunummer][slidernummer].SliderWert=Flash_New_Parameters_List[Profi_GasProzent];
+	Slider[menunummer][slidernummer].Text="GasProzent:";
+	Slider[menunummer][slidernummer].Farbe=GREEN;
 
 
 
 	slidernummer=1;
-	Slider[menuenummer][slidernummer].x=Flash_New_Parameters_List[15];
-	Slider[menuenummer][slidernummer].y=150;
-	Slider[menuenummer][slidernummer].Laenge=20;
-	Slider[menuenummer][slidernummer].Breite=10;
-	Slider[menuenummer][slidernummer].Bahn_x1=90;
-	Slider[menuenummer][slidernummer].Bahn_y1=155;
-	Slider[menuenummer][slidernummer].Bahn_x2=290;
-	Slider[menuenummer][slidernummer].Bahn_y2=165;
-	Slider[menuenummer][slidernummer].Touch_x1=Slider[menuenummer][slidernummer].Bahn_x1-20; //70
-	Slider[menuenummer][slidernummer].Touch_y1=Slider[menuenummer][slidernummer].Bahn_y1-5;  //150
-	Slider[menuenummer][slidernummer].Touch_x2=Slider[menuenummer][slidernummer].Bahn_x2+20; //310
-	Slider[menuenummer][slidernummer].Touch_y2=Slider[menuenummer][slidernummer].Bahn_y2+25; //190
-	Slider[menuenummer][slidernummer].max_wert=100;
-	Slider[menuenummer][slidernummer].min_wert=0;
-	Slider[menuenummer][slidernummer].SliderWert=Flash_New_Parameters_List[Profi_BeschlProzent];
-	Slider[menuenummer][slidernummer].Text="Beschl.:";
-	Slider[menuenummer][slidernummer].Farbe=GREEN;
+	Slider[menunummer][slidernummer].x=Flash_New_Parameters_List[15];
+	Slider[menunummer][slidernummer].y=150;
+	Slider[menunummer][slidernummer].Laenge=20;
+	Slider[menunummer][slidernummer].Breite=10;
+	Slider[menunummer][slidernummer].Bahn_x1=90;
+	Slider[menunummer][slidernummer].Bahn_y1=155;
+	Slider[menunummer][slidernummer].Bahn_x2=290;
+	Slider[menunummer][slidernummer].Bahn_y2=165;
+	Slider[menunummer][slidernummer].Touch_x1=Slider[menunummer][slidernummer].Bahn_x1-20; //70
+	Slider[menunummer][slidernummer].Touch_y1=Slider[menunummer][slidernummer].Bahn_y1-5;  //150
+	Slider[menunummer][slidernummer].Touch_x2=Slider[menunummer][slidernummer].Bahn_x2+20; //310
+	Slider[menunummer][slidernummer].Touch_y2=Slider[menunummer][slidernummer].Bahn_y2+25; //190
+	Slider[menunummer][slidernummer].max_wert=100;
+	Slider[menunummer][slidernummer].min_wert=0;
+	Slider[menunummer][slidernummer].SliderWert=Flash_New_Parameters_List[Profi_BeschlProzent];
+	Slider[menunummer][slidernummer].Text="Beschl.:";
+	Slider[menunummer][slidernummer].Farbe=GREEN;
 
 
 
 	slidernummer=2;
-	Slider[menuenummer][slidernummer].x=Flash_New_Parameters_List[28];
-	Slider[menuenummer][slidernummer].y=200;
-	Slider[menuenummer][slidernummer].Laenge=20;
-	Slider[menuenummer][slidernummer].Breite=10;
-	Slider[menuenummer][slidernummer].Bahn_x1=90;
-	Slider[menuenummer][slidernummer].Bahn_y1=205;
-	Slider[menuenummer][slidernummer].Bahn_x2=290;
-	Slider[menuenummer][slidernummer].Bahn_y2=215;
-	Slider[menuenummer][slidernummer].Touch_x1=Slider[menuenummer][slidernummer].Bahn_x1-20; //70
-	Slider[menuenummer][slidernummer].Touch_y1=Slider[menuenummer][slidernummer].Bahn_y1-5;  //200
-	Slider[menuenummer][slidernummer].Touch_x2=Slider[menuenummer][slidernummer].Bahn_x2+20; //310
-	Slider[menuenummer][slidernummer].Touch_y2=Slider[menuenummer][slidernummer].Bahn_y2+25; //240
-	Slider[menuenummer][slidernummer].max_wert=100;
-	Slider[menuenummer][slidernummer].min_wert=0;
-	Slider[menuenummer][slidernummer].SliderWert=Flash_New_Parameters_List[Profi_Rueckwaert];
-	Slider[menuenummer][slidernummer].Text="Rueckwaert:";
-	Slider[menuenummer][slidernummer].Farbe=GREEN;
+	Slider[menunummer][slidernummer].x=Flash_New_Parameters_List[28];
+	Slider[menunummer][slidernummer].y=200;
+	Slider[menunummer][slidernummer].Laenge=20;
+	Slider[menunummer][slidernummer].Breite=10;
+	Slider[menunummer][slidernummer].Bahn_x1=90;
+	Slider[menunummer][slidernummer].Bahn_y1=205;
+	Slider[menunummer][slidernummer].Bahn_x2=290;
+	Slider[menunummer][slidernummer].Bahn_y2=215;
+	Slider[menunummer][slidernummer].Touch_x1=Slider[menunummer][slidernummer].Bahn_x1-20; //70
+	Slider[menunummer][slidernummer].Touch_y1=Slider[menunummer][slidernummer].Bahn_y1-5;  //200
+	Slider[menunummer][slidernummer].Touch_x2=Slider[menunummer][slidernummer].Bahn_x2+20; //310
+	Slider[menunummer][slidernummer].Touch_y2=Slider[menunummer][slidernummer].Bahn_y2+25; //240
+	Slider[menunummer][slidernummer].max_wert=100;
+	Slider[menunummer][slidernummer].min_wert=0;
+	Slider[menunummer][slidernummer].SliderWert=Flash_New_Parameters_List[Profi_Rueckwaert];
+	Slider[menunummer][slidernummer].Text="Rueckwaert:";
+	Slider[menunummer][slidernummer].Farbe=GREEN;
 
-	// Menuebene 8
+	// menubene 8
 	// "FahrModi-Test"
-	menuenummer=8;
+	menunummer=8;
 
 
 	//---------> die Buttons f�r "Menu_Fahrmodi()"
 	buttonnummer=0;
-	S_Button[menuenummer][buttonnummer].x1=240;
-	S_Button[menuenummer][buttonnummer].y1=30;
-	S_Button[menuenummer][buttonnummer].x2=310;
-	S_Button[menuenummer][buttonnummer].y2=80;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=4;					// "Zur�ck" verlinkt zur "Fahrmodi"
-	S_Button[menuenummer][buttonnummer].Text="Zurueck";
-	S_Button[menuenummer][buttonnummer].Textlaenge=7;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=2;
+	S_Button[menunummer][buttonnummer].x1=240;
+	S_Button[menunummer][buttonnummer].y1=30;
+	S_Button[menunummer][buttonnummer].x2=310;
+	S_Button[menunummer][buttonnummer].y2=80;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=4;					// "Zur�ck" verlinkt zur "Fahrmodi"
+	S_Button[menunummer][buttonnummer].Text="Zurueck";
+	S_Button[menunummer][buttonnummer].Textlaenge=7;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=2;
 
 	buttonnummer=1;                                  //Button f�r Best�tigen
-	S_Button[menuenummer][buttonnummer].x1=120;
-	S_Button[menuenummer][buttonnummer].y1=30;
-	S_Button[menuenummer][buttonnummer].x2=230;
-	S_Button[menuenummer][buttonnummer].y2=80;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=4;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=2;
-	S_Button[menuenummer][buttonnummer].Text="Flashen";
-	S_Button[menuenummer][buttonnummer].Textlaenge=7;
+	S_Button[menunummer][buttonnummer].x1=120;
+	S_Button[menunummer][buttonnummer].y1=30;
+	S_Button[menunummer][buttonnummer].x2=230;
+	S_Button[menunummer][buttonnummer].y2=80;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=4;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=2;
+	S_Button[menunummer][buttonnummer].Text="Flashen";
+	S_Button[menunummer][buttonnummer].Textlaenge=7;
 
 
 
 	slidernummer=0;
-	Slider[menuenummer][slidernummer].x=Flash_New_Parameters_List[16];
-	Slider[menuenummer][slidernummer].y=100;
-	Slider[menuenummer][slidernummer].Laenge=20;
-	Slider[menuenummer][slidernummer].Breite=10;
-	Slider[menuenummer][slidernummer].Bahn_x1=90;
-	Slider[menuenummer][slidernummer].Bahn_y1=105;
-	Slider[menuenummer][slidernummer].Bahn_x2=290;
-	Slider[menuenummer][slidernummer].Bahn_y2=115;
-	Slider[menuenummer][slidernummer].Touch_x1=Slider[menuenummer][slidernummer].Bahn_x1-20; //70
-	Slider[menuenummer][slidernummer].Touch_y1=Slider[menuenummer][slidernummer].Bahn_y1-5;  //100
-	Slider[menuenummer][slidernummer].Touch_x2=Slider[menuenummer][slidernummer].Bahn_x2+20; //310
-	Slider[menuenummer][slidernummer].Touch_y2=Slider[menuenummer][slidernummer].Bahn_y2+25; //140
-	Slider[menuenummer][slidernummer].max_wert=100;
-	Slider[menuenummer][slidernummer].min_wert=0;
-	Slider[menuenummer][slidernummer].SliderWert=Flash_New_Parameters_List[Test_GasProzent];
-	Slider[menuenummer][slidernummer].Text="GasProzent:";
-	Slider[menuenummer][slidernummer].Farbe=GREEN;
+	Slider[menunummer][slidernummer].x=Flash_New_Parameters_List[16];
+	Slider[menunummer][slidernummer].y=100;
+	Slider[menunummer][slidernummer].Laenge=20;
+	Slider[menunummer][slidernummer].Breite=10;
+	Slider[menunummer][slidernummer].Bahn_x1=90;
+	Slider[menunummer][slidernummer].Bahn_y1=105;
+	Slider[menunummer][slidernummer].Bahn_x2=290;
+	Slider[menunummer][slidernummer].Bahn_y2=115;
+	Slider[menunummer][slidernummer].Touch_x1=Slider[menunummer][slidernummer].Bahn_x1-20; //70
+	Slider[menunummer][slidernummer].Touch_y1=Slider[menunummer][slidernummer].Bahn_y1-5;  //100
+	Slider[menunummer][slidernummer].Touch_x2=Slider[menunummer][slidernummer].Bahn_x2+20; //310
+	Slider[menunummer][slidernummer].Touch_y2=Slider[menunummer][slidernummer].Bahn_y2+25; //140
+	Slider[menunummer][slidernummer].max_wert=100;
+	Slider[menunummer][slidernummer].min_wert=0;
+	Slider[menunummer][slidernummer].SliderWert=Flash_New_Parameters_List[Test_GasProzent];
+	Slider[menunummer][slidernummer].Text="GasProzent:";
+	Slider[menunummer][slidernummer].Farbe=GREEN;
 
 
 
 	slidernummer=1;
-	Slider[menuenummer][slidernummer].x=Flash_New_Parameters_List[17];
-	Slider[menuenummer][slidernummer].y=150;
-	Slider[menuenummer][slidernummer].Laenge=20;
-	Slider[menuenummer][slidernummer].Breite=10;
-	Slider[menuenummer][slidernummer].Bahn_x1=90;
-	Slider[menuenummer][slidernummer].Bahn_y1=155;
-	Slider[menuenummer][slidernummer].Bahn_x2=290;
-	Slider[menuenummer][slidernummer].Bahn_y2=165;
-	Slider[menuenummer][slidernummer].Touch_x1=Slider[menuenummer][slidernummer].Bahn_x1-20; //70
-	Slider[menuenummer][slidernummer].Touch_y1=Slider[menuenummer][slidernummer].Bahn_y1-5;  //150
-	Slider[menuenummer][slidernummer].Touch_x2=Slider[menuenummer][slidernummer].Bahn_x2+20; //310
-	Slider[menuenummer][slidernummer].Touch_y2=Slider[menuenummer][slidernummer].Bahn_y2+25; //190
-	Slider[menuenummer][slidernummer].max_wert=100;
-	Slider[menuenummer][slidernummer].min_wert=0;
-	Slider[menuenummer][slidernummer].SliderWert=Flash_New_Parameters_List[Test_BeschlProzent];
-	Slider[menuenummer][slidernummer].Text="Beschl.:";
-	Slider[menuenummer][slidernummer].Farbe=GREEN;
+	Slider[menunummer][slidernummer].x=Flash_New_Parameters_List[17];
+	Slider[menunummer][slidernummer].y=150;
+	Slider[menunummer][slidernummer].Laenge=20;
+	Slider[menunummer][slidernummer].Breite=10;
+	Slider[menunummer][slidernummer].Bahn_x1=90;
+	Slider[menunummer][slidernummer].Bahn_y1=155;
+	Slider[menunummer][slidernummer].Bahn_x2=290;
+	Slider[menunummer][slidernummer].Bahn_y2=165;
+	Slider[menunummer][slidernummer].Touch_x1=Slider[menunummer][slidernummer].Bahn_x1-20; //70
+	Slider[menunummer][slidernummer].Touch_y1=Slider[menunummer][slidernummer].Bahn_y1-5;  //150
+	Slider[menunummer][slidernummer].Touch_x2=Slider[menunummer][slidernummer].Bahn_x2+20; //310
+	Slider[menunummer][slidernummer].Touch_y2=Slider[menunummer][slidernummer].Bahn_y2+25; //190
+	Slider[menunummer][slidernummer].max_wert=100;
+	Slider[menunummer][slidernummer].min_wert=0;
+	Slider[menunummer][slidernummer].SliderWert=Flash_New_Parameters_List[Test_BeschlProzent];
+	Slider[menunummer][slidernummer].Text="Beschl.:";
+	Slider[menunummer][slidernummer].Farbe=GREEN;
 
 
 
 	slidernummer=2;
-	Slider[menuenummer][slidernummer].x=Flash_New_Parameters_List[29];
-	Slider[menuenummer][slidernummer].y=200;
-	Slider[menuenummer][slidernummer].Laenge=20;
-	Slider[menuenummer][slidernummer].Breite=10;
-	Slider[menuenummer][slidernummer].Bahn_x1=90;
-	Slider[menuenummer][slidernummer].Bahn_y1=205;
-	Slider[menuenummer][slidernummer].Bahn_x2=290;
-	Slider[menuenummer][slidernummer].Bahn_y2=215;
-	Slider[menuenummer][slidernummer].Touch_x1=Slider[menuenummer][slidernummer].Bahn_x1-20; //70
-	Slider[menuenummer][slidernummer].Touch_y1=Slider[menuenummer][slidernummer].Bahn_y1-5;  //200
-	Slider[menuenummer][slidernummer].Touch_x2=Slider[menuenummer][slidernummer].Bahn_x2+20; //310
-	Slider[menuenummer][slidernummer].Touch_y2=Slider[menuenummer][slidernummer].Bahn_y2+25; //240
-	Slider[menuenummer][slidernummer].max_wert=100;
-	Slider[menuenummer][slidernummer].min_wert=0;
-	Slider[menuenummer][slidernummer].SliderWert=Flash_New_Parameters_List[Test_Rueckwaert];
-	Slider[menuenummer][slidernummer].Text="Rueckwaert:";
-	Slider[menuenummer][slidernummer].Farbe=GREEN;
+	Slider[menunummer][slidernummer].x=Flash_New_Parameters_List[29];
+	Slider[menunummer][slidernummer].y=200;
+	Slider[menunummer][slidernummer].Laenge=20;
+	Slider[menunummer][slidernummer].Breite=10;
+	Slider[menunummer][slidernummer].Bahn_x1=90;
+	Slider[menunummer][slidernummer].Bahn_y1=205;
+	Slider[menunummer][slidernummer].Bahn_x2=290;
+	Slider[menunummer][slidernummer].Bahn_y2=215;
+	Slider[menunummer][slidernummer].Touch_x1=Slider[menunummer][slidernummer].Bahn_x1-20; //70
+	Slider[menunummer][slidernummer].Touch_y1=Slider[menunummer][slidernummer].Bahn_y1-5;  //200
+	Slider[menunummer][slidernummer].Touch_x2=Slider[menunummer][slidernummer].Bahn_x2+20; //310
+	Slider[menunummer][slidernummer].Touch_y2=Slider[menunummer][slidernummer].Bahn_y2+25; //240
+	Slider[menunummer][slidernummer].max_wert=100;
+	Slider[menunummer][slidernummer].min_wert=0;
+	Slider[menunummer][slidernummer].SliderWert=Flash_New_Parameters_List[Test_Rueckwaert];
+	Slider[menunummer][slidernummer].Text="Rueckwaert:";
+	Slider[menunummer][slidernummer].Farbe=GREEN;
 
-	// Menuebene 9
+	// menubene 9
 	// Strom
-	menuenummer=9;
+	menunummer=9;
 
 
 	buttonnummer=0;
-	S_Button[menuenummer][buttonnummer].x1=240;
-	S_Button[menuenummer][buttonnummer].y1=50;
-	S_Button[menuenummer][buttonnummer].x2=310;
-	S_Button[menuenummer][buttonnummer].y2=100;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=2;					// "Zur�ck" verlinkt zur "Fahrmodi"
-	S_Button[menuenummer][buttonnummer].Text="Zurueck";
-	S_Button[menuenummer][buttonnummer].Textlaenge=7;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=2;
+	S_Button[menunummer][buttonnummer].x1=240;
+	S_Button[menunummer][buttonnummer].y1=50;
+	S_Button[menunummer][buttonnummer].x2=310;
+	S_Button[menunummer][buttonnummer].y2=100;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=2;					// "Zur�ck" verlinkt zur "Fahrmodi"
+	S_Button[menunummer][buttonnummer].Text="Zurueck";
+	S_Button[menunummer][buttonnummer].Textlaenge=7;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=2;
 
 	buttonnummer=1;                                  //Button f�r Best�tigen
-	S_Button[menuenummer][buttonnummer].x1=120;
-	S_Button[menuenummer][buttonnummer].y1=50;
-	S_Button[menuenummer][buttonnummer].x2=230;
-	S_Button[menuenummer][buttonnummer].y2=100;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=2;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=2;
-	S_Button[menuenummer][buttonnummer].Text="Flashen";
-	S_Button[menuenummer][buttonnummer].Textlaenge=7;
+	S_Button[menunummer][buttonnummer].x1=120;
+	S_Button[menunummer][buttonnummer].y1=50;
+	S_Button[menunummer][buttonnummer].x2=230;
+	S_Button[menunummer][buttonnummer].y2=100;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=2;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=2;
+	S_Button[menunummer][buttonnummer].Text="Flashen";
+	S_Button[menunummer][buttonnummer].Textlaenge=7;
 
 
 	slidernummer=0;
-	Slider[menuenummer][slidernummer].x=Flash_New_Parameters_List[Strom_Cursorpositionen];
-	Slider[menuenummer][slidernummer].y=120;
-	Slider[menuenummer][slidernummer].Laenge=20;
-	Slider[menuenummer][slidernummer].Breite=10;
-	Slider[menuenummer][slidernummer].Bahn_x1=90;
-	Slider[menuenummer][slidernummer].Bahn_y1=125;
-	Slider[menuenummer][slidernummer].Bahn_x2=290;
-	Slider[menuenummer][slidernummer].Bahn_y2=135;
-	Slider[menuenummer][slidernummer].Touch_x1=Slider[menuenummer][slidernummer].Bahn_x1-20; //70
-	Slider[menuenummer][slidernummer].Touch_y1=Slider[menuenummer][slidernummer].Bahn_y1-5;  //100
-	Slider[menuenummer][slidernummer].Touch_x2=Slider[menuenummer][slidernummer].Bahn_x2+20; //310
-	Slider[menuenummer][slidernummer].Touch_y2=Slider[menuenummer][slidernummer].Bahn_y2+25; //140
-	Slider[menuenummer][slidernummer].max_wert=400;
-	Slider[menuenummer][slidernummer].min_wert=200;
-	Slider[menuenummer][slidernummer].SliderWert=Flash_New_Parameters_List[Strom];
-	Slider[menuenummer][slidernummer].Text="   Strom:";
-	Slider[menuenummer][slidernummer].Farbe=GREEN;
+	Slider[menunummer][slidernummer].x=Flash_New_Parameters_List[Strom_Cursorpositionen];
+	Slider[menunummer][slidernummer].y=120;
+	Slider[menunummer][slidernummer].Laenge=20;
+	Slider[menunummer][slidernummer].Breite=10;
+	Slider[menunummer][slidernummer].Bahn_x1=90;
+	Slider[menunummer][slidernummer].Bahn_y1=125;
+	Slider[menunummer][slidernummer].Bahn_x2=290;
+	Slider[menunummer][slidernummer].Bahn_y2=135;
+	Slider[menunummer][slidernummer].Touch_x1=Slider[menunummer][slidernummer].Bahn_x1-20; //70
+	Slider[menunummer][slidernummer].Touch_y1=Slider[menunummer][slidernummer].Bahn_y1-5;  //100
+	Slider[menunummer][slidernummer].Touch_x2=Slider[menunummer][slidernummer].Bahn_x2+20; //310
+	Slider[menunummer][slidernummer].Touch_y2=Slider[menunummer][slidernummer].Bahn_y2+25; //140
+	Slider[menunummer][slidernummer].max_wert=400;
+	Slider[menunummer][slidernummer].min_wert=200;
+	Slider[menunummer][slidernummer].SliderWert=Flash_New_Parameters_List[Strom];
+	Slider[menunummer][slidernummer].Text="   Strom:";
+	Slider[menunummer][slidernummer].Farbe=GREEN;
 
-	// Menuebene 10
+	// menubene 10
 	// Password
-	menuenummer=10;
+	menunummer=10;
 
 	buttonnummer=0;
-	S_Button[menuenummer][buttonnummer].x1=220;
-	S_Button[menuenummer][buttonnummer].y1=123;
-	S_Button[menuenummer][buttonnummer].x2=315;
-	S_Button[menuenummer][buttonnummer].y2=163;
-	S_Button[menuenummer][buttonnummer].Wert=0;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=10;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=13;
-	S_Button[menuenummer][buttonnummer].Text="0";
-	S_Button[menuenummer][buttonnummer].Textlaenge=1;
+	S_Button[menunummer][buttonnummer].x1=220;
+	S_Button[menunummer][buttonnummer].y1=123;
+	S_Button[menunummer][buttonnummer].x2=315;
+	S_Button[menunummer][buttonnummer].y2=163;
+	S_Button[menunummer][buttonnummer].Wert=0;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=10;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=13;
+	S_Button[menunummer][buttonnummer].Text="0";
+	S_Button[menunummer][buttonnummer].Textlaenge=1;
 
 	buttonnummer=1;
-	S_Button[menuenummer][buttonnummer].x1=10;
-	S_Button[menuenummer][buttonnummer].y1=60;
-	S_Button[menuenummer][buttonnummer].x2=70;
-	S_Button[menuenummer][buttonnummer].y2=100;
-	S_Button[menuenummer][buttonnummer].Wert=1;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=10;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=13;
-	S_Button[menuenummer][buttonnummer].Text="1";
-	S_Button[menuenummer][buttonnummer].Textlaenge=1;
+	S_Button[menunummer][buttonnummer].x1=10;
+	S_Button[menunummer][buttonnummer].y1=60;
+	S_Button[menunummer][buttonnummer].x2=70;
+	S_Button[menunummer][buttonnummer].y2=100;
+	S_Button[menunummer][buttonnummer].Wert=1;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=10;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=13;
+	S_Button[menunummer][buttonnummer].Text="1";
+	S_Button[menunummer][buttonnummer].Textlaenge=1;
 
 	buttonnummer=2;
-	S_Button[menuenummer][buttonnummer].x1=80;
-	S_Button[menuenummer][buttonnummer].y1=60;
-	S_Button[menuenummer][buttonnummer].x2=140;
-	S_Button[menuenummer][buttonnummer].y2=100;
-	S_Button[menuenummer][buttonnummer].Wert=2;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=10;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=13;
-	S_Button[menuenummer][buttonnummer].Text="2";
-	S_Button[menuenummer][buttonnummer].Textlaenge=1;
+	S_Button[menunummer][buttonnummer].x1=80;
+	S_Button[menunummer][buttonnummer].y1=60;
+	S_Button[menunummer][buttonnummer].x2=140;
+	S_Button[menunummer][buttonnummer].y2=100;
+	S_Button[menunummer][buttonnummer].Wert=2;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=10;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=13;
+	S_Button[menunummer][buttonnummer].Text="2";
+	S_Button[menunummer][buttonnummer].Textlaenge=1;
 
 	buttonnummer=3;
-	S_Button[menuenummer][buttonnummer].x1=150;
-	S_Button[menuenummer][buttonnummer].y1=60;
-	S_Button[menuenummer][buttonnummer].x2=210;
-	S_Button[menuenummer][buttonnummer].y2=100;
-	S_Button[menuenummer][buttonnummer].Wert=3;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=10;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=13;
-	S_Button[menuenummer][buttonnummer].Text="3";
-	S_Button[menuenummer][buttonnummer].Textlaenge=1;
+	S_Button[menunummer][buttonnummer].x1=150;
+	S_Button[menunummer][buttonnummer].y1=60;
+	S_Button[menunummer][buttonnummer].x2=210;
+	S_Button[menunummer][buttonnummer].y2=100;
+	S_Button[menunummer][buttonnummer].Wert=3;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=10;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=13;
+	S_Button[menunummer][buttonnummer].Text="3";
+	S_Button[menunummer][buttonnummer].Textlaenge=1;
 
 	buttonnummer=4;
-	S_Button[menuenummer][buttonnummer].x1=10;
-	S_Button[menuenummer][buttonnummer].y1=123;
-	S_Button[menuenummer][buttonnummer].x2=70;
-	S_Button[menuenummer][buttonnummer].y2=163;
-	S_Button[menuenummer][buttonnummer].Wert=4;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=10;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=13;
-	S_Button[menuenummer][buttonnummer].Text="4";
-	S_Button[menuenummer][buttonnummer].Textlaenge=1;
+	S_Button[menunummer][buttonnummer].x1=10;
+	S_Button[menunummer][buttonnummer].y1=123;
+	S_Button[menunummer][buttonnummer].x2=70;
+	S_Button[menunummer][buttonnummer].y2=163;
+	S_Button[menunummer][buttonnummer].Wert=4;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=10;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=13;
+	S_Button[menunummer][buttonnummer].Text="4";
+	S_Button[menunummer][buttonnummer].Textlaenge=1;
 
 	buttonnummer=5;
-	S_Button[menuenummer][buttonnummer].x1=80;
-	S_Button[menuenummer][buttonnummer].y1=123;
-	S_Button[menuenummer][buttonnummer].x2=140;
-	S_Button[menuenummer][buttonnummer].y2=163;
-	S_Button[menuenummer][buttonnummer].Wert=5;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=10;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=13;
-	S_Button[menuenummer][buttonnummer].Text="5";
-	S_Button[menuenummer][buttonnummer].Textlaenge=1;
+	S_Button[menunummer][buttonnummer].x1=80;
+	S_Button[menunummer][buttonnummer].y1=123;
+	S_Button[menunummer][buttonnummer].x2=140;
+	S_Button[menunummer][buttonnummer].y2=163;
+	S_Button[menunummer][buttonnummer].Wert=5;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=10;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=13;
+	S_Button[menunummer][buttonnummer].Text="5";
+	S_Button[menunummer][buttonnummer].Textlaenge=1;
 
 	buttonnummer=6;
-	S_Button[menuenummer][buttonnummer].x1=150;
-	S_Button[menuenummer][buttonnummer].y1=123;
-	S_Button[menuenummer][buttonnummer].x2=210;
-	S_Button[menuenummer][buttonnummer].y2=163;
-	S_Button[menuenummer][buttonnummer].Wert=6;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=10;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=13;
-	S_Button[menuenummer][buttonnummer].Text="6";
-	S_Button[menuenummer][buttonnummer].Textlaenge=1;
+	S_Button[menunummer][buttonnummer].x1=150;
+	S_Button[menunummer][buttonnummer].y1=123;
+	S_Button[menunummer][buttonnummer].x2=210;
+	S_Button[menunummer][buttonnummer].y2=163;
+	S_Button[menunummer][buttonnummer].Wert=6;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=10;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=13;
+	S_Button[menunummer][buttonnummer].Text="6";
+	S_Button[menunummer][buttonnummer].Textlaenge=1;
 
 	buttonnummer=7;
-	S_Button[menuenummer][buttonnummer].x1=10;
-	S_Button[menuenummer][buttonnummer].y1=186;
-	S_Button[menuenummer][buttonnummer].x2=70;
-	S_Button[menuenummer][buttonnummer].y2=226;
-	S_Button[menuenummer][buttonnummer].Wert=7;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=10;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=13;
-	S_Button[menuenummer][buttonnummer].Text="7";
-	S_Button[menuenummer][buttonnummer].Textlaenge=1;
+	S_Button[menunummer][buttonnummer].x1=10;
+	S_Button[menunummer][buttonnummer].y1=186;
+	S_Button[menunummer][buttonnummer].x2=70;
+	S_Button[menunummer][buttonnummer].y2=226;
+	S_Button[menunummer][buttonnummer].Wert=7;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=10;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=13;
+	S_Button[menunummer][buttonnummer].Text="7";
+	S_Button[menunummer][buttonnummer].Textlaenge=1;
 
 	buttonnummer=8;
-	S_Button[menuenummer][buttonnummer].x1=80;
-	S_Button[menuenummer][buttonnummer].y1=186;
-	S_Button[menuenummer][buttonnummer].x2=140;
-	S_Button[menuenummer][buttonnummer].y2=226;
-	S_Button[menuenummer][buttonnummer].Wert=8;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=10;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=13;
-	S_Button[menuenummer][buttonnummer].Text="8";
-	S_Button[menuenummer][buttonnummer].Textlaenge=1;
+	S_Button[menunummer][buttonnummer].x1=80;
+	S_Button[menunummer][buttonnummer].y1=186;
+	S_Button[menunummer][buttonnummer].x2=140;
+	S_Button[menunummer][buttonnummer].y2=226;
+	S_Button[menunummer][buttonnummer].Wert=8;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=10;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=13;
+	S_Button[menunummer][buttonnummer].Text="8";
+	S_Button[menunummer][buttonnummer].Textlaenge=1;
 
 	buttonnummer=9;
-	S_Button[menuenummer][buttonnummer].x1=150;
-	S_Button[menuenummer][buttonnummer].y1=186;
-	S_Button[menuenummer][buttonnummer].x2=210;
-	S_Button[menuenummer][buttonnummer].y2=226;
-	S_Button[menuenummer][buttonnummer].Wert=9;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=10;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=13;
-	S_Button[menuenummer][buttonnummer].Text="9";
-	S_Button[menuenummer][buttonnummer].Textlaenge=1;
+	S_Button[menunummer][buttonnummer].x1=150;
+	S_Button[menunummer][buttonnummer].y1=186;
+	S_Button[menunummer][buttonnummer].x2=210;
+	S_Button[menunummer][buttonnummer].y2=226;
+	S_Button[menunummer][buttonnummer].Wert=9;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=10;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=13;
+	S_Button[menunummer][buttonnummer].Text="9";
+	S_Button[menunummer][buttonnummer].Textlaenge=1;
 
 	buttonnummer=10;                                  //Button f�r Abbruch
-	S_Button[menuenummer][buttonnummer].x1=200;
-	S_Button[menuenummer][buttonnummer].y1=23;
-	S_Button[menuenummer][buttonnummer].x2=280;
-	S_Button[menuenummer][buttonnummer].y2=45;
-	S_Button[menuenummer][buttonnummer].Wert=10;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=1;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=13;
-	S_Button[menuenummer][buttonnummer].Text="Abbruch";
-	S_Button[menuenummer][buttonnummer].Textlaenge=7;
+	S_Button[menunummer][buttonnummer].x1=200;
+	S_Button[menunummer][buttonnummer].y1=23;
+	S_Button[menunummer][buttonnummer].x2=280;
+	S_Button[menunummer][buttonnummer].y2=45;
+	S_Button[menunummer][buttonnummer].Wert=10;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=1;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=13;
+	S_Button[menunummer][buttonnummer].Text="Abbruch";
+	S_Button[menunummer][buttonnummer].Textlaenge=7;
 
 	buttonnummer=11;                                  //Button f�r Best�tigen
-	S_Button[menuenummer][buttonnummer].x1=220;
-	S_Button[menuenummer][buttonnummer].y1=60;
-	S_Button[menuenummer][buttonnummer].x2=315;
-	S_Button[menuenummer][buttonnummer].y2=100;
-	S_Button[menuenummer][buttonnummer].Wert=11;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=2;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=13;
-	S_Button[menuenummer][buttonnummer].Text="Bestaetigen";
-	S_Button[menuenummer][buttonnummer].Textlaenge=11;
+	S_Button[menunummer][buttonnummer].x1=220;
+	S_Button[menunummer][buttonnummer].y1=60;
+	S_Button[menunummer][buttonnummer].x2=315;
+	S_Button[menunummer][buttonnummer].y2=100;
+	S_Button[menunummer][buttonnummer].Wert=11;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=2;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=13;
+	S_Button[menunummer][buttonnummer].Text="Bestaetigen";
+	S_Button[menunummer][buttonnummer].Textlaenge=11;
 
 	buttonnummer=12;                                  //Button f�r L�schen
-	S_Button[menuenummer][buttonnummer].x1=220;
-	S_Button[menuenummer][buttonnummer].y1=186;
-	S_Button[menuenummer][buttonnummer].x2=315;
-	S_Button[menuenummer][buttonnummer].y2=226;
-	S_Button[menuenummer][buttonnummer].Wert=12;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=10;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=13;
-	S_Button[menuenummer][buttonnummer].Text="Loeschen";
-	S_Button[menuenummer][buttonnummer].Textlaenge=8;
+	S_Button[menunummer][buttonnummer].x1=220;
+	S_Button[menunummer][buttonnummer].y1=186;
+	S_Button[menunummer][buttonnummer].x2=315;
+	S_Button[menunummer][buttonnummer].y2=226;
+	S_Button[menunummer][buttonnummer].Wert=12;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=10;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=13;
+	S_Button[menunummer][buttonnummer].Text="Loeschen";
+	S_Button[menunummer][buttonnummer].Textlaenge=8;
 
-	// Menuebene 11
-	// Menue "RCP-Mode"
-	menuenummer=11;
+	// menubene 11
+	// Menu "RCP-Mode"
+	menunummer=11;
 
 	buttonnummer=0;
-	S_Button[menuenummer][buttonnummer].x1=220;
-	S_Button[menuenummer][buttonnummer].y1=190;
-	S_Button[menuenummer][buttonnummer].x2=320;
-	S_Button[menuenummer][buttonnummer].y2=240;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=2; // "Zur�ck" verlinkt zur "Hauptmenu"
-	S_Button[menuenummer][buttonnummer].Text="Zurueck";
-	S_Button[menuenummer][buttonnummer].Textlaenge=7;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=2;
+	S_Button[menunummer][buttonnummer].x1=220;
+	S_Button[menunummer][buttonnummer].y1=190;
+	S_Button[menunummer][buttonnummer].x2=320;
+	S_Button[menunummer][buttonnummer].y2=240;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=2; // "Zur�ck" verlinkt zur "Hauptmenu"
+	S_Button[menunummer][buttonnummer].Text="Zurueck";
+	S_Button[menunummer][buttonnummer].Textlaenge=7;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=2;
 
 	buttonnummer=1;                                  //Button sent RCP connection request
-	S_Button[menuenummer][buttonnummer].x1=110;
-	S_Button[menuenummer][buttonnummer].y1=190;
-	S_Button[menuenummer][buttonnummer].x2=215;
-	S_Button[menuenummer][buttonnummer].y2=240;
-	S_Button[menuenummer][buttonnummer].Menueverlinkung=11;
-	S_Button[menuenummer][buttonnummer].bottonsanzahl=2;
-	S_Button[menuenummer][buttonnummer].Text="RCP-Connect";
-	S_Button[menuenummer][buttonnummer].Textlaenge=11;
+	S_Button[menunummer][buttonnummer].x1=110;
+	S_Button[menunummer][buttonnummer].y1=190;
+	S_Button[menunummer][buttonnummer].x2=215;
+	S_Button[menunummer][buttonnummer].y2=240;
+	S_Button[menunummer][buttonnummer].Menuverlinkung=11;
+	S_Button[menunummer][buttonnummer].bottonsanzahl=2;
+	S_Button[menunummer][buttonnummer].Text="RCP-Connect";
+	S_Button[menunummer][buttonnummer].Textlaenge=11;
 
 }
 
 // Diese Funktion sorgt für ein Update der tatsaechlich angezeigten GUI-Struktur
-void Anzeige(uint_fast8_t menuebene)
+void Anzeige(uint_fast8_t menubene)
 {
-	switch(menuebene)
+	switch(menubene)
 	{
 		case 1:
 		{

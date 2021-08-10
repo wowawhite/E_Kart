@@ -153,7 +153,7 @@ int main(void)
 
     LCD_Init();
     XPT2046_Init();
-    Menuestruktur();
+    Menustruktur();
     Anzeige_Init(menuebene);
     Motor_Init();
 

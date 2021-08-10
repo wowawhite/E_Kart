@@ -46,7 +46,7 @@ void EKartZustand(void);
 void Anzeige_Init(uint8_t menuebene);
 void getTouch(void);
 uint8_t TouchAction(uint8_t menuebene);
-void Menuestruktur(void);
+void Menustruktur(void);
 void Anzeige(uint_fast8_t menuebene);
 
 
