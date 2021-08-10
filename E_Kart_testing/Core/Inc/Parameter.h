@@ -22,20 +22,12 @@
 #define ON 1
 #define OFF 0
 
-//#define EX_PLOT  // this one turns on/off experimental plot feature
-//#ifdef EX_PLOT
-//
-//#endif
-
 // Errorcodes RCP-Mode
 #define NO_ERROR 0
 #define RCP_TIMEOUT 1
 #define NO_RCP_HEARTBEAT 2
 #define NO_MOTOR_HEARTBEAT 3
 #define RCP_MOVING_ERROR 4
-#ifdef EX_PLOT
-#define BUF_OVERFLOW 5
-#endif
 
 
 #define max_menuebenen 19       // insgesamt 19 Menuebenen, 0.Menuebene wird nicht genutzt
